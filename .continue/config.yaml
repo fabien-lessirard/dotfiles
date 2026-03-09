@@ -1,3 +1,5 @@
+systemMessage: |
+  {{ `cat .github/mictlan-instructions.md` }}
 name: Local Config
 version: 1.0.0
 schema: v1
