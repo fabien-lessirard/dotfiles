@@ -1,3 +1,0 @@
-{
-  "output": "No matches found for pattern \"Fait par\" in path \".\"."
-}

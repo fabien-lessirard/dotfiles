@@ -1,3 +1,0 @@
-{
-  "output": "No matches found for pattern \"import ProductForm from './components/ProductForm';\" in path \".\"."
-}

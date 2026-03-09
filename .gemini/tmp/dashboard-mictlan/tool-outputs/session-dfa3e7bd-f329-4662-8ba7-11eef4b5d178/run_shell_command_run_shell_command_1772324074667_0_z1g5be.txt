@@ -1,3 +1,0 @@
-{
-  "output": "Output: En línea: 1 Carácter: 133\n+ ... ableGrid.jsx src/hooks/useAudio.js src/prompts/todolist.md && git com ...\n+                                                                ~~\nEl token '&&' no es un separador de instrucciones válido en esta versión.\n    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException\n    + FullyQualifiedErrorId : InvalidEndOfLine\n \nExit Code: 1\nProcess Group PGID: 14324"
-}

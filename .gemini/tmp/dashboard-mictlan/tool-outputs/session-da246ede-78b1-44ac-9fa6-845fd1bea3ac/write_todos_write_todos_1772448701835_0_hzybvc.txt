@@ -1,3 +1,0 @@
-{
-  "output": "Successfully updated the todo list. The current list is now:\n1. [in_progress] Quand on se connecte avec un compte depuis un dispositif différent, cela crée un second utilisateur dans la base de données qui n'a pas les droits d'admin. Il faut donner les droits d'admin aussi au second utilisateur.\n2. [completed] create a script to remove users with no emails from the users collection. those are created when one connects as anonyme"
-}

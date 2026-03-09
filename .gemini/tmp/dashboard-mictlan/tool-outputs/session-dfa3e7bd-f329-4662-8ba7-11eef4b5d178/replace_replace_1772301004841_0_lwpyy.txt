@@ -1,3 +1,0 @@
-{
-  "output": "Successfully modified file: C:\\Users\\acodu\\dev\\dashboard_mictlan\\functions\\index.js (1 replacements)."
-}

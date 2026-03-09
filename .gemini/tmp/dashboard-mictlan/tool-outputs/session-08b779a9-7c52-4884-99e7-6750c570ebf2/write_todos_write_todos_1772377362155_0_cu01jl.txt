@@ -1,3 +1,0 @@
-{
-  "output": "Successfully updated the todo list. The current list is now:\n1. [completed] Associate products with test dishes.\n2. [completed] Add a button to remove test dishes."
-}

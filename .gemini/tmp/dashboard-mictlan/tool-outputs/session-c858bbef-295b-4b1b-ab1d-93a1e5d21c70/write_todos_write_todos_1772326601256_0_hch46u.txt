@@ -1,3 +1,0 @@
-{
-  "output": "Successfully updated the todo list. The current list is now:\n1. [in_progress] Aggregate line counts by directory."
-}

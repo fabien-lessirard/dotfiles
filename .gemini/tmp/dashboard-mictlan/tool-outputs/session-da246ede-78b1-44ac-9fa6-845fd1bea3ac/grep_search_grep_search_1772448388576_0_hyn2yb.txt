@@ -1,3 +1,0 @@
-{
-  "output": "No matches found for pattern \"functions.auth.user().onCreate\" in path \"functions\"."
-}

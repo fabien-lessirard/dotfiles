@@ -1,4 +1,0 @@
-Output: [branch-v1.1.0-dev a491c21] docs: Move cloud function deployment summary to docs folder
- 1 file changed, 8 insertions(+)
- create mode 100644 docs/cloud_function_deployment_summary.txt
-Process Group PGID: 9304

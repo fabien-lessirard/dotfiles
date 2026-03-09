@@ -1,3 +1,0 @@
-{
-  "output": "Output: Setting CORS on gs://dashboard-mictlan-dev.firebasestorage.app/...\nProcess Group PGID: 10328"
-}

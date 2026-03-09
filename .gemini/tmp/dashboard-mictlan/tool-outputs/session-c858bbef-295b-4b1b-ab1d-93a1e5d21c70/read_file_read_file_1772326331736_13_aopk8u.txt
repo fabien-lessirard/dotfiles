@@ -1,3 +1,0 @@
-{
-  "output": "{\r\n  \"apiKey\": \"AIzaSyDDBAzayzk5B-R92pQEYaAM1cyh2qgI3y0\",\r\n  \"authDomain\": \"dashboard-mictlan-staging.firebaseapp.com\",\r\n  \"projectId\": \"dashboard-mictlan-staging\",\r\n  \"storageBucket\": \"dashboard-mictlan-staging.firebasestorage.app\",\r\n  \"messagingSenderId\": \"702884048893\",\r\n  \"appId\": \"1:702884048893:web:69bf2dd1782f59c7c63394\",\r\n  \"measurementId\": \"G-J2YE8MGLKG\"\r\n}"
-}

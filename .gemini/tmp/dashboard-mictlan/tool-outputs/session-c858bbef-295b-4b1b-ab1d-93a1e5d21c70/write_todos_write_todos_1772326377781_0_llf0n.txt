@@ -1,3 +1,0 @@
-{
-  "error": "Invalid parameters: Only one task can be \"in_progress\" at a time."
-}

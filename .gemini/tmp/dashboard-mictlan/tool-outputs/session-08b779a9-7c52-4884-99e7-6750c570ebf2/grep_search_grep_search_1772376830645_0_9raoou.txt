@@ -1,3 +1,0 @@
-{
-  "output": "Found 4 matches for pattern \"ProductDecisions\" in path \"src\":\n---\nFile: prompts\\recreate app prompt.md\nL111: *   **`ProductForm.jsx`, `ProductList.jsx`, `ProductDecisions.jsx`, `ProductReporting.jsx`**: Components for managing products.\n---\nFile: components\\ProductDecisions.jsx\nL9: export default function ProductDecisions() {\n---\nFile: components\\InventoryManagementDashboard.jsx\nL3: import ProductDecisions from './ProductDecisions';\nL62:         {activeTab === 'products-decisions' && <ProductDecisions />}\n---"
-}

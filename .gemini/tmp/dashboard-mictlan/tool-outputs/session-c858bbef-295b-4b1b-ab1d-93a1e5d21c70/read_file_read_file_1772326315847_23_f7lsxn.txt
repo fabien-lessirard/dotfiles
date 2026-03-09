@@ -1,3 +1,0 @@
-{
-  "output": "export default {\r\n  plugins: {\r\n    '@tailwindcss/postcss': {},\r\n  },\r\n}"
-}

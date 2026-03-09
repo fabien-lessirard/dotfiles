@@ -1,3 +1,0 @@
-{
-  "output": "Successfully updated the todo list. The current list is now:\n1. [completed] Deploy the cloud functions in index.js to the dev environment."
-}

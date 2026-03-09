@@ -1,3 +1,0 @@
-{
-  "output": "Successfully modified file: C:\\Users\\acodu\\dev\\dashboard_mictlan\\src\\prompts\\todolist.md (1 replacements)."
-}

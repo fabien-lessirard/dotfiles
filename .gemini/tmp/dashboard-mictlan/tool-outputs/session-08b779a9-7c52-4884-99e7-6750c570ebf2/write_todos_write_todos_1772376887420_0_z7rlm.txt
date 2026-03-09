@@ -1,3 +1,0 @@
-{
-  "output": "Successfully updated the todo list. The current list is now:\n1. [completed] Add a function to delete test dishes.\n2. [completed] Test dishes should have \"TEST\" in their name.\n3. [completed] Explain why a decision needs to be taken in the \"decision tab\" for products."
-}

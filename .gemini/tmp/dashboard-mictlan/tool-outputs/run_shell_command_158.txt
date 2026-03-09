@@ -1,6 +1,0 @@
-Output: [branch-v1.1.0-dev 3a0e6b4] docs: Organize agent-generated informational files into agent_notes/
- 3 files changed, 37 insertions(+)
- create mode 100644 agent_notes/frontend_rebuild_instructions.txt
- create mode 100644 agent_notes/user_info.txt
- create mode 100644 agent_notes/verification_instructions.txt
-Process Group PGID: 15520

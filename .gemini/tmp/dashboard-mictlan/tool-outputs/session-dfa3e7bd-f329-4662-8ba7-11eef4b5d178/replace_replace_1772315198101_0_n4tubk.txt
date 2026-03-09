@@ -1,3 +1,0 @@
-{
-  "output": "Successfully modified file: C:\\Users\\acodu\\dev\\dashboard_mictlan\\src\\components\\CleaningChecklist.jsx (1 replacements)."
-}

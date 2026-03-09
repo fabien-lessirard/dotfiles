@@ -1,3 +1,0 @@
-{
-  "output": "import { defineConfig } from 'vite'\r\nimport react from '@vitejs/plugin-react'\r\nimport { readFileSync } from 'fs'\r\nimport path from 'path'\r\n\r\nconst packageJson = JSON.parse(readFileSync(path.resolve(__dirname, './package.json')))\r\n\r\nexport default defineConfig({\r\n  plugins: [\r\n    react(),\r\n  ],\r\n  base: './',\r\n  define: {\r\n    'import.meta.env.VITE_APP_VERSION': JSON.stringify(packageJson.version),\r\n  },\r\n})"
-}

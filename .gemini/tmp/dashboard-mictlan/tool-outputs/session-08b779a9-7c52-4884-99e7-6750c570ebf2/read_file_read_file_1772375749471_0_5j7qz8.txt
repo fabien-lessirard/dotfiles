@@ -1,3 +1,0 @@
-{
-  "output": "{\r\n  \"hosting\": {\r\n    \"site\": \"dashboard-mictlan-prod\",\r\n    \"public\": \"dist\",\r\n    \"ignore\": [\r\n      \"firebase.json\",\r\n      \"**/.*\",\r\n      \"**/node_modules/**\"\r\n    ],\r\n    \"rewrites\": [\r\n      {\r\n        \"source\": \"**\",\r\n        \"destination\": \"/index.html\"\r\n      }\r\n    ]\r\n  },\r\n  \"functions\": {\r\n    \"source\": \"functions\",\r\n    \"runtime\": \"nodejs22\"\r\n  }\r\n}"
-}

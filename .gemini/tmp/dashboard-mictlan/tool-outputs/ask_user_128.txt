@@ -1,3 +1,0 @@
-{
-  "error": "params/questions/0/header must NOT have more than 16 characters"
-}

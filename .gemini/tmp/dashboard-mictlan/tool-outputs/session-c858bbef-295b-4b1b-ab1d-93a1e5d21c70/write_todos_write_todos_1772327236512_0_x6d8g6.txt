@@ -1,3 +1,0 @@
-{
-  "output": "Successfully updated the todo list. The current list is now:\n1. [in_progress] Recalculate and present lines per folder excluding `package-lock.json` files, `sa-key-*.json` files, and `agent_notes/firebase-config-*.json` files."
-}

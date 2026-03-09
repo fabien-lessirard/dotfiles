@@ -1,3 +1,0 @@
-{
-  "output": "function MultiPage1() {\r\n  return (\r\n    <div className=\"min-h-screen bg-[#0a0a0a] text-gray-200 flex items-center justify-center\">\r\n      <div className=\"text-center\">\r\n        <h1 className=\"text-4xl font-bold text-[#d4af37] mb-4\">MultiPage1</h1>\r\n        <p className=\"text-lg\">Welcome to the MultiPage1 page!</p>\r\n      </div>\r\n    </div>\r\n  );\r\n}\r\n\r\nexport default MultiPage1;"
-}

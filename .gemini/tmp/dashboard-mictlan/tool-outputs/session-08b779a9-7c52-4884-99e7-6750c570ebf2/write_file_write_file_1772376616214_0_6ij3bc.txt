@@ -1,3 +1,0 @@
-{
-  "output": "Successfully overwrote file: C:\\Users\\acodu\\dev\\dashboard_mictlan\\gemini.md. Here is the updated code:\nAll requested cloud functions have been deployed to the `dev` environment and the `firebase-functions` package has been updated. I have also stopped working on the Zenchef integration as per your request.\n"
-}

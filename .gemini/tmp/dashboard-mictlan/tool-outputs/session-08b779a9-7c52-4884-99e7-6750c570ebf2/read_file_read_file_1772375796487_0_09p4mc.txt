@@ -1,3 +1,0 @@
-{
-  "output": "{\r\n  \"projects\": {\r\n    \"default\": \"dashboard-mictlan-dev\",\r\n    \"dev\": \"dashboard-mictlan-dev\",\r\n    \"staging\": \"dashboard-mictlan-staging\",\r\n    \"prod\": \"dashboard-mictlan-prod\"\r\n  }\r\n}"
-}

@@ -1,3 +1,0 @@
-{
-  "output": "Directory listing for C:\\Users\\acodu\\dev\\dashboard_mictlan\\src\\hooks:\nuseAudio.js (2976 bytes)\nuseAuth.js (3872 bytes)\nuseDishes.js (759 bytes)\nuseFirestore.js (1863 bytes)\nuseInventory.js (1315 bytes)\nuseLogs.js (978 bytes)\nuseProducts.js (775 bytes)\nuseSettings.js (2389 bytes)\nuseTables.js (1014 bytes)"
-}

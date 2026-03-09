@@ -1,3 +1,0 @@
-{
-  "output": "Directory listing for C:\\Users\\acodu\\dev\\dashboard_mictlan\\functions:\n[DIR] node_modules\nindex.js (13766 bytes)\npackage-lock.json (102777 bytes)\npackage.json (423 bytes)"
-}

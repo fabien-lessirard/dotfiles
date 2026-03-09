@@ -1,8 +1,0 @@
-{
-  "projects": {
-    "default": "dashboard-mictlan-dev",
-    "dev": "dashboard-mictlan-dev",
-    "staging": "dashboard-mictlan-staging",
-    "prod": "dashboard-mictlan-prod"
-  }
-}

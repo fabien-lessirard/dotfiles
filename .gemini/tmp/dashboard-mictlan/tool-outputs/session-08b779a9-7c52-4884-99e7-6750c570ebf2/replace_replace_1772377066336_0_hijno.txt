@@ -1,3 +1,0 @@
-{
-  "output": "Successfully modified file: C:\\Users\\acodu\\dev\\dashboard_mictlan\\src\\components\\DishManagementDashboard.jsx (1 replacements). Here is the updated code:\nimport React from 'react';\nimport Card from './Card';\nimport DishForm from './DishForm';\nimport { Utensils } from 'lucide-react';\nimport TestDataManager from './TestDataManager';\n\nconst DishManagementDashboard = () => {\n  return (\n    <Card title=\"Gestion des Plats\" titleIcon={<Utensils />}>\n      <DishForm />\n      <div className=\"mt-4\">\n        <TestDataManager type=\"dishes\" />\n      </div>\n    </Card>\n  );\n};\n\nexport default DishManagementDashboard;\n"
-}

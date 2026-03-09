@@ -1,3 +1,0 @@
-{
-  "output": "{\r\n    \"chat.restoreLastPanelSession\": true\r\n}"
-}
