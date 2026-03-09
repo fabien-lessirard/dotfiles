@@ -1,0 +1,3 @@
+{
+  "output": "import { db } from './config';\r\nimport { doc, writeBatch } from 'firebase/firestore';\r\n\r\nexport const initializeFirestoreTables = async (numberOfTables = 4) => {\r\n  const batch = writeBatch(db);\r\n  \r\n  for (let i = 1; i <= numberOfTables; i++) {\r\n    const tableRef = doc(db, \"tables\", `table_${i}`);\r\n    batch.set(tableRef, {\r\n      id: i,\r\n      name: `Table ${i}`,\r\n      status: \"idle\",\r\n      isWaiting: false,\r\n      needsBill: false,\r\n      lastUpdate: new Date()\r\n    });\r\n  }\r\n\r\n  try {\r\n    await batch.commit();\r\n    console.log(\"✅ Firestore initialisé avec succès !\");\r\n  } catch (error) {\r\n    console.error(\"❌ Erreur lors de l'initialisation :\", error);\r\n  }\r\n};"
+}

@@ -1,0 +1,31 @@
+# Plan: Add All Extensions to devcontainer.json
+
+## Context
+User wants Codespaces to mirror their current local VSCode setup so they can work from phone or friend's PC. The devcontainer.json currently has only 3 extensions but the user has 10 installed locally.
+
+## Change
+
+**File:** `.devcontainer/devcontainer.json`
+
+Replace the current `extensions` array with all 10 locally installed extensions:
+
+```json
+"extensions": [
+  "firebase.vscode-firebase-explorer",
+  "esbenp.prettier-vscode",
+  "dbaeumer.vscode-eslint",
+  "anthropic.claude-code",
+  "continue.continue",
+  "github.vscode-github-actions",
+  "github.vscode-pull-request-github",
+  "google.gemini-cli-vscode-ide-companion",
+  "google.geminicodeassist",
+  "ms-vscode-remote.remote-containers",
+  "ms-vscode.powershell",
+  "redhat.vscode-yaml",
+  "ritwickdey.liveserver"
+]
+```
+
+## Verification
+- Open a Codespace from GitHub and confirm all extensions auto-install

@@ -1,0 +1,3 @@
+{
+  "output": "Output: error: unknown option '--all'\nExit Code: 1\nProcess Group PGID: 15772"
+}

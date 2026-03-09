@@ -1,0 +1,89 @@
+{
+	"motd": {
+		"cloudBuildErrorAfter": 1594252800000,
+		"cloudBuildWarnAfter": 1590019200000,
+		"defaultNode10After": 1594252800000,
+		"minVersion": "3.0.5",
+		"node8DeploysDisabledAfter": 1613390400000,
+		"node8RuntimeDisabledAfter": 1615809600000,
+		"node8WarnAfter": 1600128000000,
+		"fetched": 1772485609115
+	},
+	"gemini": true,
+	"usage": true,
+	"analytics-uuid": "10162348-c0c0-42b4-a267-6e9c8c6f696c",
+	"user": {
+		"iss": "accounts.google.com",
+		"azp": "563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com",
+		"aud": "563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com",
+		"sub": "102096839874454893728",
+		"email": "fabien.lessirard@gmail.com",
+		"email_verified": true,
+		"at_hash": "PPTkqE-kKOnPtYGcPlzf9Q",
+		"iat": 1760605520,
+		"exp": 1760609120
+	},
+	"tokens": {
+		"expires_at": 1772493295071,
+		"refresh_token": "1//03EofqB3HbERECgYIARAAGAMSNwF-L9Ir4l7y3CzOmEnTS9Kth7MSlGtLFOdAeSBcCt1JqkvjiaKL-srm5PN4tgXrbmXO7U9J6uE",
+		"scopes": [],
+		"access_token": "ya29.a0ATkoCc5Ugb2tQU1KpfclQlrF2Gxp-ea8Vgru3C813Mk-I9x3U9VLYRBbXkWh4FNadpdn3rvw_pHYOJh0oNux-H1GB5Lg2qBPaSJ57SsHWnJAlwRcQi-bOXTGFbB1C28YzpsShZ5g_1d0U84IKBUUd1NOLoToKdMq37_3WB7RRItGPTi2d47dz1-WgFOA0zzLFX5pmpQcUKAzAUcaCgYKAQESAQ0SFQHGX2MiXvNTPu7rmhVJoYal1j-d-g0214",
+		"expires_in": 3599,
+		"scope": "https://www.googleapis.com/auth/cloudplatformprojects.readonly https://www.googleapis.com/auth/userinfo.email openid https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/firebase",
+		"token_type": "Bearer",
+		"id_token": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjI1MDdmNTFhZjJhMTYyNDY3MDc0ODQ2NzRhNDJhZTNjMmI2MjMxOWMiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJhY2NvdW50cy5nb29nbGUuY29tIiwiYXpwIjoiNTYzNTg0MzM1ODY5LWZncmhnbWQ0N2JxbmVraWo1aThiNXByMDNobzg0OWU2LmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwiYXVkIjoiNTYzNTg0MzM1ODY5LWZncmhnbWQ0N2JxbmVraWo1aThiNXByMDNobzg0OWU2LmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwic3ViIjoiMTAyMDk2ODM5ODc0NDU0ODkzNzI4IiwiZW1haWwiOiJmYWJpZW4ubGVzc2lyYXJkQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJhdF9oYXNoIjoiY2F0WVJpT2MyTUx5dGstRFVhMWNoQSIsImlhdCI6MTc3MjQ4OTY5NiwiZXhwIjoxNzcyNDkzMjk2fQ.MaZ3DIhr7fSOj0RaJXW1-Lk-JoVqJFKnVHKyFw1Oq28aGFLPOB16UMU53G-QkVsQIM05uUlRMjrNEyal3IFmx-j9pEe54xKXJhMDORTxCNcj9b2a6AtB3tX8MF974rT8-jT481Xd1KUb0gRYNF4P2BUlTxoTxCbRcXWIa_ZvEFIAKpX-wMmCAn-xDXpnEYRarJuBBe0R52fYaV2ugaKt4e4iup7qCX36kd7FBBU1ZgeVyME3x3R5xANjjALoHFXlmt9bYQv8ItH_AITmz5ZDQrSxlcHYKilSFqbIevH3x3E896CNBzTXTwuDJwOqJ9UsOOCe3SS83Lf9aG30OZFIiQ"
+	},
+	"activeProjects": {
+		"G:\\Mi unidad\\dashboard_mictlan": "dashboard-mictlan-v1",
+		"C:\\Users\\acodu\\dev\\dashboard_mictlan": "dev"
+	},
+	"apiEnablementCache": {
+		"dashboard-mictlan-v1": {
+			"cloudresourcemanager.googleapis.com": true,
+			"runtimeconfig.googleapis.com": true,
+			"cloudfunctions.googleapis.com": true
+		},
+		"dashboard-mictlan-prod": {
+			"cloudresourcemanager.googleapis.com": true,
+			"runtimeconfig.googleapis.com": true,
+			"cloudfunctions.googleapis.com": true,
+			"artifactregistry.googleapis.com": true,
+			"cloudbuild.googleapis.com": true,
+			"firebaseextensions.googleapis.com": true
+		},
+		"976040868703": {
+			"pubsub.googleapis.com": true,
+			"storage.googleapis.com": true,
+			"eventarc.googleapis.com": true,
+			"run.googleapis.com": true
+		},
+		"dashboard-mictlan-dev": {
+			"cloudresourcemanager.googleapis.com": true,
+			"runtimeconfig.googleapis.com": true,
+			"cloudfunctions.googleapis.com": true,
+			"cloudbuild.googleapis.com": true,
+			"artifactregistry.googleapis.com": true,
+			"firebaseextensions.googleapis.com": true
+		},
+		"992629744623": {
+			"storage.googleapis.com": true,
+			"pubsub.googleapis.com": true,
+			"eventarc.googleapis.com": true,
+			"run.googleapis.com": true
+		},
+		"dashboard-mictlan-staging": {
+			"cloudresourcemanager.googleapis.com": true,
+			"runtimeconfig.googleapis.com": true,
+			"cloudfunctions.googleapis.com": true,
+			"cloudbuild.googleapis.com": true,
+			"artifactregistry.googleapis.com": true,
+			"firebaseextensions.googleapis.com": true
+		},
+		"702884048893": {
+			"pubsub.googleapis.com": true,
+			"storage.googleapis.com": true,
+			"run.googleapis.com": true,
+			"eventarc.googleapis.com": true
+		}
+	}
+}

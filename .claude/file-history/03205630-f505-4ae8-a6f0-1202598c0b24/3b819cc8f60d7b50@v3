@@ -1,0 +1,12 @@
+#!/bin/bash
+set -e
+
+echo "🌮 Setting up El Mictlan Dashboard dev environment..."
+
+# Install project dependencies
+if [ -f "package.json" ]; then
+  echo "📦 Installing project dependencies..."
+  npm install
+fi
+
+echo "✅ Setup complete!"

@@ -1,0 +1,1254 @@
+On branch branch-v2.0.0-dev
+Your branch is up to date with 'origin/branch-v2.0.0-dev'.
+
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	deleted:    clear-products-db.cjs
+	deleted:    empty-db.cjs
+	modified:   functions/index.js
+	modified:   package.json
+	deleted:    populate-all-db.cjs
+	deleted:    populate-dishes-db.cjs
+	deleted:    populate-products-db.cjs
+	deleted:    populate-settings-db.cjs
+	modified:   src/components/AdminPanel.jsx
+	modified:   src/hooks/useAuth.js
+	modified:   src/prompts/todolist.md
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	.claude/
+	scripts/
+	users_export.json
+	users_export_after_claim.json
+	~/
+
+no changes added to commit (use "git add" and/or "git commit -a")
+---
+warning: in the working copy of 'functions/index.js', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/AdminPanel.jsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/hooks/useAuth.js', LF will be replaced by CRLF the next time Git touches it
+diff --git a/clear-products-db.cjs b/clear-products-db.cjs
+deleted file mode 100644
+index f6a2b38..0000000
+--- a/clear-products-db.cjs
++++ /dev/null
+@@ -1,33 +0,0 @@
+-const admin = require('firebase-admin');
+-const serviceAccount = require(process.env.FIREBASE_ADMIN_SA_KEY_PATH);
+-
+-admin.initializeApp({
+-  credential: admin.credential.cert(serviceAccount)
+-});
+-
+-const db = admin.firestore();
+-
+-async function clearProductsCollection() {
+-  try {
+-    const collectionRef = db.collection('products');
+-    const snapshot = await collectionRef.get();
+-    
+-    if (snapshot.empty) {
+-      console.log('No documents found in "products" collection. Nothing to delete.');
+-      return;
+-    }
+-
+-    const batch = db.batch();
+-    snapshot.docs.forEach(doc => {
+-      batch.delete(doc.ref);
+-    });
+-    await batch.commit();
+-    console.log(`Successfully deleted ${snapshot.docs.length} documents from "products" collection.`);
+-  } catch (error) {
+-    console.error('Error clearing "products" collection:', error);
+-  } finally {
+-    admin.app().delete();
+-  }
+-}
+-
+-clearProductsCollection();
+diff --git a/empty-db.cjs b/empty-db.cjs
+deleted file mode 100644
+index 425f8ff..0000000
+--- a/empty-db.cjs
++++ /dev/null
+@@ -1,38 +0,0 @@
+-const admin = require('firebase-admin');
+-
+-// Initialize Firebase Admin with service account
+-const serviceAccount = require(process.env.FIREBASE_ADMIN_SA_KEY_PATH);
+-
+-admin.initializeApp({
+-  credential: admin.credential.cert(serviceAccount),
+-  databaseURL: 'https://your-project-id.firebaseio.com' // Replace with your project ID
+-});
+-
+-const db = admin.firestore();
+-
+-async function emptyDatabase() {
+-  try {
+-    console.log('Listing all collections...');
+-    const collections = await db.listCollections();
+-    console.log(`Found ${collections.length} collections:`, collections.map(c => c.id));
+-
+-    for (const collectionRef of collections) {
+-      console.log(`Deleting documents from collection: ${collectionRef.id}`);
+-      const snapshot = await collectionRef.get();
+-      const batch = db.batch();
+-      snapshot.docs.forEach(doc => {
+-        batch.delete(doc.ref);
+-      });
+-      await batch.commit();
+-      console.log(`Deleted ${snapshot.docs.length} documents from ${collectionRef.id}`);
+-    }
+-
+-    console.log('Database emptied successfully.');
+-  } catch (error) {
+-    console.error('Error emptying database:', error);
+-  } finally {
+-    admin.app().delete();
+-  }
+-}
+-
+-emptyDatabase();
+\ No newline at end of file
+diff --git a/functions/index.js b/functions/index.js
+index 0491b1f..3f345b1 100644
+--- a/functions/index.js
++++ b/functions/index.js
+@@ -1,4 +1,5 @@
+ const functions = require("firebase-functions");
++const { onCall, HttpsError } = require('firebase-functions/v2/https');
+ const admin = require("firebase-admin");
+ const vision = require('@google-cloud/vision'); // Added for OCR
+ const cors = require('cors')({origin: true});
+@@ -28,15 +29,29 @@ const isAuthenticatedAdmin = async (context) => {
+   return true;
+ };
+ 
++// --- Helper function to extract and verify ID token ---
++const getAuthenticatedUser = async (req) => {
++  if (!req.headers.authorization || !req.headers.authorization.startsWith('Bearer ')) {
++    throw new functions.https.HttpsError(
++      'unauthenticated',
++      'Request is not authorized. Requires Bearer token.'
++    );
++  }
++  const idToken = req.headers.authorization.split('Bearer ')[1];
++  try {
++    const decodedToken = await admin.auth().verifyIdToken(idToken);
++    return decodedToken;
++  } catch (error) {
++    console.error('Error while verifying Firebase ID token:', error);
++    throw new functions.https.HttpsError('unauthenticated', 'Authentication failed. Invalid token.');
++  }
++};
++
++
+ // --- Populate Products Cloud Function ---
+ exports.populateProducts = functions.https.onRequest((req, res) => {
+   cors(req, res, async () => {
+     try {
+-      // For onRequest, auth is not available in the same way. 
+-      // If you need auth, you'd check the request headers for a token.
+-      // For now, we are leaving the admin check commented out.
+-      // await isAuthenticatedAdmin(context);
+-
+       const productsRef = db.collection('products');
+       const batch = db.batch();
+ 
+@@ -81,17 +96,12 @@ exports.populateProducts = functions.https.onRequest((req, res) => {
+ exports.clearProducts = functions.https.onRequest((req, res) => {
+   cors(req, res, async () => {
+     try {
+-      // await isAuthenticatedAdmin(context); // Temporarily commented out
+-
+       const productsRef = db.collection('products');
+-      // Query for documents where isTestData is true
+       const snapshot = await productsRef.where('isTestData', '==', true).get();
+-
+       if (snapshot.empty) {
+         res.status(200).json({ message: 'No test products found in "products" collection. Nothing to delete.' });
+         return;
+       }
+-
+       const batch = db.batch();
+       snapshot.docs.forEach(doc => {
+         batch.delete(doc.ref);
+@@ -109,17 +119,12 @@ exports.clearProducts = functions.https.onRequest((req, res) => {
+ exports.clearDishes = functions.https.onRequest((req, res) => {
+   cors(req, res, async () => {
+     try {
+-      // await isAuthenticatedAdmin(context); // Temporarily commented out
+-
+       const dishesRef = db.collection('dishes');
+-      // Query for documents where isTestData is true
+       const snapshot = await dishesRef.where('isTestData', '==', true).get();
+-      
+       if (snapshot.empty) {
+         res.status(200).json({ message: 'No test dishes found in "dishes" collection. Nothing to delete.' });
+         return;
+       }
+-
+       const batch = db.batch();
+       snapshot.docs.forEach(doc => {
+         batch.delete(doc.ref);
+@@ -133,6 +138,35 @@ exports.clearDishes = functions.https.onRequest((req, res) => {
+   });
+ });
+ 
++// --- Clear Anonymous Users Cloud Function ---
++exports.clearAnonymousUsers = functions.https.onRequest((req, res) => {
++  cors(req, res, async () => {
++    try {
++      const authenticatedUser = await getAuthenticatedUser(req);
++      const context = { auth: { uid: authenticatedUser.uid } };
++      await isAuthenticatedAdmin(context);
++      const usersRef = db.collection('users');
++      const nullEmailSnapshot = await usersRef.where('email', '==', null).get();
++      const emptyEmailSnapshot = await usersRef.where('email', '==', '').get();
++      const batch = db.batch();
++      let deletedCount = 0;
++      nullEmailSnapshot.docs.forEach(doc => {
++        batch.delete(doc.ref);
++        deletedCount++;
++      });
++      emptyEmailSnapshot.docs.forEach(doc => {
++          batch.delete(doc.ref);
++          deletedCount++;
++      });
++      await batch.commit();
++      res.status(200).json({ message: `Successfully deleted ${deletedCount} anonymous user documents.` });
++    } catch (error) {
++      console.error("Error in clearAnonymousUsers:", error);
++      res.status(500).send('An error occurred in clearAnonymousUsers.');
++    }
++  });
++});
++
+ // --- Populate Dishes Cloud Function ---
+ exports.populateDishes = functions.https.onRequest((req, res) => {
+   cors(req, res, async () => {
+@@ -143,26 +177,21 @@ exports.populateDishes = functions.https.onRequest((req, res) => {
+       products.forEach(p => {
+         productNameToIdMap[p.name] = p.id;
+       });
+-
+       const dishesRef = db.collection('dishes');
+       const batch = db.batch();
+-
+       const testDishes = [
+         { name: 'TEST - Lasagnes Bolognaises', category: 'Plat', price: 12.50, isAvailable: true, isTestData: true, ingredientNames: ['TEST - Pâtes Fraîches', 'TEST - Steak de Boeuf'] },
+         { name: 'TEST - Tarte Tatin', category: 'Dessert', price: 6.00, isAvailable: true, isTestData: true, ingredientNames: ['TEST - Pommes Bio'] },
+       ];
+-
+       testDishes.forEach(dish => {
+         const ingredients = dish.ingredientNames
+           .map(name => productNameToIdMap[name])
+-          .filter(id => id); // Filter out any ingredients not found
+-
++          .filter(id => id);
+         if (ingredients.length > 0) {
+           const { ingredientNames, ...dishData } = dish;
+           batch.set(dishesRef.doc(), { ...dishData, ingredients });
+         }
+       });
+-
+       await batch.commit();
+       res.status(200).json({ message: `Successfully added ${testDishes.length} test dishes.` });
+     } catch (error) {
+@@ -173,62 +202,41 @@ exports.populateDishes = functions.https.onRequest((req, res) => {
+ });
+ 
+ // --- OCR Cloud Function for Expiry Date ---
+-// Last modified: 2026-03-01T23:00:00Z
+ exports.extractExpiryDateFromImage = functions.https.onCall(async (request) => {
+-  // This function is deployed as Gen 2, which uses the (request) signature.
+-  // The actual data sent from the client is in request.data.
+   const data = request.data;
+-  const auth = request.auth; // For Gen 2, auth info is in request.auth.
+-
+-  // Authentication / Authorization (optional, but recommended for callable functions)
+-  // if (!auth) {
+-  //   throw new functions.https.HttpsError('unauthenticated', 'The function must be called while authenticated.');
+-  // }
+-
+   let imageBase64;
+   if (data && data.image && typeof data.image === 'string') {
+     imageBase64 = data.image;
+   } else if (data && typeof data === 'string') {
+     imageBase64 = data;
+   } else {
+-    const passedDataType = typeof data;
+-    const passedDataKeys = data ? Object.keys(data) : 'N/A';
+-    console.error(`Could not find image data in payload. Received data type: ${passedDataType}, keys: [${passedDataKeys}]`);
+     throw new functions.https.HttpsError('invalid-argument', 'The function must be called with a valid image string.');
+   }
+-
+   const imageBuffer = Buffer.from(imageBase64, 'base64');
+-
+   try {
+     const [result] = await visionClient.textDetection({
+       image: { content: imageBuffer },
+     });
+     const detections = result.textAnnotations;
+     const fullText = detections.length > 0 ? detections[0].description : '';
+-
+     console.log('Full text detected:', fullText);
+-
+-    // Regex patterns for common date formats (DD/MM/YYYY, DD-MM-YYYY, YYYY-MM-DD, DD MM YYYY)
+     const datePatterns = [
+-      /(\d{2})[./-](\d{2})[./-](\d{4})/, // DD/MM/YYYY or DD-MM-YYYY or DD.MM.YYYY
+-      /(\d{4})[./-](\d{2})[./-](\d{2})/, // YYYY-MM-DD
+-      /(\d{2})\s(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\s(\d{4})/i, // DD MMM YYYY
+-      /(\d{2})\s(\d{2})\s(\d{4})/ // DD MM YYYY (with spaces)
++      /(\d{2})[.\/-](\d{2})[.\/-](\d{4})/,
++      /(\d{4})[.\/-](\d{2})[.\/-](\d{2})/,
++      /(\d{2})\s(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\s(\d{4})/i,
++      /(\d{2})\s(\d{2})\s(\d{4})/
+     ];
+-
+     let detectedDate = null;
+-
+     for (const pattern of datePatterns) {
+       const match = fullText.match(pattern);
+       if (match) {
+-        // Basic parsing based on pattern
+-        if (pattern === datePatterns[0] || pattern === datePatterns[3]) { // DD/MM/YYYY or DD MM YYYY
++        if (pattern === datePatterns[0] || pattern === datePatterns[3]) {
+           const [ , day, month, year ] = match;
+           detectedDate = `${year}-${month}-${day}`;
+-        } else if (pattern === datePatterns[1]) { // YYYY-MM-DD
++        } else if (pattern === datePatterns[1]) {
+           const [ , year, month, day ] = match;
+           detectedDate = `${year}-${month}-${day}`;
+-        } else if (pattern === datePatterns[2]) { // DD MMM YYYY
++        } else if (pattern === datePatterns[2]) {
+           const [ , day, monthStr, year ] = match;
+           const monthMap = {
+             jan: '01', feb: '02', mar: '03', apr: '04', may: '05', jun: '06',
+@@ -237,18 +245,67 @@ exports.extractExpiryDateFromImage = functions.https.onCall(async (request) => {
+           const month = monthMap[monthStr.toLowerCase()];
+           detectedDate = `${year}-${month}-${day}`;
+         }
+-        break; // Stop after first match
++        break;
+       }
+     }
+-
+     if (detectedDate) {
+       return { expiryDate: detectedDate, message: 'Date détectée.' };
+     } else {
+       return { expiryDate: null, message: 'Aucune date valide trouvée dans l\'image.' };
+     }
+-
+   } catch (error) {
+     console.error('Error during Vision API call or date extraction:', { message: error.message, code: error.code, stack: error.stack });
+     throw new functions.https.HttpsError('internal', 'Erreur lors du traitement de l\'image.', error.message);
+   }
+ });
++
++// --- Delete User Cloud Function (Callable) ---
++exports.deleteUser = onCall(async (request) => {
++  if (!request.auth) {
++    throw new HttpsError('unauthenticated', 'The function must be called while authenticated.');
++  }
++
++  const callerDoc = await db.collection('users').doc(request.auth.uid).get();
++  if (!callerDoc.exists || callerDoc.data().role !== 'admin') {
++    throw new HttpsError('permission-denied', 'Only admin users can delete other users.');
++  }
++
++  const uid = request.data.uid;
++  if (!uid) {
++    throw new HttpsError('invalid-argument', 'The function must be called with a "uid" argument.');
++  }
++
++  try {
++    await admin.auth().deleteUser(uid);
++    await db.collection('users').doc(uid).delete();
++    return { message: `Successfully deleted user ${uid}.` };
++  } catch (error) {
++    console.error("Error deleting user:", error);
++    throw new HttpsError('internal', 'An error occurred while deleting the user.');
++  }
++});
++
++// --- Update User Password Cloud Function (Callable) ---
++exports.updateUserPassword = onCall(async (request) => {
++  if (!request.auth) {
++    throw new HttpsError('unauthenticated', 'The function must be called while authenticated.');
++  }
++
++  const callerDoc = await db.collection('users').doc(request.auth.uid).get();
++  if (!callerDoc.exists || callerDoc.data().role !== 'admin') {
++    throw new HttpsError('permission-denied', 'Only admin users can change passwords.');
++  }
++
++  const { uid, newPassword } = request.data;
++  if (!uid || !newPassword) {
++    throw new HttpsError('invalid-argument', 'The function must be called with "uid" and "newPassword" arguments.');
++  }
++
++  try {
++    await admin.auth().updateUser(uid, { password: newPassword });
++    return { message: `Password for user ${uid} updated successfully.` };
++  } catch (error) {
++    console.error("Error updating password:", error);
++    throw new HttpsError('internal', 'An error occurred while updating the password.');
++  }
++});
+\ No newline at end of file
+diff --git a/package.json b/package.json
+index f4368d5..1d1a369 100644
+--- a/package.json
++++ b/package.json
+@@ -10,19 +10,22 @@
+     "build:production": "vite build --mode production",
+     "lint": "eslint .",
+     "preview": "vite preview",
+-    "emptyDb": "node empty-db.cjs",
+-    "emptyDb:dev": "cross-env FIREBASE_ADMIN_SA_KEY_PATH=\"./sa-key-dev-admin.json\" node empty-db.cjs",
+-    "emptyDb:staging": "cross-env FIREBASE_ADMIN_SA_KEY_PATH=\"./sa-key-staging-admin.json\" node empty-db.cjs",
+-    "emptyDb:prod": "cross-env FIREBASE_ADMIN_SA_KEY_PATH=\"./sa-key-prod.json\" node empty-db.cjs",
+-    "clearProductsDb:dev": "cross-env FIREBASE_ADMIN_SA_KEY_PATH=\"./sa-key-dev-admin.json\" node clear-products-db.cjs",
+-    "clearProductsDb:staging": "cross-env FIREBASE_ADMIN_SA_KEY_PATH=\"./sa-key-staging-admin.json\" node clear-products-db.cjs",
+-    "clearProductsDb:prod": "cross-env FIREBASE_ADMIN_SA_KEY_PATH=\"./sa-key-prod.json\" node clear-products-db.cjs",
+-    "populateDishesDb:dev": "cross-env FIREBASE_ADMIN_SA_KEY_PATH=\"./sa-key-dev-admin.json\" node populate-dishes-db.cjs",
+-    "populateDishesDb:staging": "cross-env FIREBASE_ADMIN_SA_KEY_PATH=\"./sa-key-staging-admin.json\" node populate-dishes-db.cjs",
+-    "populateDishesDb:prod": "cross-env FIREBASE_ADMIN_SA_KEY_PATH=\"./sa-key-prod.json\" node populate-dishes-db.cjs",
+-    "populateProductsDb:dev": "cross-env FIREBASE_ADMIN_SA_KEY_PATH=\"./sa-key-dev-admin.json\" node populate-products-db.cjs",
+-    "populateProductsDb:staging": "cross-env FIREBASE_ADMIN_SA_KEY_PATH=\"./sa-key-staging-admin.json\" node populate-products-db.cjs",
+-    "populateProductsDb:prod": "cross-env FIREBASE_ADMIN_SA_KEY_PATH=\"./sa-key-prod.json\" node populate-products-db.cjs"
++    "emptyDb": "node scripts/local/empty-db.cjs",
++    "emptyDb:dev": "cross-env FIREBASE_ADMIN_SA_KEY_PATH=\"./sa-key-dev-admin.json\" node scripts/local/empty-db.cjs",
++    "emptyDb:staging": "cross-env FIREBASE_ADMIN_SA_KEY_PATH=\"./sa-key-staging-admin.json\" node scripts/local/empty-db.cjs",
++    "emptyDb:prod": "cross-env FIREBASE_ADMIN_SA_KEY_PATH=\"./sa-key-production-admin.json\" node scripts/local/empty-db.cjs",
++    "clearAnonymousUsersDb": "node scripts/local/clear-anonymous-users-db.cjs",
++    "clearAnonymousUsersDb:dev": "cross-env FIREBASE_ADMIN_SA_KEY_PATH=\"./sa-key-dev-admin.json\" node scripts/local/clear-anonymous-users-db.cjs",
++    "clearAnonymousUsersDb:staging": "cross-env FIREBASE_ADMIN_SA_KEY_PATH=\"./sa-key-staging-admin.json\" node scripts/local/clear-anonymous-users-db.cjs",
++    "clearAnonymousUsersDb:prod": "cross-env FIREBASE_ADMIN_SA_KEY_PATH=\"./sa-key-production-admin.json\" node scripts/local/clear-anonymous-users-db.cjs",    "clearProductsDb:dev": "cross-env FIREBASE_ADMIN_SA_KEY_PATH=\"./sa-key-dev-admin.json\" node scripts/local/clear-products-db.cjs",
++    "clearProductsDb:staging": "cross-env FIREBASE_ADMIN_SA_KEY_PATH=\"./sa-key-staging-admin.json\" node scripts/local/clear-products-db.cjs",
++    "clearProductsDb:prod": "cross-env FIREBASE_ADMIN_SA_KEY_PATH=\"./sa-key-production-admin.json\" node scripts/local/clear-products-db.cjs",
++    "populateDishesDb:dev": "cross-env FIREBASE_ADMIN_SA_KEY_PATH=\"./sa-key-dev-admin.json\" node scripts/local/populate-dishes-db.cjs",
++    "populateDishesDb:staging": "cross-env FIREBASE_ADMIN_SA_KEY_PATH=\"./sa-key-staging-admin.json\" node scripts/local/populate-dishes-db.cjs",
++    "populateDishesDb:prod": "cross-env FIREBASE_ADMIN_SA_KEY_PATH=\"./sa-key-production-admin.json\" node scripts/local/populate-dishes-db.cjs",
++    "populateProductsDb:dev": "cross-env FIREBASE_ADMIN_SA_KEY_PATH=\"./sa-key-dev-admin.json\" node scripts/local/populate-products-db.cjs",
++    "populateProductsDb:staging": "cross-env FIREBASE_ADMIN_SA_KEY_PATH=\"./sa-key-staging-admin.json\" node scripts/local/populate-products-db.cjs",
++    "populateProductsDb:prod": "cross-env FIREBASE_ADMIN_SA_KEY_PATH=\"./sa-key-production-admin.json\" node scripts/local/populate-products-db.cjs"
+   },
+   "dependencies": {
+     "@tailwindcss/postcss": "^4.1.18",
+diff --git a/populate-all-db.cjs b/populate-all-db.cjs
+deleted file mode 100644
+index ca7caa8..0000000
+--- a/populate-all-db.cjs
++++ /dev/null
+@@ -1,46 +0,0 @@
+-const admin = require('firebase-admin');
+-const populateProducts = require('./populate-products-db.cjs');
+-const populateDishes = require('./populate-dishes-db.cjs');
+-const populateSettings = require('./populate-settings-db.cjs');
+-
+-// Initialize Firebase Admin SDK once for all scripts
+-const serviceAccount = require(process.env.FIREBASE_ADMIN_SA_KEY_PATH);
+-admin.initializeApp({
+-  credential: admin.credential.cert(serviceAccount)
+-});
+-
+-async function populateAll() {
+-  try {
+-    console.log('Starting full database population...');
+-
+-    // 1. Clear existing data (optional, but good for consistent test data)
+-    // You might want to implement clear-all-db.cjs similar to clear-products-db.cjs
+-    // For now, we'll assume the collections are empty or we're overwriting.
+-
+-    // 2. Populate Products and get their IDs
+-    console.log('Populating products...');
+-    const populatedProducts = await populateProducts();
+-    console.log('Products populated.');
+-
+-    // 3. Populate Dishes using the populated product IDs
+-    console.log('Populating dishes...');
+-    await populateDishes(populatedProducts);
+-    console.log('Dishes populated.');
+-
+-    // 4. Populate Settings
+-    console.log('Populating settings...');
+-    await populateSettings();
+-    console.log('Settings populated.');
+-
+-    console.log('Full database population complete!');
+-  } catch (error) {
+-    console.error('Error during full database population:', error);
+-    process.exit(1);
+-  } finally {
+-    if (admin.apps.length > 0) {
+-      await admin.app().delete();
+-    }
+-  }
+-}
+-
+-populateAll();
+diff --git a/populate-dishes-db.cjs b/populate-dishes-db.cjs
+deleted file mode 100644
+index c07e316..0000000
+--- a/populate-dishes-db.cjs
++++ /dev/null
+@@ -1,69 +0,0 @@
+-const { initializeApp, cert } = require('firebase-admin/app');
+-const { getFirestore } = require('firebase-admin/firestore');
+-
+-// Use a service account
+-const serviceAccount = require(process.env.FIREBASE_ADMIN_SA_KEY_PATH);
+-
+-initializeApp({
+-  credential: cert(serviceAccount)
+-});
+-
+-const db = getFirestore();
+-
+-const testDishes = [
+-  {
+-    name: 'Salade de Chèvre Chaud',
+-    ingredientNames: ['Fromage de Chèvre', 'Tomates Cerises', 'Pain de Mie Complet'] // Use names for mapping
+-  },
+-  {
+-    name: 'Yaourt aux Fruits',
+-    ingredientNames: ['Yaourt Grec Nature', 'Pommes Bio']
+-  },
+-  {
+-    name: 'Jus Pressé',
+-    ingredientNames: ['Jus d\'Orange Frais', 'Pommes Bio']
+-  }
+-];
+-
+-// populateDishes now accepts an array of products (with their Firestore IDs)
+-async function populateDishes(products) {
+-  const batch = db.batch();
+-  const dishesCollection = db.collection('dishes');
+-
+-  // Create a map of product names to their IDs for easy lookup
+-  const productNameToIdMap = {};
+-  products.forEach(p => {
+-    productNameToIdMap[p.name] = p.id;
+-  });
+-
+-  testDishes.forEach(dish => {
+-    const docRef = dishesCollection.doc();
+-    // Map ingredient names to their actual Firestore IDs
+-    const ingredientsWithIds = dish.ingredientNames
+-                                 .map(name => productNameToIdMap[name])
+-                                 .filter(id => id); // Filter out any ingredients not found
+-
+-    if (ingredientsWithIds.length > 0) {
+-      batch.set(docRef, { 
+-        name: dish.name, 
+-        ingredients: ingredientsWithIds,
+-        creationDate: admin.firestore.Timestamp.now() // Add creation date
+-      });
+-    } else {
+-      console.warn(`Dish "${dish.name}" has no valid ingredients, skipping.`);
+-    }
+-  });
+-
+-  await batch.commit();
+-  console.log(`Successfully added ${testDishes.length} test dishes to Firestore.`);
+-}
+-
+-// Check if this script is run directly or imported
+-if (require.main === module) {
+-  // If run directly, assume products are already in DB or handle fetching
+-  // For simplicity, we'll just log an error if products are not provided when run directly
+-  console.error("This script should be called with product data. Please use the main populate script.");
+-  process.exit(1);
+-} else {
+-  module.exports = populateDishes;
+-}
+diff --git a/populate-products-db.cjs b/populate-products-db.cjs
+deleted file mode 100644
+index 79a15fd..0000000
+--- a/populate-products-db.cjs
++++ /dev/null
+@@ -1,202 +0,0 @@
+-const admin = require('firebase-admin');
+-const serviceAccount = require(process.env.FIREBASE_ADMIN_SA_KEY_PATH);
+-
+-admin.initializeApp({
+-  credential: admin.credential.cert(serviceAccount)
+-});
+-
+-const db = admin.firestore();
+-
+-async function populateProducts() {
+-  const productsRef = db.collection('products');
+-  const batch = db.batch();
+-
+-  const now = new Date();
+-
+-  // Helper to get future/past dates
+-  const getDate = (daysOffset) => {
+-    const d = new Date(now);
+-    d.setDate(now.getDate() + daysOffset);
+-    return admin.firestore.Timestamp.fromDate(d);
+-  };
+-
+-  const productsWithIds = [];
+-
+-  const testProducts = [
+-    {
+-      name: 'Yaourt Grec Nature',
+-      weight: 150,
+-      unit: 'g',
+-      expiryDate: getDate(2), // Expires in 2 days (to_handle)
+-      quantity: 5,
+-      category: 'Laitier',
+-      price: 1.20,
+-      photos: ['https://firebasestorage.googleapis.com/v0/b/mictlan-dashboard.appspot.com/o/product_photos%2F1701111600000_yaourt_grec.jpg?alt=media'],
+-      decisionStatus: 'to_handle',
+-      creationDate: admin.firestore.Timestamp.fromDate(now),
+-    },
+-    {
+-      name: 'Salade Composée',
+-      weight: 300,
+-      unit: 'g',
+-      expiryDate: getDate(0), // Expires today (to_handle/expired)
+-      quantity: 2,
+-      category: 'Traiteur',
+-      price: 4.50,
+-      photos: ['https://firebasestorage.googleapis.com/v0/b/mictlan-dashboard.appspot.com/o/product_photos%2F1701111600000_salade_composee.jpg?alt=media'],
+-      decisionStatus: 'to_handle',
+-      creationDate: admin.firestore.Timestamp.fromDate(now),
+-    },
+-    {
+-      name: 'Jus d\'Orange Frais',
+-      weight: 1000,
+-      unit: 'ml',
+-      expiryDate: getDate(6), // Expires in 6 days (suggestions)
+-      quantity: 1,
+-      category: 'Boissons',
+-      price: 3.00,
+-      photos: ['https://firebasestorage.googleapis.com/v0/b/mictlan-dashboard.appspot.com/o/product_photos%2F1701111600000_jus_orange.jpg?alt=media'],
+-      decisionStatus: 'to_handle',
+-      creationDate: admin.firestore.Timestamp.fromDate(now),
+-    },
+-    {
+-      name: 'Pain de Mie Complet',
+-      weight: 500,
+-      unit: 'g',
+-      expiryDate: getDate(10), // Expires in 10 days (normal)
+-      quantity: 1,
+-      category: 'Boulangerie',
+-      price: 2.10,
+-      photos: ['https://firebasestorage.googleapis.com/v0/b/mictlan-dashboard.appspot.com/o/product_photos%2F1701111600000_pain_de_mie.jpg?alt=media'],
+-      decisionStatus: 'promoted', // Example of a product already promoted
+-      creationDate: admin.firestore.Timestamp.fromDate(now),
+-    },
+-    {
+-      name: 'Steak de Boeuf',
+-      weight: 200,
+-      unit: 'g',
+-      expiryDate: getDate(1), // Expires in 1 day (to_handle)
+-      quantity: 3,
+-      category: 'Viande',
+-      price: 6.80,
+-      photos: ['https://firebasestorage.googleapis.com/v0/b/mictlan-dashboard.appspot.com/o/product_photos%2F1701111600000_steak_boeuf.jpg?alt=media'],
+-      decisionStatus: 'donated', // Example of a product already donated
+-      creationDate: admin.firestore.Timestamp.fromDate(now),
+-    },
+-    {
+-      name: 'Fromage de Chèvre',
+-      weight: 180,
+-      unit: 'g',
+-      expiryDate: getDate(-5), // Already expired (expired)
+-      quantity: 1,
+-      category: 'Fromage',
+-      price: 5.20,
+-      photos: ['https://firebasestorage.googleapis.com/v0/b/mictlan-dashboard.appspot.com/o/product_photos%2F1701111600000_fromage_chevre.jpg?alt=media'],
+-      decisionStatus: 'destroyed', // Example of a product already destroyed
+-      creationDate: admin.firestore.Timestamp.fromDate(now),
+-    },
+-    {
+-      name: 'Tomates Cerises',
+-      weight: 250,
+-      unit: 'g',
+-      expiryDate: getDate(4), // Expires in 4 days (suggestions)
+-      quantity: 1,
+-      category: 'Légumes',
+-      price: 2.80,
+-      photos: ['https://firebasestorage.googleapis.com/v0/b/mictlan-dashboard.appspot.com/o/product_photos%2F1701111600000_tomates_cerises.jpg?alt=media'],
+-      decisionStatus: 'to_handle',
+-      creationDate: admin.firestore.Timestamp.fromDate(now),
+-    },
+-    {
+-      name: 'Eau Minérale',
+-      weight: 1500,
+-      unit: 'ml',
+-      expiryDate: getDate(300), // Expires far in future
+-      quantity: 6,
+-      category: 'Boissons',
+-      price: 0.80,
+-      photos: ['https://firebasestorage.googleapis.com/v0/b/mictlan-dashboard.appspot.com/o/product_photos%2F1701111600000_eau_minerale.jpg?alt=media'],
+-      decisionStatus: 'to_handle',
+-      creationDate: admin.firestore.Timestamp.fromDate(now),
+-    },
+-    {
+-      name: 'Pommes Bio',
+-      weight: 1,
+-      unit: 'kg',
+-      expiryDate: getDate(8), // Normal expiry
+-      quantity: 1,
+-      category: 'Fruits',
+-      price: 3.50,
+-      photos: ['https://firebasestorage.googleapis.com/v0/b/mictlan-dashboard.appspot.com/o/product_photos%2F1701111600000_pommes_bio.jpg?alt=media'],
+-      decisionStatus: 'to_handle',
+-      creationDate: admin.firestore.Timestamp.fromDate(now),
+-    },
+-    {
+-      name: 'Lait demi-écrémé',
+-      weight: 1000,
+-      unit: 'ml',
+-      expiryDate: getDate(5), // Expires in 5 days (suggestions)
+-      quantity: 2,
+-      category: 'Laitier',
+-      price: 1.00,
+-      photos: ['https://firebasestorage.googleapis.com/v0/b/mictlan-dashboard.appspot.com/o/product_photos%2F1701111600000_lait_demi_ecreme.jpg?alt=media'],
+-      decisionStatus: 'to_handle',
+-      creationDate: admin.firestore.Timestamp.fromDate(now),
+-    },
+-    {
+-      name: 'Pâtes Fraîches',
+-      weight: 500,
+-      unit: 'g',
+-      expiryDate: getDate(1), // Expires in 1 day (to_handle)
+-      quantity: 1,
+-      category: 'Pâtes',
+-      price: 2.20,
+-      photos: ['https://firebasestorage.googleapis.com/v0/b/mictlan-dashboard.appspot.com/o/product_photos%2F1701111600000_pates_fraiches.jpg?alt=media'],
+-      decisionStatus: 'to_handle',
+-      creationDate: admin.firestore.Timestamp.fromDate(now),
+-    },
+-    {
+-      name: 'Saumon Fumé',
+-      weight: 120,
+-      unit: 'g',
+-      expiryDate: getDate(-1), // Already expired (to_handle)
+-      quantity: 1,
+-      category: 'Poisson',
+-      price: 7.90,
+-      photos: ['https://firebasestorage.googleapis.com/v0/b/mictlan-dashboard.appspot.com/o/product_photos%2F1701111600000_saumon_fume.jpg?alt=media'],
+-      decisionStatus: 'to_handle',
+-      creationDate: admin.firestore.Timestamp.fromDate(now),
+-    },
+-  ];
+-
+-  testProducts.forEach(product => {
+-    const docRef = productsRef.doc(); // Let Firestore generate ID
+-    batch.set(docRef, product);
+-    productsWithIds.push({ ...product, id: docRef.id });
+-  });
+-
+-  try {
+-    await batch.commit();
+-    console.log(`Successfully added ${testProducts.length} test products to Firestore.`);
+-    return productsWithIds; // Return products with their new IDs
+-  } catch (error) {
+-    console.error('Error populating products:', error);
+-    throw error;
+-  } finally {
+-    // We don't delete the app here, it will be done after all scripts if run sequentially
+-    // admin.app().delete();
+-  }
+-}
+-
+-// Check if this script is run directly or imported
+-if (require.main === module) {
+-  populateProducts()
+-    .then(() => admin.app().delete())
+-    .catch((error) => {
+-      console.error("Failed to populate products:", error);
+-      process.exit(1);
+-    });
+-} else {
+-  module.exports = populateProducts;
+-}
+-
+diff --git a/populate-settings-db.cjs b/populate-settings-db.cjs
+deleted file mode 100644
+index 4513b92..0000000
+--- a/populate-settings-db.cjs
++++ /dev/null
+@@ -1,44 +0,0 @@
+-const admin = require('firebase-admin');
+-const serviceAccount = require(process.env.FIREBASE_ADMIN_SA_KEY_PATH);
+-
+-admin.initializeApp({
+-  credential: admin.credential.cert(serviceAccount)
+-});
+-
+-const db = admin.firestore();
+-
+-async function populateSettings() {
+-  const settingsDocRef = db.collection('settings').doc('tables'); // Using 'tables' as the document ID for general settings
+-
+-  const defaultOpeningDays = {
+-    // Example: All days are open by default. You can add specific overrides later.
+-    // However, the component sets Sunday and Monday to false by default.
+-    // For this script, we'll initialize a structure that the component expects.
+-    // The component will then apply its default logic (Sun/Mon closed).
+-  };
+-
+-  try {
+-    await settingsDocRef.set({
+-      inactivityTimeout: 5, // Default for tables
+-      anonymousLoginEnabled: true, // Default
+-      openingDays: defaultOpeningDays, // Initialize with empty object, component handles default logic
+-    }, { merge: true }); // Merge to avoid overwriting other settings
+-
+-    console.log('Default settings populated successfully, including openingDays.');
+-  } catch (error) {
+-    console.error('Error populating default settings:', error);
+-    throw error;
+-  } finally {
+-    admin.app().delete();
+-  }
+-}
+-
+-// Check if this script is run directly or imported
+-if (require.main === module) {
+-  populateSettings().catch((error) => {
+-    console.error("Failed to populate settings:", error);
+-    process.exit(1);
+-  });
+-} else {
+-  module.exports = populateSettings;
+-}
+diff --git a/src/components/AdminPanel.jsx b/src/components/AdminPanel.jsx
+index effe136..abef450 100644
+--- a/src/components/AdminPanel.jsx
++++ b/src/components/AdminPanel.jsx
+@@ -1,15 +1,32 @@
+-import React, { useState } from 'react';
+-import Card from './Card'; // Import Card component
+-import { Settings, RefreshCw, Trash2 } from 'lucide-react'; 
++import React, { useState, useEffect } from 'react';
++import Card from './Card';
++import { Settings, RefreshCw, Trash2, Users } from 'lucide-react';
+ import { resetDatabase, emptyDatabase } from '../firebase/dbActions';
++import { getAuth } from 'firebase/auth';
++import { auth } from '../firebase/config';
++import { useAuth } from '../hooks/useAuth'; // Import useAuth hook
+ 
+ export default function AdminPanel() {
+   const [tableCount, setTableCount] = useState(4);
+   const [isUpdating, setIsUpdating] = useState(false);
+   const [isEmptying, setIsEmptying] = useState(false);
+-  // Removed product and dishes related states and feedback
++  const [isClearingAnonymousUsers, setIsClearingAnonymousUsers] = useState(false);
++  const [users, setUsers] = useState([]);
++  const { getAllUsers, updateUserRole, registerUser, deleteUser, changeUserPassword } = useAuth();
++  const [newUserEmail, setNewUserEmail] = useState('');
++  const [newUserPassword, setNewUserPassword] = useState('');
++
++  useEffect(() => {
++    const fetchUsers = async () => {
++      const userList = await getAllUsers();
++      setUsers(userList);
++    };
++    fetchUsers();
++  }, [getAllUsers]);
+ 
+   const cloudFunctionsBaseUrl = `https://us-central1-${import.meta.env.VITE_FIREBASE_PROJECT_ID}.cloudfunctions.net`;
++  // ... (rest of the component)
++
+ 
+   const handleReset = async () => {
+     setIsUpdating(true);
+@@ -38,6 +55,96 @@ export default function AdminPanel() {
+     }
+   };
+ 
++  const handleRoleChange = async (userId, newRole) => {
++    const success = await updateUserRole(userId, newRole);
++    if (success) {
++      const userList = await getAllUsers();
++      setUsers(userList);
++    } else {
++      alert("Erreur lors de la mise à jour du rôle de l'utilisateur.");
++    }
++  };
++
++  const handleCreateUser = async (e) => {
++    e.preventDefault();
++    if (!newUserEmail || !newUserPassword) {
++      alert("Veuillez saisir une adresse e-mail et un mot de passe.");
++      return;
++    }
++    const { success, error } = await registerUser(newUserEmail, newUserPassword);
++    if (success) {
++      alert("Utilisateur créé avec succès !");
++      setNewUserEmail('');
++      setNewUserPassword('');
++      // Refresh the user list
++      const userList = await getAllUsers();
++      setUsers(userList);
++    } else {
++      alert(`Erreur lors de la création de l'utilisateur : ${error.message}`);
++    }
++  };
++
++  const handleDeleteUser = async (userId) => {
++    if (window.confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible.")) {
++      const { success, error } = await deleteUser(userId);
++      if (success) {
++        alert("Utilisateur supprimé avec succès !");
++        const userList = await getAllUsers();
++        setUsers(userList);
++      } else {
++        alert(`Erreur lors de la suppression de l'utilisateur : ${error.message}`);
++      }
++    }
++  };
++
++  const handleChangePassword = async (userId) => {
++    const newPassword = prompt("Veuillez saisir le nouveau mot de passe :");
++    if (newPassword) {
++      const { success, error } = await changeUserPassword(userId, newPassword);
++      if (success) {
++        alert("Mot de passe modifié avec succès !");
++      } else {
++        alert(`Erreur lors de la modification du mot de passe : ${error.message}`);
++      }
++    }
++  };
++
++  const handleClearAnonymousUsers = async () => {
++    if (!confirm("Êtes-vous sûr de vouloir supprimer tous les utilisateurs anonymes ? Cette action est irréversible.")) {
++      return;
++    }
++    setIsClearingAnonymousUsers(true);
++    try {
++      const user = getAuth().currentUser;
++      if (!user) {
++        alert("Vous devez être connecté pour effectuer cette action.");
++        return;
++      }
++      const idToken = await user.getIdToken();
++
++      const response = await fetch(`${cloudFunctionsBaseUrl}/clearAnonymousUsers`, {
++        method: 'POST',
++        headers: {
++          'Content-Type': 'application/json',
++          'Authorization': `Bearer ${idToken}`,
++        },
++      });
++
++      if (!response.ok) {
++        const errorData = await response.json();
++        throw new Error(errorData.message || 'Erreur lors de la suppression des utilisateurs anonymes.');
++      }
++
++      const result = await response.json();
++      alert(result.message);
++    } catch (error) {
++      console.error("Erreur lors de la suppression des utilisateurs anonymes:", error);
++      alert(`Erreur: ${error.message}`);
++    } finally {
++      setIsClearingAnonymousUsers(false);
++    }
++  };
++
+   // Removed handlePopulateProducts, handleClearProducts, handlePopulateDishes functions
+ 
+   return (
+@@ -71,14 +178,75 @@ export default function AdminPanel() {
+           <Trash2 className={`w-3 h-3 ${isEmptying ? 'animate-spin' : ''}`} />
+           {isEmptying ? 'Vidage...' : 'Vider DB'}
+         </button>
++        <button 
++          onClick={handleClearAnonymousUsers}
++          disabled={isClearingAnonymousUsers}
++          className="bg-black/40 text-gray-500 rounded-lg border border-gray-800 hover:text-mictlan-gold transition-all px-4 py-2 font-bold text-[10px] uppercase flex items-center gap-2"
++        >
++          <Users className={`w-3 h-3 ${isClearingAnonymousUsers ? 'animate-spin' : ''}`} />
++          {isClearingAnonymousUsers ? 'Suppression...' : 'Supprimer Anonymes'}
++        </button>
+       </div>
+       <p className="text-[8px] text-gray-600 mt-2 italic font-mono uppercase">
+-        * Réinitialiser Salle : Efface toutes les données actuelles pour générer {tableCount} tables. Vider DB : Supprime toutes les données des collections connues (tables, inventory, logs, users). Pour vider toutes les collections inconnues, exécutez `npm run empty-db` or `node empty-db.cjs` dans un terminal.
++        * Réinitialiser Salle : Efface toutes les données actuelles pour générer {tableCount} tables. Vider DB : Supprime toutes les données des collections connues (tables, inventory, logs, users). Supprimer Anonymes : Supprime les documents des utilisateurs sans adresse e-mail. Pour vider toutes les collections inconnues, exécutez `npm run empty-db` or `node empty-db.cjs` dans un terminal.
+       </p>
+ 
+-      {/* Removed "Gestion des Produits de Test" and "Gestion des Plats de Test" sections */}
+-
++            {/* ... (previous JSX) */}
++      <div className="mt-4">
++        <h3 className="text-lg font-bold mb-2 text-white">Gestion des Utilisateurs</h3>
++        <ul className="space-y-2">
++          {users.map(user => (
++            <li key={user.id} className="text-white p-2 border border-gray-800 rounded flex items-center justify-between">
++              <span>{user.email || 'Utilisateur Anonyme'} - <span className="font-bold">{user.role}</span></span>
++              <div className="flex items-center gap-2">
++                <select
++                  value={user.role}
++                  onChange={(e) => handleRoleChange(user.id, e.target.value)}
++                  className="bg-black border border-gray-700 rounded p-1 text-white focus:outline-none focus:ring-1 focus:ring-mictlan-gold"
++                >
++                  <option value="regular">regular</option>
++                  <option value="admin">admin</option>
++                </select>
++                <button onClick={() => handleChangePassword(user.id)} className="bg-blue-500 text-white px-2 py-1 rounded text-xs">Changer MDP</button>
++                <button onClick={() => handleDeleteUser(user.id)} className="bg-red-500 text-white px-2 py-1 rounded text-xs">Supprimer</button>
++              </div>
++            </li>
++          ))}
++        </ul>
++      </div>
+ 
++      <div className="mt-6">
++        <h3 className="text-lg font-bold mb-2 text-white">Créer un Nouvel Utilisateur</h3>
++        <form onSubmit={handleCreateUser} className="flex items-end gap-4">
++          <div className="flex-1">
++            <label className="block text-gray-500 text-[9px] uppercase mb-1">Email</label>
++            <input
++              type="email"
++              value={newUserEmail}
++              onChange={(e) => setNewUserEmail(e.target.value)}
++              placeholder="email@example.com"
++              className="w-full bg-black border border-gray-800 rounded p-2 text-white outline-none focus:border-mictlan-gold"
++            />
++          </div>
++          <div className="flex-1">
++            <label className="block text-gray-500 text-[9px] uppercase mb-1">Mot de passe</label>
++            <input
++              type="password"
++              value={newUserPassword}
++              onChange={(e) => setNewUserPassword(e.target.value)}
++              placeholder="Mot de passe"
++              className="w-full bg-black border border-gray-800 rounded p-2 text-white outline-none focus:border-mictlan-gold"
++            />
++          </div>
++          <button
++            type="submit"
++            className="bg-mictlan-gold text-black rounded-lg hover:bg-opacity-80 transition-all px-4 py-2 font-bold text-[10px] uppercase flex items-center gap-2"
++          >
++            Créer
++          </button>
++        </form>
++      </div>
+     </Card>
+   );
+ }
++
+diff --git a/src/hooks/useAuth.js b/src/hooks/useAuth.js
+index 8d6bf31..5ee7deb 100644
+--- a/src/hooks/useAuth.js
++++ b/src/hooks/useAuth.js
+@@ -1,5 +1,7 @@
+-import { useState, useEffect } from 'react';
++import { useState, useEffect, useCallback } from 'react';
+ import { auth, db } from '../firebase/config'; // Importez l'instance déjà configurée
++import { getApp } from "firebase/app";
++import { getFunctions, httpsCallable } from "firebase/functions";
+ import { 
+   onAuthStateChanged, 
+   signInAnonymously, 
+@@ -9,6 +11,9 @@ import {
+ } from 'firebase/auth';
+ import { doc, getDoc, setDoc, updateDoc, query, where, collection, getDocs } from 'firebase/firestore';
+ 
++const app = getApp();
++const functions = getFunctions(app, 'us-central1');
++
+ export function useAuth() {
+   const [user, setUser] = useState(null);
+   const [userData, setUserData] = useState(null);
+@@ -25,7 +30,20 @@ export function useAuth() {
+         if (userDoc.exists()) {
+           setUserData(userDoc.data());
+         } else {
+-          const defaultData = { role: 'regular', email: currentUser.email };
++          // Check if an existing user with this email is an admin
++          let assignedRole = 'regular';
++          if (currentUser.email) {
++            // Firestore does not allow querying for null or missing fields in 'where' clauses for security rules,
++            // but for data consistency, we assume 'email' exists for non-anonymous users.
++            // Also, we search for 'admin' role specifically.
++            const adminQuery = query(collection(db, 'users'), where('email', '==', currentUser.email), where('role', '==', 'admin'));
++            const adminSnapshot = await getDocs(adminQuery);
++            if (!adminSnapshot.empty) {
++              assignedRole = 'admin';
++            }
++          }
++
++          const defaultData = { role: assignedRole, email: currentUser.email, uid: currentUser.uid };
+           await setDoc(userDocRef, defaultData);
+           setUserData(defaultData);
+         }
+@@ -77,7 +95,7 @@ export function useAuth() {
+     initializeAdmin();
+   }, []);
+ 
+-  const loginAnonymously = async () => {
++    const loginAnonymously = useCallback(async () => {
+     try {
+       setLoading(true);
+       await signInAnonymously(auth);
+@@ -86,9 +104,9 @@ export function useAuth() {
+     } finally {
+       setLoading(false);
+     }
+-  };
++  }, []);
+ 
+-  const loginEmail = async (email, password) => {
++  const loginEmail = useCallback(async (email, password) => {
+     try {
+       setLoading(true);
+       await signInWithEmailAndPassword(auth, email, password);
+@@ -98,9 +116,70 @@ export function useAuth() {
+     } finally {
+       setLoading(false);
+     }
+-  };
++  }, []);
++
++  const logout = useCallback(() => signOut(auth), []);
++
++  const getAllUsers = useCallback(async () => {
++    try {
++      const usersCollection = collection(db, 'users');
++      const userSnapshot = await getDocs(usersCollection);
++      const userList = userSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
++      return userList;
++    } catch (error) {
++      console.error("Error fetching users:", error);
++      return [];
++    }
++  }, []);
++
++  const updateUserRole = useCallback(async (userId, newRole) => {
++    try {
++      const userDocRef = doc(db, 'users', userId);
++      await updateDoc(userDocRef, { role: newRole });
++      return true;
++    } catch (error) {
++      console.error("Error updating user role:", error);
++      return false;
++    }
++  }, []);
+ 
+-  const logout = () => signOut(auth);
++  const registerUser = useCallback(async (email, password) => {
++    try {
++      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
++      const user = userCredential.user;
++      await setDoc(doc(db, 'users', user.uid), {
++        uid: user.uid,
++        email: user.email,
++        role: 'regular'
++      });
++      return { success: true, user };
++    } catch (error) {
++      console.error("Error creating user:", error);
++      return { success: false, error };
++    }
++  }, []);
++
++  const deleteUser = useCallback(async (uid) => {
++    try {
++      const deleteUserFunction = httpsCallable(functions, 'deleteUser');
++      await deleteUserFunction({ uid });
++      return { success: true };
++    } catch (error) {
++      console.error("Error deleting user:", error);
++      return { success: false, error };
++    }
++  }, []);
++
++  const changeUserPassword = useCallback(async (uid, newPassword) => {
++    try {
++      const changeUserPasswordFunction = httpsCallable(functions, 'updateUserPassword');
++      await changeUserPasswordFunction({ uid, newPassword });
++      return { success: true };
++    } catch (error) {
++      console.error("Error changing user password:", error);
++      return { success: false, error };
++    }
++  }, []);
+ 
+-  return { user, userData, loading, loginAnonymously, loginEmail, logout };
++  return { user, userData, loading, loginAnonymously, loginEmail, logout, getAllUsers, updateUserRole, registerUser, deleteUser, changeUserPassword };
+ }
+\ No newline at end of file
+diff --git a/src/prompts/todolist.md b/src/prompts/todolist.md
+index d060baf..1bdae6b 100644
+--- a/src/prompts/todolist.md
++++ b/src/prompts/todolist.md
+@@ -15,7 +15,6 @@
+ 
+ ## Fixes
+ 
+-- [x] Corriger l'erreur `TypeError [ERR_INVALID_ARG_TYPE]` dans la fonction Cloud `extractExpiryDateFromImage` en rendant le backend plus robuste à différents formats de payload et en corrigeant l'analyse de la réponse côté client.
+ - [ ] Quand on se connecte avec un compte depuis un dispositif différent, cela crée un second utilisateur dans la base de données qui n'a pas les droits d'admin. Il faut donner les droits d'admin aussi au second utilisateur.
+ - [ ] quand une tache expire automaiquement, la barre passe au vert, affiche Il reste 30 secondes et la date du prochain nettoyage change outes les secondes
+ 
+@@ -33,7 +32,7 @@
+         - [x] Afficher les produits à moins de 7 jours d'expiration.
+         - [x] Filtres : catégorie, prix.
+         - [x] Options : réduction, offre groupée. (removed as per Olivia's feedback)
+-        - [x] Nouveau champ pour changer le nombre de jours d'expiration.
++        - [ ] Nouveau champ pour changer le nombre de jours d'expiration. Quand le champ est vide, expliquer ce qu'il fait a l'interieur du champ
+         - [x] Filtre de catégorie transformé en liste déroulante.
+   - [x] **Écran pour afficher les décisions pour les produits sur le point d'expirer**
+         - [x] Lister les produits à moins de 3 jours d'expiration.
+@@ -65,7 +64,7 @@
+ 
+ ## Outils et Paramètres Utilisateur
+ 
+-- [ ] Permettre d'afficher ou non les informations pertinentes sur l'écran with a configuration propre à chaque utilisateur. Créer une configuration par défaut pour les éléments de configuration manquants, que ce soit à la première utilisation d'un compte ou à tout autre moment, dans le cas où la base de données serait corrompue.
++- [ ] Permettre d'afficher ou non les informations pertinentes sur l'écran avec une configuration propre à chaque utilisateur. Créer une configuration par défaut pour les éléments de configuration manquants, que ce soit à la première utilisation d'un compte ou à tout autre moment, dans le cas où la base de données serait corrompue.
+ 
+ - [ ] Rajouter la possibilité d'uploader et télécharger un fichier :
+     - [ ] **checklist nettoyage**
+@@ -114,26 +113,26 @@
+ - [x] **afficher le pourcentage de temps passe jusqu'au prochain nettoyage** montre la progression du temps en affichant la partie gauche de la barre (le temps ecoule) en plus foncé et la partie droite (le temps restant) en plus clair.
+ 
+ ### Problèmes de Gestion des Produits
+-- [x] **7. Suggestions Clients - Ajout de Suggestions:** Le processus d'ajout de suggestions clients n'est pas clair. rajouter un champ qui permet de changer le nombre de jour qui manque pour que ca perime. (Implemented field to change days until expiry)
+-- [x] **8. Suggestions Clients - Filtre par Catégorie:** Le filtre de catégorie est un champ de texte et non une liste déroulante, rendant son utilisation difficile sans connaître les catégories. (Changed category filter to a dropdown)
+-- [x] **9. Décisions Produits - Notifications:** Le bouton "Activer les notifications" pour les décisions produits n'offre pas de feedback clair sur son activation. (Added clear feedback for notification activation)
++- [x] **7. Suggestions Clients - Ajout de Suggestions:** Le processus d'ajout de suggestions clients n'est pas clair. rajouter un champ qui permet de changer le nombre de jour qui manque pour que ca perime.
++- [x] **8. Suggestions Clients - Filtre par Catégorie:** Le filtre de catégorie est un champ de texte et non une liste déroulante, rendant son utilisation difficile sans connaître les catégories.
++- [x] **9. Décisions Produits - Notifications:** Le bouton "Activer les notifications" pour les décisions produits n'offre pas de feedback clair sur son activation.
+ - [x] **10. Création de Produit - Affichage d'Image:** Les images des produits créés n'apparaissent pas dans la liste (seulement le nom du produit). (Implemented image upload and display for products)
+ - [x] **11. Logique des Produits Expirés:**
+-    - [x] Le compte à rebours d'expiration ne tient pas compte des jours de fermeture du restaurant (dimanche et lundi). rajouter un calendrier qui permet de changer le jour de ouvert a ferme et qui met tout les dimanches et lundi fermes par defaut (Implemented opening days manager and integrated into expiration logic)
++    - [x] Le compte à rebours d'expiration ne tient pas compte des jours de fermeture du restaurant (dimanche et lundi). rajouter un calendrier qui permet de changer le jour de ouvert a ferme et qui met tout les dimanches et lundi fermes par defaut
+     - [x] enlever les etiquette -10% -20% "offre groupee" (Removed discount labels)
+-- [x] **12. Modification/Suppression de Produit:** Impossibilité de modifier ou supprimer un produit unique après sa création. (Implemented product edit and delete functionality)
+-- [x] **13. UI/UX de Gestion des Produits:** Les sections "Suggestions clients", "Décisions produits" et "Liste des produits" sont trop éloignées et mal liées. (Consolidated into a tabbed ProductManagementDashboard)
+-- [x] **14. Problème de Téléchargement/Affichage d'Image:** Les images ajoutées aux produits ne s'affichent pas sur le téléphone. (Addressed potential mobile display issues with CSS)
++- [x] **12. Modification/Suppression de Produit:** Impossibilité de modifier ou supprimer un produit unique après sa création.
++- [x] **13. UI/UX de Gestion des Produits:** Les sections "Suggestions clients", "Décisions produits" et "Liste des produits" sont trop éloignées et mal liées. 
++- [ ] **14. Problème de Téléchargement/Affichage d'Image:** Les images ajoutées aux produits ne s'affichent pas. les liens des images sont probablement factices ou errones
+ - [ ] **creation de produit** pour le nom du produit, proposer des noms de produit qui ont ete crees auparavant et preremplir les autres champs avec les donnees correspondantes sauf pour la date de peremption (This sub-task is not yet implemented)
+ 
+ ### Général UI/UX
+-- [x] **15. Section "Fonctionnalités":** La section "fonctionnalités" est présente mais sans éléments interactifs. (Made features toggleable)
+-- [x] **16. Page du Manuel:** La page du manuel n'est pas à jour. (Updated manual content to reflect new features)
+-- [ ] **faire une page a part pour les produits et plats et une autre pour les taches de nettoyage** de la meme maniere que pour les reservations (Partially implemented with ProductManagementDashboard and DishManagementDashboard, but not full separate pages as routes)
++- [x] **15. Section "Fonctionnalités":** La section "fonctionnalités" est présente mais sans éléments interactifs.
++- [x] **16. Page du Manuel:** La page du manuel n'est pas à jour. )
++- [ ] **faire une page a part pour les produits et plats et une autre pour les taches de nettoyage** de la meme maniere que pour les reservations
+ 
+ ### Gestion des Stocks/Plats
+-- [x] **17. Ajout de Plats:** Impossibilité d'ajouter de nouveaux plats (Implemented dish adding functionality via a new form and dashboard)
+-- [x] **18. Donnee de test:** quand on efface les donnees de test, on ne doit pas effacer les donnees entrees manuellement. et les donnees de test doivent mettre le mot cle test dans le nom du produit ou du plat. (Updated test data population scripts to be more comprehensive and consistent, includes product images and opening days settings. Note: the part about not erasing manually entered data and adding 'test' keyword to names was not explicitly implemented but the new populate script is more robust.)
++- [x] **17. Ajout de Plats:** Impossibilité d'ajouter de nouveaux plats
++- [ ] **18. Donnee de test:** quand on efface les donnees de test, on ne doit pas effacer les donnees entrees manuellement. et les donnees de test doivent mettre le mot cle test dans le nom du produit ou du plat.
+ - [ ] **liste des produits** n'afficher par defaut que les produits "to handle (remplace le terme par "A gérer")" et les produits dans un autre etat que "A gerer" qui ne sont pas plus vieux que 2 semaines. rajouter possibilite de filtrer selon l'etat (a gérer/soldé/donné/jeté) et l'intervalle de date. la date a prendre en compte est soit la date de péremption, soit la date de prise de decision (soldé/donné/jeté)
+ - [ ] quand une decision est prise sur un produit (soldé/donné/jeté), il doit disparaitre de la liste des suggestions
+ - [ ] creer un historique pour les creations/suppression/decisions de produits et de plats

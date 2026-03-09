@@ -1,0 +1,118 @@
+import { useState, useEffect } from 'react';
+import { db } from '../firebase/config';
+import { collection, query, orderBy, onSnapshot, doc, deleteDoc } from 'firebase/firestore';
+import Card from './Card';
+import { Utensils, Edit, Trash2 } from 'lucide-react';
+import { useDishes } from '../hooks/useDishes'; // Assuming you have a useDishes hook
+import { useProducts } from '../hooks/useProducts'; // To get product names for ingredients
+import DishEditForm from './DishEditForm'; // Import the new component
+
+export default function DishList() {
+  const { dishes, loading, error } = useDishes();
+  const { products } = useProducts(); // Get all products to map ingredient IDs to names
+  const [editingDishId, setEditingDishId] = useState(null); // State to manage editing
+
+  const handleDeleteDish = async (dishId) => {
+    if (window.confirm("Êtes-vous sûr de vouloir supprimer ce plat ?")) {
+      try {
+        await deleteDoc(doc(db, 'dishes', dishId));
+        alert("Plat supprimé avec succès !");
+      } catch (error) {
+        console.error("Error deleting dish:", error);
+        alert("Erreur lors de la suppression du plat.");
+      }
+    }
+  };
+
+  const handleEditClick = (dishId) => {
+    setEditingDishId(dishId);
+  };
+
+  const handleCloseEditForm = () => {
+    setEditingDishId(null);
+  };
+
+  // Create a map for product IDs to names for easy lookup
+  const productIdToNameMap = products.reduce((acc, product) => {
+    acc[product.id] = product.name;
+    return acc;
+  }, {});
+
+  if (loading) {
+    return (
+      <Card title="Liste des Plats" titleIcon={<Utensils />}>
+        <p className="text-center text-gray-400">Chargement des plats...</p>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card title="Liste des Plats" titleIcon={<Utensils />}>
+        <p className="text-center text-red-500">{error.message}</p>
+      </Card>
+    );
+  }
+
+  return (
+    <>
+      <Card title="Liste des Plats" titleIcon={<Utensils />}>
+        {dishes.length === 0 ? (
+          <p className="text-center text-gray-400">Aucun plat enregistré.</p>
+        ) : (
+          <ul className="space-y-4">
+            {dishes.map(dish => (
+              <li key={dish.id} className="bg-black/30 p-4 rounded-lg border border-gray-700">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-mictlan-gold font-bold text-sm uppercase">{dish.name}</h3>
+                  <div className="flex space-x-2">
+                    <button 
+                      onClick={() => handleEditClick(dish.id)}
+                      className="text-gray-400 hover:text-mictlan-gold transition-colors"
+                    >
+                      <Edit size={16} />
+                    </button>
+                    <button 
+                      onClick={() => handleDeleteDish(dish.id)}
+                      className="text-gray-400 hover:text-red-500 transition-colors"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+                {dish.description && (
+                  <p className="text-gray-300 text-xs mt-2">{dish.description}</p>
+                )}
+                {dish.ingredients && dish.ingredients.length > 0 && (
+                  <div className="mt-2">
+                    <p className="text-gray-400 text-xs font-bold">Ingrédients:</p>
+                    <ul className="list-disc list-inside text-gray-300 text-xs">
+                      {dish.ingredients.map(ingredientId => (
+                        <li key={ingredientId}>{productIdToNameMap[ingredientId] || 'Produit Inconnu'}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </Card>
+
+      {editingDishId && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+          <div className="relative bg-gray-900 p-6 rounded-lg max-h-[90vh] overflow-y-auto w-full max-w-md">
+            <button 
+              onClick={handleCloseEditForm}
+              className="absolute top-3 right-3 text-gray-400 hover:text-white"
+            >
+              &times;
+            </button>
+            <DishEditForm dishId={editingDishId} onClose={handleCloseEditForm} />
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+

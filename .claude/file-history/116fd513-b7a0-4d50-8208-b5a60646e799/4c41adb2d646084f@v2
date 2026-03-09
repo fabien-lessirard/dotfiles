@@ -1,0 +1,219 @@
+import React, { useEffect, useState } from 'react';
+import Card from './Card';
+import { ShieldAlert, HelpCircle } from 'lucide-react';
+import { useProducts } from '../hooks/useProducts';
+import { db } from '../firebase/config';
+import { doc, updateDoc } from 'firebase/firestore';
+import { useSettings } from '../hooks/useSettings';
+import { useAuth } from '../hooks/useAuth';
+import { useLogs } from '../hooks/useLogs';
+
+export default function ProductDecisions() {
+  const { products, loading } = useProducts();
+  const { settings } = useSettings();
+  const { user } = useAuth();
+  const { addLog } = useLogs();
+  const [notificationPermission, setNotificationPermission] = useState(Notification.permission);
+  const [feedbackMessage, setFeedbackMessage] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('');
+  const [priceFilter, setPriceFilter] = useState('');
+  const [daysUntilDecision, setDaysUntilDecision] = useState(3);
+  const [showExplanation, setShowExplanation] = useState(false);
+
+  const categories = [...new Set(products.map(p => p.category).filter(Boolean))];
+
+  const isDayOpen = (date) => {
+    const dateString = date.toISOString().split('T')[0];
+    if (settings.openingDays && settings.openingDays[dateString] !== undefined) {
+      return settings.openingDays[dateString];
+    }
+    const day = date.getDay();
+    return day !== 0 && day !== 1; // Not Sunday or Monday
+  };
+
+  const getFutureOpenDate = (startDate, days) => {
+    let count = 0;
+    let futureDate = new Date(startDate);
+    while (count < days) {
+      futureDate.setDate(futureDate.getDate() + 1);
+      if (isDayOpen(futureDate)) {
+        count++;
+      }
+    }
+    return futureDate;
+  };
+
+  const getClosedDaysCount = (startDate, endDate) => {
+    let count = 0;
+    let currentDate = new Date(startDate);
+    while (currentDate <= endDate) {
+      if (!isDayOpen(currentDate)) {
+        count++;
+      }
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+    return count;
+  };
+
+  const expiringSoon = products.filter(product => {
+    if (!product.expiryDate) return false;
+    const expiry = product.expiryDate.toDate();
+    const today = new Date();
+    const decisionWindow = getFutureOpenDate(today, daysUntilDecision);
+    return expiry > today && expiry <= decisionWindow;
+  });
+
+  const productsNeedingDecision = expiringSoon.filter(p => {
+    const categoryMatch = categoryFilter ? p.category === categoryFilter : true;
+    const priceMatch = priceFilter ? p.price <= parseFloat(priceFilter) : true;
+    return p.decisionStatus === 'to_handle' && categoryMatch && priceMatch;
+  });
+
+  useEffect(() => {
+    if (notificationPermission === 'granted' && productsNeedingDecision.length > 0) {
+      new Notification('Produits nécessitant une décision', {
+        body: `Il y a ${productsNeedingDecision.length} produits qui expirent bientôt.`,
+      });
+    }
+  }, [notificationPermission, productsNeedingDecision.length]);
+
+  const DECISION_LABELS = { promoted: 'Soldé', donated: 'Donné', destroyed: 'Jeté' };
+
+  const handleDecision = async (productId, decision) => {
+    const product = products.find(p => p.id === productId);
+    const productRef = doc(db, 'products', productId);
+    await updateDoc(productRef, { decisionStatus: decision, decisionDate: new Date() });
+    await addLog(
+      `INVENTAIRE : Décision "${DECISION_LABELS[decision] || decision}" prise pour "${product?.name || productId}".`,
+      'info', user, 'inventory'
+    );
+  };
+
+  const requestNotificationPermission = () => {
+    Notification.requestPermission().then(permission => {
+      setNotificationPermission(permission);
+      if (permission === 'granted') {
+        setFeedbackMessage('Notifications activées !');
+        new Notification('Notifications activées', { body: 'Vous recevrez des notifications pour les produits importants.' });
+      } else if (permission === 'denied') {
+        setFeedbackMessage('Notifications bloquées. Vous devez les autoriser dans les paramètres de votre navigateur.');
+      } else {
+        setFeedbackMessage('Vous recevrez une notification lors du prochain événement.');
+      }
+    });
+  };
+
+  return (
+    <Card title="Décisions Produits" titleIcon={<ShieldAlert />}>
+      <div className="flex space-x-4 mb-4">
+        <select
+          value={categoryFilter}
+          onChange={(e) => setCategoryFilter(e.target.value)}
+          className="w-full p-2 bg-black/40 text-white border border-gray-700 rounded focus:outline-none focus:ring-1 focus:ring-mictlan-gold"
+        >
+          <option value="">Toutes les catégories</option>
+          {categories.map(category => (
+            <option key={category} value={category}>{category}</option>
+          ))}
+        </select>
+        <input
+          type="number"
+          placeholder="Filtrer par prix max"
+          value={priceFilter}
+          onChange={(e) => setPriceFilter(e.target.value)}
+          className="w-full p-2 bg-black/40 text-white border border-gray-700 rounded focus:outline-none focus:ring-1 focus:ring-mictlan-gold"
+        />
+        <div className="relative w-full">
+          <input
+            type="number"
+            placeholder="Jours avant décision"
+            value={daysUntilDecision}
+            onChange={(e) => setDaysUntilDecision(parseInt(e.target.value, 10) || 0)}
+            className="w-full p-2 pr-8 bg-black/40 text-white border border-gray-700 rounded focus:outline-none focus:ring-1 focus:ring-mictlan-gold"
+          />
+          <HelpCircle
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer"
+            size={16}
+            onClick={() => setShowExplanation(!showExplanation)}
+          />
+        </div>
+      </div>
+      {showExplanation && (
+        <p className="text-sm text-gray-400 mb-4">
+          Nombre de jours ouverts avant l'expiration pendant lesquels une décision doit être prise.
+        </p>
+      )}
+      {notificationPermission === 'default' && (
+        <div className="mb-4">
+          <button
+            onClick={requestNotificationPermission}
+            className="w-full bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 rounded-lg text-xs uppercase tracking-widest flex items-center justify-center transition-all"
+          >
+            Activer les notifications
+          </button>
+        </div>
+      )}
+      {feedbackMessage && <p className="text-center text-sm text-gray-400 mb-4">{feedbackMessage}</p>}
+       {notificationPermission === 'granted' && !feedbackMessage && <p className="text-center text-sm text-green-400 mb-4">Les notifications sont activées.</p>}
+      {notificationPermission === 'denied' && <p className="text-center text-sm text-red-400 mb-4">Les notifications sont bloquées. Modifiez les paramètres de votre navigateur pour les autoriser.</p>}
+      {loading ? (
+        <div className="text-center text-gray-500">Chargement...</div>
+      ) : (
+        <div className="space-y-4">
+          {productsNeedingDecision.length > 0 ? (
+            productsNeedingDecision.map(product => {
+              const today = new Date();
+              const expiryDate = product.expiryDate.toDate();
+              const closedDays = getClosedDaysCount(today, expiryDate);
+              const diffTime = Math.abs(expiryDate - today);
+              const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+              return (
+                <div key={product.id} className={`p-4 rounded-lg ${product.decisionStatus === 'to_handle' ? 'bg-red-900/50' : 'bg-gray-800'}`}>
+                  <h3 className="font-bold">{product.name}</h3>
+                  <p className="text-sm text-gray-400">
+                    Expire le: {expiryDate.toLocaleDateString()}
+                  </p>
+                  <p className="text-sm text-gray-400">
+                    Prix: {product.price}€
+                  </p>
+                  {product.decisionStatus === 'to_handle' && (
+                    <p className="text-sm text-yellow-400">
+                      Ce produit expire dans {diffDays} jour(s), et le restaurant sera fermé {closedDays} jour(s) d'ici là.
+                    </p>
+                  )}
+                  <p className="text-sm text-gray-400">
+                    Statut: {product.decisionStatus}
+                  </p>
+                  {product.decisionStatus === 'to_handle' && (
+                    <div className="flex space-x-2 mt-2">
+                      <button
+                        onClick={() => handleDecision(product.id, 'promoted')}
+                        className="bg-green-500 hover:bg-green-400 text-white font-bold py-1 px-2 rounded text-xs">
+                        Promotion
+                      </button>
+                      <button
+                        onClick={() => handleDecision(product.id, 'donated')}
+                        className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-1 px-2 rounded text-xs">
+                        Don
+                      </button>
+                      <button
+                        onClick={() => handleDecision(product.id, 'destroyed')}
+                        className="bg-red-500 hover:bg-red-400 text-white font-bold py-1 px-2 rounded text-xs">
+                        Destruction
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )
+            })
+          ) : (
+            <div className="text-center text-gray-500">
+              <p>Aucun produit ne nécessite une décision pour le moment.</p>
+            </div>
+          )}
+        </div>
+      )}
+    </Card>
+  );
+}

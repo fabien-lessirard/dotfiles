@@ -1,0 +1,3 @@
+Output: fatal: not under version control, source=user_info.txt, destination=agent_notes/user_info.txt
+Exit Code: 1
+Process Group PGID: 22072

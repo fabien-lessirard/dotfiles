@@ -1,0 +1,71 @@
+Voici la description technique exhaustive de la configuration actuelle des comptes de service, basée sur les captures d'écran des trois environnements (**dev**, **staging**, **prod**). Ces informations sont structurées pour vous permettre d'adapter vos fichiers de configuration ou vos appels API.
+
+### **1. Comptes de Service par Défaut (Communs aux 3 projets)**
+
+Chaque projet possède deux comptes créés automatiquement avec le rôle **Éditeur (Editor)**. Ils sont identifiés par le numéro de projet unique.
+
+* **Compute Engine Default Service Account**
+* **Format ID :** `[PROJECT_NUMBER]-compute@developer.gserviceaccount.com`
+* **Rôle :** `roles/editor`
+* **Usage :** Utilisé par défaut par les instances VM, Cloud Run, ou Cloud Functions si aucun autre compte n'est spécifié.
+
+
+* **App Engine Default Service Account**
+* **Format ID :** `[PROJECT_ID]@appspot.gserviceaccount.com`
+* **Rôle :** `roles/editor`
+* **Usage :** Identité par défaut pour les services déployés sur App Engine.
+
+
+
+---
+
+### **2. Comptes Firebase Admin SDK (Par projet)**
+
+Ces comptes sont essentiels pour l'initialisation du SDK Admin dans votre code (Node.js, Python, etc.).
+
+* **Principal :** `firebase-adminsdk-fbsvc@[PROJECT_ID].iam.gserviceaccount.com`
+* **Rôles attribués :**
+1. `Firebase SDK Admin Service Agent`
+2. `Firebase Authentication Admin`
+3. `Service Account Token Creator` (Permet de générer des jetons personnalisés via `createCustomToken()`).
+
+
+* **IDs spécifiques par environnement :**
+* **Dev :** `firebase-adminsdk-fbsvc@dashboard-mictlan-dev.iam...`
+* **Staging :** `firebase-adminsdk-fbsvc@dashboard-mictlan-staging.iam...`
+* **Prod :** `firebase-adminsdk-fbsvc@dashboard-mictlan-prod.iam...`
+
+
+
+---
+
+### **3. Comptes de Déploiement CI/CD (Production)**
+
+L'environnement de production dispose de deux comptes spécifiques utilisés pour les pipelines de déploiement (GitHub Actions).
+
+* **GitHub Actions Deployer (Production)**
+* **ID :** `github-actions-deployer@dashboard-mictlan-prod.iam.gserviceaccount.com`
+* **Rôle :** `Firebase Hosting Admin` (Droits de déploiement sur Hosting).
+
+
+* **GitHub Preview Deployer (Cross-Project)**
+* **ID :** `github-preview-deployer@dashboard-mictlan-staging.iam.gserviceaccount.com`
+* **Rôle en Prod :** `Firebase Hosting Admin`.
+* **Note pour le code :** Ce compte appartient techniquement au projet **Staging** mais possède des permissions sur le projet **Prod** (probablement pour gérer les "Preview Channels").
+
+
+
+---
+
+### **Récapitulatif des identifiants (Project IDs)**
+
+Si vous devez configurer vos variables d'environnement (`.env`), voici les IDs à utiliser :
+
+1. **Développement :** `dashboard-mictlan-dev`
+2. **Staging :** `dashboard-mictlan-staging`
+3. **Production :** `dashboard-mictlan-prod`
+
+**Vérification factuelle :**
+
+* **Source :** Captures d'écran IAM fournies.
+* **Statut :** Les comptes listés sont actifs et possèdent les rôles `Éditeur`, `Firebase Admin`, et `Hosting Admin` selon l'interface Google Cloud affichée.

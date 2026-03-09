@@ -1,0 +1,4 @@
+Output: [branch-v1.1.0-dev 0845728] docs: Add service accounts description
+ 1 file changed, 71 insertions(+)
+ create mode 100644 src/prompts/service accounts description.txt
+Process Group PGID: 13624

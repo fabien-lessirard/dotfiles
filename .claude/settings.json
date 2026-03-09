@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(firebase deploy:*)",
+      "Bash(gh run:*)",
+      "Bash(wc:*)",
+      "Bash(gh pr:*)"
+    ],
+    "defaultMode": "acceptEdits"
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash /c/Users/acodu/.claude/statusline-command.sh"
+  }
+}

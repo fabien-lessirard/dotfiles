@@ -1,0 +1,1 @@
+Successfully modified file: C:\Users\acodu\dev\dashboard_mictlan\src\components\AdminPanel.jsx (1 replacements).

@@ -1,0 +1,3 @@
+{
+  "output": "No matches found for pattern \"collection(db, \"users\")\" in path \"src\"."
+}

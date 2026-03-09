@@ -1,0 +1,1856 @@
+Output: diff --git a/.env.development.local b/.env.development.local
+new file mode 100644
+index 0000000..53da85f
+--- /dev/null
++++ b/.env.development.local
+@@ -0,0 +1 @@
++VITE_FIREBASE_PROJECT_ID=dashboard-mictlan-dev
+diff --git a/functions/index.js b/functions/index.js
+index b087700..3961c95 100644
+--- a/functions/index.js
++++ b/functions/index.js
+@@ -1,11 +1,12 @@
+ const functions = require("firebase-functions");
+ const admin = require("firebase-admin");
++const vision = require('@google-cloud/vision'); // Added for OCR
+
+ // Initialize Firebase Admin SDK
+-// This assumes your Cloud Function environment has the necessary credentials (handled by Firebase automatically)
+ admin.initializeApp();
+
+ const db = admin.firestore();
++const visionClient = new vision.ImageAnnotatorClient(); // Initialized for OCR
+
+ // --- Helper function to check if user is admin ---
+ const isAuthenticatedAdmin = async (context) => {
+@@ -27,58 +28,143 @@ const isAuthenticatedAdmin = async (context) => {
+
+ // --- Populate Products Cloud Function ---
+ exports.populateProducts = functions.https.onCall(async (data, context) => {
+-  // await isAuthenticatedAdmin(context); // Temporarily commented out to bypass admin check
+-
+-  const productsRef = db.collection('products');
+-  const batch = db.batch();
+-
+-  const now = new Date();
+-  const getDate = (daysOffset) => {
+-    const d = new Date(now);
+-    d.setDate(now.getDate() + daysOffset);
+-    return admin.firestore.Timestamp.fromDate(d);
+-  };
+-
+-  const testProducts = [
+-    { name: 'Yaourt Grec Nature', weight: 150, unit: 'g', expiryDate: getDate(2), quantity: 5, category: 'Laitier', price: 1.20, photos: ['https://source.unsplash.com/ran
+dom/100x100?yogurt'], decisionStatus: 'to_handle', creationDate: admin.firestore.Timestamp.fromDate(now) },
+-    { name: 'Salade Composée', weight: 300, unit: 'g', expiryDate: getDate(0), quantity: 2, category: 'Traiteur', price: 4.50, photos: ['https://source.unsplash.com/rando
+m/100x100?salad'], decisionStatus: 'to_handle', creationDate: admin.firestore.Timestamp.fromDate(now) },
+-    { name: 'Jus d\'Orange Frais', weight: 1000, unit: 'ml', expiryDate: getDate(6), quantity: 1, category: 'Boissons', price: 3.00, photos: ['https://source.unsplash.com
+/random/100x100?orange-juice'], decisionStatus: 'to_handle', creationDate: admin.firestore.Timestamp.fromDate(now) },
+-    { name: 'Pain de Mie Complet', weight: 500, unit: 'g', expiryDate: getDate(10), quantity: 1, category: 'Boulangerie', price: 2.10, photos: ['https://source.unsplash.c
+om/random/100x100?bread'], decisionStatus: 'to_handle', creationDate: admin.firestore.Timestamp.fromDate(now) },
+-    { name: 'Steak de Boeuf', weight: 200, unit: 'g', expiryDate: getDate(1), quantity: 3, category: 'Viande', price: 6.80, photos: ['https://source.unsplash.com/random/1
+00x100?steak'], decisionStatus: 'to_handle', creationDate: admin.firestore.Timestamp.fromDate(now) },
+-    { name: 'Fromage de Chèvre', weight: 180, unit: 'g', expiryDate: getDate(-5), quantity: 1, category: 'Fromage', price: 5.20, photos: ['https://source.unsplash.com/ran
+dom/100x100?goat-cheese'], decisionStatus: 'to_handle', creationDate: admin.firestore.Timestamp.fromDate(now) },
+-    { name: 'Tomates Cerises', weight: 250, unit: 'g', expiryDate: getDate(4), quantity: 1, category: 'Légumes', price: 2.80, photos: ['https://source.unsplash.com/random
+/100x100?cherry-tomatoes'], decisionStatus: 'to_handle', creationDate: admin.firestore.Timestamp.fromDate(now) },
+-    { name: 'Eau Minérale', weight: 1500, unit: 'ml', expiryDate: getDate(300), quantity: 6, category: 'Boissons', price: 0.80, photos: ['https://source.unsplash.com/rand
+om/100x100?water'], decisionStatus: 'to_handle', creationDate: admin.firestore.Timestamp.fromDate(now) },
+-    { name: 'Pommes Bio', weight: 1, unit: 'kg', expiryDate: getDate(8), quantity: 1, category: 'Fruits', price: 3.50, photos: ['https://source.unsplash.com/random/100x10
+0?apples'], decisionStatus: 'to_handle', creationDate: admin.firestore.Timestamp.fromDate(now) },
+-    { name: 'Lait demi-écrémé', weight: 1000, unit: 'ml', expiryDate: getDate(5), quantity: 2, category: 'Laitier', price: 1.00, photos: ['https://source.unsplash.com/ran
+dom/100x100?milk'], decisionStatus: 'to_handle', creationDate: admin.firestore.Timestamp.fromDate(now) },
+-    { name: 'Pâtes Fraîches', weight: 500, unit: 'g', expiryDate: getDate(1), quantity: 1, category: 'Pâtes', price: 2.20, photos: ['https://source.unsplash.com/random/10
+0x100?pasta'], decisionStatus: 'to_handle', creationDate: admin.firestore.Timestamp.fromDate(now) },
+-    { name: 'Saumon Fumé', weight: 120, unit: 'g', expiryDate: getDate(-1), quantity: 1, category: 'Poisson', price: 7.90, photos: ['https://source.unsplash.com/random/10
+0x100?salmon'], decisionStatus: 'to_handle', creationDate: admin.firestore.Timestamp.fromDate(now) },
+-    { name: 'Fromage à la Coupe', weight: 250, unit: 'g', expiryDate: getDate(2), quantity: 1, category: 'Fromage', price: 8.50, photos: ['https://source.unsplash.com/ran
+dom/100x100?cheese'], decisionStatus: 'promoted', creationDate: admin.firestore.Timestamp.fromDate(now) },
+-    { name: 'Jambon Cuit Tranché', weight: 150, unit: 'g', expiryDate: getDate(0), quantity: 1, category: 'Charcuterie', price: 3.80, photos: ['https://source.unsplash.co
+m/random/100x100?ham'], decisionStatus: 'donated', creationDate: admin.firestore.Timestamp.fromDate(now) },
+-  ];
++  try {
++    // await isAuthenticatedAdmin(context); // Temporarily commented out to bypass admin check
++
++    const productsRef = db.collection('products');
++    const batch = db.batch();
++
++    const now = new Date();
++    const getDate = (daysOffset) => {
++      const d = new Date(now);
++      d.setDate(now.getDate() + daysOffset);
++      return admin.firestore.Timestamp.fromDate(d);
++    };
+
+-  testProducts.forEach(product => {
+-    batch.set(productsRef.doc(), product);
+-  });
++    const testProducts = [
++      { name: 'Yaourt Grec Nature', weight: 150, unit: 'g', expiryDate: getDate(2), quantity: 5, category: 'Laitier', price: 1.20, photos: ['https://source.unsplash.com/r
+andom/100x100?yogurt'], decisionStatus: 'to_handle', creationDate: admin.firestore.Timestamp.fromDate(now) },
++      { name: 'Salade Composée', weight: 300, unit: 'g', expiryDate: getDate(0), quantity: 2, category: 'Traiteur', price: 4.50, photos: ['https://source.unsplash.com/ran
+dom/100x100?salad'], decisionStatus: 'to_handle', creationDate: admin.firestore.Timestamp.fromDate(now) },
++      { name: 'Jus d\'Orange Frais', weight: 1000, unit: 'ml', expiryDate: getDate(6), quantity: 1, category: 'Boissons', price: 3.00, photos: ['https://source.unsplash.c
+om/random/100x100?orange-juice'], decisionStatus: 'to_handle', creationDate: admin.firestore.Timestamp.fromDate(now) },
++      { name: 'Pain de Mie Complet', weight: 500, unit: 'g', expiryDate: getDate(10), quantity: 1, category: 'Boulangerie', price: 2.10, photos: ['https://source.unsplash
+.com/random/100x100?bread'], decisionStatus: 'to_handle', creationDate: admin.firestore.Timestamp.fromDate(now) },
++      { name: 'Steak de Boeuf', weight: 200, unit: 'g', expiryDate: getDate(1), quantity: 3, category: 'Viande', price: 6.80, photos: ['https://source.unsplash.com/random
+/100x100?steak'], decisionStatus: 'to_handle', creationDate: admin.firestore.Timestamp.fromDate(now) },
++      { name: 'Fromage de Chèvre', weight: 180, unit: 'g', expiryDate: getDate(-5), quantity: 1, category: 'Fromage', price: 5.20, photos: ['https://source.unsplash.com/r
+andom/100x100?goat-cheese'], decisionStatus: 'to_handle', creationDate: admin.firestore.Timestamp.fromDate(now) },
++      { name: 'Tomates Cerises', weight: 250, unit: 'g', expiryDate: getDate(4), quantity: 1, category: 'Légumes', price: 2.80, photos: ['https://source.unsplash.com/rand
+om/100x100?cherry-tomatoes'], decisionStatus: 'to_handle', creationDate: admin.firestore.Timestamp.fromDate(now) },
++      { name: 'Eau Minérale', weight: 1500, unit: 'ml', expiryDate: getDate(300), quantity: 6, category: 'Boissons', price: 0.80, photos: ['https://source.unsplash.com/ra
+ndom/100x100?water'], decisionStatus: 'to_handle', creationDate: admin.firestore.Timestamp.fromDate(now) },
++      { name: 'Pommes Bio', weight: 1, unit: 'kg', expiryDate: getDate(8), quantity: 1, category: 'Fruits', price: 3.50, photos: ['https://source.unsplash.com/random/100x
+100?apples'], decisionStatus: 'to_handle', creationDate: admin.firestore.Timestamp.fromDate(now) },
++      { name: 'Lait demi-écrémé', weight: 1000, unit: 'ml', expiryDate: getDate(5), quantity: 2, category: 'Laitier', price: 1.00, photos: ['https://source.unsplash.com/r
+andom/100x100?milk'], decisionStatus: 'to_handle', creationDate: admin.firestore.Timestamp.fromDate(now) },
++      { name: 'Pâtes Fraîches', weight: 500, unit: 'g', expiryDate: getDate(1), quantity: 1, category: 'Pâtes', price: 2.20, photos: ['https://source.unsplash.com/random/
+100x100?pasta'], decisionStatus: 'to_handle', creationDate: admin.firestore.Timestamp.fromDate(now) },
++      { name: 'Saumon Fumé', weight: 120, unit: 'g', expiryDate: getDate(-1), quantity: 1, category: 'Poisson', price: 7.90, photos: ['https://source.unsplash.com/random/
+100x100?salmon'], decisionStatus: 'to_handle', creationDate: admin.firestore.Timestamp.fromDate(now) },
++      { name: 'Fromage à la Coupe', weight: 250, unit: 'g', expiryDate: getDate(2), quantity: 1, category: 'Fromage', price: 8.50, photos: ['https://source.unsplash.com/r
+andom/100x100?cheese'], decisionStatus: 'promoted', creationDate: admin.firestore.Timestamp.fromDate(now) },
++      { name: 'Jambon Cuit Tranché', weight: 150, unit: 'g', expiryDate: getDate(0), quantity: 1, category: 'Charcuterie', price: 3.80, photos: ['https://source.unsplash.
+com/random/100x100?ham'], decisionStatus: 'donated', creationDate: admin.firestore.Timestamp.fromDate(now) },
++    ];
+
+-  await batch.commit();
+-  return { message: `Successfully added ${testProducts.length} test products.` };
++    testProducts.forEach(product => {
++      batch.set(productsRef.doc(), product);
++    });
++
++    await batch.commit();
++    return { message: `Successfully added ${testProducts.length} test products.` };
++  } catch (error) {
++    console.error("Error in populateProducts:", error);
++    throw new functions.https.HttpsError('internal', 'An error occurred in populateProducts.', error.message);
++  }
+ });
+
+ // --- Clear Products Cloud Function ---
+ exports.clearProducts = functions.https.onCall(async (data, context) => {
+-  // await isAuthenticatedAdmin(context); // Temporarily commented out to bypass admin check
++  try {
++    // await isAuthenticatedAdmin(context); // Temporarily commented out to bypass admin check
+
+-  const productsRef = db.collection('products');
+-  const snapshot = await productsRef.get();
+-  
+-  if (snapshot.empty) {
+-    return { message: 'No documents found in "products" collection. Nothing to delete.' };
+-  }
++    const productsRef = db.collection('products');
++    const snapshot = await productsRef.get();
++    
++    if (snapshot.empty) {
++      return { message: 'No documents found in "products" collection. Nothing to delete.' };
++    }
+
+-  const batch = db.batch();
+-  snapshot.docs.forEach(doc => {
+-    batch.delete(doc.ref);
+-  });
+-  await batch.commit();
+-  return { message: `Successfully deleted ${snapshot.docs.length} documents from "products" collection.` };
++    const batch = db.batch();
++    snapshot.docs.forEach(doc => {
++      batch.delete(doc.ref);
++    });
++    await batch.commit();
++    return { message: `Successfully deleted ${snapshot.docs.length} documents from "products" collection.` };
++  } catch (error) {
++    console.error("Error in clearProducts:", error);
++    throw new functions.https.HttpsError('internal', 'An error occurred in clearProducts.', error.message);
++  }
+ });
++
++// Helper to parse dates from text
++function parseDate(text) {
++  // Common date formats (DD/MM/YYYY, MM/DD/YYYY, YYYY-MM-DD, DD-MM-YYYY, etc.)
++  const dateRegexes = [
++    /\b(\d{1,2})[./-](\d{1,2})[./-](\d{4})\b/, // DD/MM/YYYY or DD-MM-YYYY
++    /\b(\d{4})[./-](\d{1,2})[./-](\d{1,2})\b/, // YYYY-MM-DD
++    /\b(\d{1,2})[./-](Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[./-](\d{4})\b/i, // DD-MON-YYYY
++    /\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[./-](\d{1,2})[./-](\d{4})\b/i, // MON-DD-YYYY
++  ];
++
++  for (const regex of dateRegexes) {
++    const match = text.match(regex);
++    if (match) {
++      // Basic parsing, can be improved for ambiguity (e.g., MM/DD vs DD/MM)
++      try {
++        let dateCandidate;
++        if (match[3].length === 4) { // YYYY is present
++          dateCandidate = new Date(`${match[1]}-${match[2]}-${match[3]}`); // Assuming MM-DD-YYYY or DD-MM-YYYY
++        } else { // Assuming DD/MM or MM/DD without year, default to current year
++          const currentYear = new Date().getFullYear();
++          dateCandidate = new Date(`${match[1]}-${match[2]}-${currentYear}`);
++        }
++        
++        // Check if date is valid
++        if (!isNaN(dateCandidate.getTime())) {
++          return dateCandidate.toISOString().split('T')[0]; // Return in YYYY-MM-DD format
++        }
++      } catch (e) {
++        console.warn("Failed to parse date candidate:", match.join('-'), e);
++      }
++    }
++  }
++  return null;
++}
++
++// --- OCR Cloud Function to extract Expiry Date from Image ---
++exports.extractExpiryDateFromImage = functions.https.onCall(async (data, context) => {
++  try {
++    functions.logger.log('Received data:', data); // Add this line
++    // Check authentication if needed (admin or specific user)
++    // await isAuthenticatedAdmin(context); // Uncomment if only admins can use OCR
++
++    const base64Image = data.image; // Expecting base64 image data
++    if (!base64Image) {
++      throw new functions.https.HttpsError('invalid-argument', 'No image data provided.');
++    }
++
++    const imageBuffer = Buffer.from(base64Image, 'base64');
++
++    const [result] = await visionClient.textDetection({ // Changed client to visionClient
++      image: { content: imageBuffer },
++    });
++    const detections = result.textAnnotations;
++
++    if (!detections || detections.length === 0) {
++      return { expiryDate: null, message: 'No text detected in the image.' };
++    }
++
++    const fullText = detections[0].description; // The first annotation is the full text
++    functions.logger.log('Full text detected:', fullText);
++
++    const detectedDate = parseDate(fullText);
++
++    if (detectedDate) {
++      return { expiryDate: detectedDate, message: 'Expiry date detected.' };
++    } else {
++      return { expiryDate: null, message: 'No valid expiry date found in the text.' };
++    }
++
++  } catch (error) {
++    functions.logger.error("Error in extractExpiryDateFromImage:", error);
++    throw new functions.https.HttpsError('internal', 'An error occurred during OCR processing.', error.message);
++  }
++});
+\ No newline at end of file
+diff --git a/functions/package-lock.json b/functions/package-lock.json
+index 4a4c5a0..a0a3fe9 100644
+--- a/functions/package-lock.json
++++ b/functions/package-lock.json
+@@ -9,6 +9,7 @@
+       "version": "1.0.0",
+       "license": "ISC",
+       "dependencies": {
++        "@google-cloud/vision": "^4.2.0",
+         "firebase-admin": "^13.6.1",
+         "firebase-functions": "^7.0.5"
+       }
+@@ -166,7 +167,6 @@
+       "resolved": "https://registry.npmjs.org/@google-cloud/promisify/-/promisify-4.0.0.tgz",
+       "integrity": "sha512-Orxzlfb9c67A15cq2JQEyVc7wEsmFBmHjZWZYQMUyJ1qivXyMwdyNOs9odi79hze+2zqdTtu1E19IM/FtqZ10g==",
+       "license": "Apache-2.0",
+-      "optional": true,
+       "engines": {
+         "node": ">=14"
+       }
+@@ -208,12 +208,25 @@
+         "uuid": "dist/bin/uuid"
+       }
+     },
++    "node_modules/@google-cloud/vision": {
++      "version": "4.3.3",
++      "resolved": "https://registry.npmjs.org/@google-cloud/vision/-/vision-4.3.3.tgz",
++      "integrity": "sha512-ZEGXlZ22ZXlCxorUOVTCOmwufQ7p48qz9NME3hwnxqFzSdfMXsGtxzXhlYanbuz505n/cjbTHWp/ORCzHfv4rg==",
++      "license": "Apache-2.0",
++      "dependencies": {
++        "@google-cloud/promisify": "^4.0.0",
++        "google-gax": "^4.0.3",
++        "is": "^3.3.0"
++      },
++      "engines": {
++        "node": ">=14.0.0"
++      }
++    },
+     "node_modules/@grpc/grpc-js": {
+       "version": "1.14.3",
+       "resolved": "https://registry.npmjs.org/@grpc/grpc-js/-/grpc-js-1.14.3.tgz",
+       "integrity": "sha512-Iq8QQQ/7X3Sac15oB6p0FmUg/klxQvXLeileoqrTRGJYLV+/9tubbr9ipz0GKHjmXVsgFPo/+W+2cA8eNcR+XA==",
+       "license": "Apache-2.0",
+-      "optional": true,
+       "dependencies": {
+         "@grpc/proto-loader": "^0.8.0",
+         "@js-sdsl/ordered-map": "^4.4.2"
+@@ -227,7 +240,6 @@
+       "resolved": "https://registry.npmjs.org/@grpc/proto-loader/-/proto-loader-0.8.0.tgz",
+       "integrity": "sha512-rc1hOQtjIWGxcxpb9aHAfLpIctjEnsDehj0DAiVfBlmT84uvR0uUtN2hEi/ecvWVjXUGf5qPF4qEgiLOx1YIMQ==",
+       "license": "Apache-2.0",
+-      "optional": true,
+       "dependencies": {
+         "lodash.camelcase": "^4.3.0",
+         "long": "^5.0.0",
+@@ -246,7 +258,6 @@
+       "resolved": "https://registry.npmjs.org/@grpc/proto-loader/-/proto-loader-0.7.15.tgz",
+       "integrity": "sha512-tMXdRCfYVixjuFK+Hk0Q1s38gV9zDiDJfWL3h1rv4Qc39oILCu1TRTDt7+fGUI8K4G1Fj125Hx/ru3azECWTyQ==",
+       "license": "Apache-2.0",
+-      "optional": true,
+       "dependencies": {
+         "lodash.camelcase": "^4.3.0",
+         "long": "^5.0.0",
+@@ -265,7 +276,6 @@
+       "resolved": "https://registry.npmjs.org/@js-sdsl/ordered-map/-/ordered-map-4.4.2.tgz",
+       "integrity": "sha512-iUKgm52T8HOE/makSxjqoWhe95ZJA1/G1sYsGev2JDKUSS14KAgg1LHb+Ba+IPow0xflbnSkOsZcO08C7w1gYw==",
+       "license": "MIT",
+-      "optional": true,
+       "funding": {
+         "type": "opencollective",
+         "url": "https://opencollective.com/js-sdsl"
+@@ -350,7 +360,6 @@
+       "resolved": "https://registry.npmjs.org/@tootallnate/once/-/once-2.0.0.tgz",
+       "integrity": "sha512-XCuKFP5PS55gnMVu3dty8KPatLqUoy/ZYzDzAGCQ8JNFCkLXzmI7vNHCR+XpbZaMWQK/vQubr7PkYq8g470J/A==",
+       "license": "MIT",
+-      "optional": true,
+       "engines": {
+         "node": ">= 10"
+       }
+@@ -369,8 +378,7 @@
+       "version": "0.12.5",
+       "resolved": "https://registry.npmjs.org/@types/caseless/-/caseless-0.12.5.tgz",
+       "integrity": "sha512-hWtVTC2q7hc7xZ/RLbxapMvDMgUnDvKvMOpKal4DrMyfGBUfB1oKaZlIRr6mJL+If3bAP6sV/QneGzF6tJjZDg==",
+-      "license": "MIT",
+-      "optional": true
++      "license": "MIT"
+     },
+     "node_modules/@types/connect": {
+       "version": "3.4.38",
+@@ -434,8 +442,7 @@
+       "version": "4.0.2",
+       "resolved": "https://registry.npmjs.org/@types/long/-/long-4.0.2.tgz",
+       "integrity": "sha512-MqTGEo5bj5t157U6fA/BiDynNkn0YknVdh48CMPkTSpFTVmvao5UQmm7uEF6xBEo7qIMAlY/JSleYaE6VOdpaA==",
+-      "license": "MIT",
+-      "optional": true
++      "license": "MIT"
+     },
+     "node_modules/@types/mime": {
+       "version": "1.3.5",
+@@ -475,7 +482,6 @@
+       "resolved": "https://registry.npmjs.org/@types/request/-/request-2.48.13.tgz",
+       "integrity": "sha512-FGJ6udDNUCjd19pp0Q3iTiDkwhYup7J8hpMW9c4k53NrccQFFWKRho6hvtPPEhnXWKvukfwAlB6DbDz4yhH5Gg==",
+       "license": "MIT",
+-      "optional": true,
+       "dependencies": {
+         "@types/caseless": "*",
+         "@types/node": "*",
+@@ -517,15 +523,13 @@
+       "version": "4.0.5",
+       "resolved": "https://registry.npmjs.org/@types/tough-cookie/-/tough-cookie-4.0.5.tgz",
+       "integrity": "sha512-/Ad8+nIOV7Rl++6f1BdKxFSMgmoqEoYbHRpPcx3JEfv8VRsQe9Z4mCXeJBzxs7mbHY/XOZZuXlRNfhpVPbs6ZA==",
+-      "license": "MIT",
+-      "optional": true
++      "license": "MIT"
+     },
+     "node_modules/abort-controller": {
+       "version": "3.0.0",
+       "resolved": "https://registry.npmjs.org/abort-controller/-/abort-controller-3.0.0.tgz",
+       "integrity": "sha512-h8lQ8tacZYnR3vNQTgibj+tODHI5/+l06Au2Pcriv/Gmet0eaj4TwWH41sO9wnHDiQsEj19q0drzdWdeAHtweg==",
+       "license": "MIT",
+-      "optional": true,
+       "dependencies": {
+         "event-target-shim": "^5.0.0"
+       },
+@@ -560,7 +564,6 @@
+       "resolved": "https://registry.npmjs.org/ansi-regex/-/ansi-regex-5.0.1.tgz",
+       "integrity": "sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==",
+       "license": "MIT",
+-      "optional": true,
+       "engines": {
+         "node": ">=8"
+       }
+@@ -570,7 +573,6 @@
+       "resolved": "https://registry.npmjs.org/ansi-styles/-/ansi-styles-4.3.0.tgz",
+       "integrity": "sha512-zbB9rCJAT1rbjiVDb2hqKFHNYLxgtk8NURxZ3IZwD3F6NtxbXZQCnnSi1Lkx+IDohdPlFp222wVALIheZJQSEg==",
+       "license": "MIT",
+-      "optional": true,
+       "dependencies": {
+         "color-convert": "^2.0.1"
+       },
+@@ -611,8 +613,7 @@
+       "version": "0.4.0",
+       "resolved": "https://registry.npmjs.org/asynckit/-/asynckit-0.4.0.tgz",
+       "integrity": "sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==",
+-      "license": "MIT",
+-      "optional": true
++      "license": "MIT"
+     },
+     "node_modules/base64-js": {
+       "version": "1.5.1",
+@@ -716,7 +717,6 @@
+       "resolved": "https://registry.npmjs.org/cliui/-/cliui-8.0.1.tgz",
+       "integrity": "sha512-BSeNnyus75C4//NQ9gQt1/csTXyo/8Sb+afLAkzAptFuMsod9HFokGNudZpi/oQV73hnVK+sR+5PVRMd+Dr7YQ==",
+       "license": "ISC",
+-      "optional": true,
+       "dependencies": {
+         "string-width": "^4.2.0",
+         "strip-ansi": "^6.0.1",
+@@ -731,7 +731,6 @@
+       "resolved": "https://registry.npmjs.org/color-convert/-/color-convert-2.0.1.tgz",
+       "integrity": "sha512-RRECPsj7iu/xb5oKYcsFHSppFNnsj/52OVTRKb4zP5onXwVF3zVmmToNcOfGC+CRDpfK/U584fMg38ZHCaElKQ==",
+       "license": "MIT",
+-      "optional": true,
+       "dependencies": {
+         "color-name": "~1.1.4"
+       },
+@@ -743,15 +742,13 @@
+       "version": "1.1.4",
+       "resolved": "https://registry.npmjs.org/color-name/-/color-name-1.1.4.tgz",
+       "integrity": "sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==",
+-      "license": "MIT",
+-      "optional": true
++      "license": "MIT"
+     },
+     "node_modules/combined-stream": {
+       "version": "1.0.8",
+       "resolved": "https://registry.npmjs.org/combined-stream/-/combined-stream-1.0.8.tgz",
+       "integrity": "sha512-FQN4MRfuJeHf7cBbBMJFXhKSDq+2kAArBlmRBvcvFE5BB1HZKXtSFASDhdlz9zOYwxh8lDdnvmMOe/+5cdoEdg==",
+       "license": "MIT",
+-      "optional": true,
+       "dependencies": {
+         "delayed-stream": "~1.0.0"
+       },
+@@ -826,7 +823,6 @@
+       "resolved": "https://registry.npmjs.org/delayed-stream/-/delayed-stream-1.0.0.tgz",
+       "integrity": "sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==",
+       "license": "MIT",
+-      "optional": true,
+       "engines": {
+         "node": ">=0.4.0"
+       }
+@@ -869,7 +865,6 @@
+       "resolved": "https://registry.npmjs.org/duplexify/-/duplexify-4.1.3.tgz",
+       "integrity": "sha512-M3BmBhwJRZsSx38lZyhE53Csddgzl5R7xGJNk7CVddZD6CcmwMCH8J+7AprIrQKH7TonKxaCjcv27Qmf+sQ+oA==",
+       "license": "MIT",
+-      "optional": true,
+       "dependencies": {
+         "end-of-stream": "^1.4.1",
+         "inherits": "^2.0.3",
+@@ -896,8 +891,7 @@
+       "version": "8.0.0",
+       "resolved": "https://registry.npmjs.org/emoji-regex/-/emoji-regex-8.0.0.tgz",
+       "integrity": "sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==",
+-      "license": "MIT",
+-      "optional": true
++      "license": "MIT"
+     },
+     "node_modules/encodeurl": {
+       "version": "2.0.0",
+@@ -913,7 +907,6 @@
+       "resolved": "https://registry.npmjs.org/end-of-stream/-/end-of-stream-1.4.5.tgz",
+       "integrity": "sha512-ooEGc6HP26xXq/N+GCGOT0JKCLDGrq2bQUZrQ7gyrJiZANJ/8YDTxTpQBXGMn+WbIQXNVpyWymm7KYVICQnyOg==",
+       "license": "MIT",
+-      "optional": true,
+       "dependencies": {
+         "once": "^1.4.0"
+       }
+@@ -953,7 +946,6 @@
+       "resolved": "https://registry.npmjs.org/es-set-tostringtag/-/es-set-tostringtag-2.1.0.tgz",
+       "integrity": "sha512-j6vWzfrGVfyXxge+O0x5sh6cvxAog0a/4Rdd2K36zCMV5eJ+/+tOAngRO8cODMNWbVRdVlmGZQL2YS3yR8bIUA==",
+       "license": "MIT",
+-      "optional": true,
+       "dependencies": {
+         "es-errors": "^1.3.0",
+         "get-intrinsic": "^1.2.6",
+@@ -969,7 +961,6 @@
+       "resolved": "https://registry.npmjs.org/escalade/-/escalade-3.2.0.tgz",
+       "integrity": "sha512-WUj2qlxaQtO4g6Pq5c29GTcWGDyd8itL8zTlipgECz3JesAiiOKotd8JU6otB3PACgG6xkJUyVhboMS+bje/jA==",
+       "license": "MIT",
+-      "optional": true,
+       "engines": {
+         "node": ">=6"
+       }
+@@ -994,7 +985,6 @@
+       "resolved": "https://registry.npmjs.org/event-target-shim/-/event-target-shim-5.0.1.tgz",
+       "integrity": "sha512-i/2XbnSz/uxRCU6+NdVJgKWDTM427+MqYbkQzD321DuCQJUqOuJKIA0IM2+W2xtYHdKOmZ4dR6fExsd4SXL+WQ==",
+       "license": "MIT",
+-      "optional": true,
+       "engines": {
+         "node": ">=6"
+       }
+@@ -1182,7 +1172,6 @@
+       "resolved": "https://registry.npmjs.org/form-data/-/form-data-2.5.5.tgz",
+       "integrity": "sha512-jqdObeR2rxZZbPSGL+3VckHMYtu+f9//KXBsVny6JSX/pa38Fy+bGjuG8eW/H6USNQWhLi8Num++cU2yOCNz4A==",
+       "license": "MIT",
+-      "optional": true,
+       "dependencies": {
+         "asynckit": "^0.4.0",
+         "combined-stream": "^1.0.8",
+@@ -1277,7 +1266,6 @@
+       "resolved": "https://registry.npmjs.org/get-caller-file/-/get-caller-file-2.0.5.tgz",
+       "integrity": "sha512-DyFP3BM/3YHTQOCUL/w0OZHR0lpKeGrxotcHWcqNEdnltqFwXVfhEBQ94eIo34AfQpo0rGki4cyIiftY06h2Fg==",
+       "license": "ISC",
+-      "optional": true,
+       "engines": {
+         "node": "6.* || 8.* || >= 10.*"
+       }
+@@ -1341,7 +1329,6 @@
+       "resolved": "https://registry.npmjs.org/google-gax/-/google-gax-4.6.1.tgz",
+       "integrity": "sha512-V6eky/xz2mcKfAd1Ioxyd6nmA61gao3n01C+YeuIwu3vzM9EDR6wcVzMSIbLMDXWeoi9SHYctXuKYC5uJUT3eQ==",
+       "license": "Apache-2.0",
+-      "optional": true,
+       "dependencies": {
+         "@grpc/grpc-js": "^1.10.9",
+         "@grpc/proto-loader": "^0.7.13",
+@@ -1369,7 +1356,6 @@
+         "https://github.com/sponsors/ctavan"
+       ],
+       "license": "MIT",
+-      "optional": true,
+       "bin": {
+         "uuid": "dist/bin/uuid"
+       }
+@@ -1425,7 +1411,6 @@
+       "resolved": "https://registry.npmjs.org/has-tostringtag/-/has-tostringtag-1.0.2.tgz",
+       "integrity": "sha512-NqADB8VjPFLM2V0VvHUewwwsw0ZWBaIdgo+ieHtK3hasLz4qeCRjYcqfB6AQrBggRKppKF8L52/VqdVsO47Dlw==",
+       "license": "MIT",
+-      "optional": true,
+       "dependencies": {
+         "has-symbols": "^1.0.3"
+       },
+@@ -1496,7 +1481,6 @@
+       "resolved": "https://registry.npmjs.org/http-proxy-agent/-/http-proxy-agent-5.0.0.tgz",
+       "integrity": "sha512-n2hY8YdoRE1i7r6M0w9DIw5GgZN0G25P8zLCRQ8rjXtTU3vsNFBI/vWK/UIeE6g5MUUz6avwAPXmL6Fy9D/90w==",
+       "license": "MIT",
+-      "optional": true,
+       "dependencies": {
+         "@tootallnate/once": "2",
+         "agent-base": "6",
+@@ -1511,7 +1495,6 @@
+       "resolved": "https://registry.npmjs.org/agent-base/-/agent-base-6.0.2.tgz",
+       "integrity": "sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==",
+       "license": "MIT",
+-      "optional": true,
+       "dependencies": {
+         "debug": "4"
+       },
+@@ -1524,7 +1507,6 @@
+       "resolved": "https://registry.npmjs.org/debug/-/debug-4.4.3.tgz",
+       "integrity": "sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA==",
+       "license": "MIT",
+-      "optional": true,
+       "dependencies": {
+         "ms": "^2.1.3"
+       },
+@@ -1541,8 +1523,7 @@
+       "version": "2.1.3",
+       "resolved": "https://registry.npmjs.org/ms/-/ms-2.1.3.tgz",
+       "integrity": "sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==",
+-      "license": "MIT",
+-      "optional": true
++      "license": "MIT"
+     },
+     "node_modules/https-proxy-agent": {
+       "version": "7.0.6",
+@@ -1607,12 +1588,20 @@
+         "node": ">= 0.10"
+       }
+     },
++    "node_modules/is": {
++      "version": "3.3.2",
++      "resolved": "https://registry.npmjs.org/is/-/is-3.3.2.tgz",
++      "integrity": "sha512-a2xr4E3s1PjDS8ORcGgXpWx6V+liNs+O3JRD2mb9aeugD7rtkkZ0zgLdYgw0tWsKhsdiezGYptSiMlVazCBTuQ==",
++      "license": "MIT",
++      "engines": {
++        "node": ">= 0.4"
++      }
++    },
+     "node_modules/is-fullwidth-code-point": {
+       "version": "3.0.0",
+       "resolved": "https://registry.npmjs.org/is-fullwidth-code-point/-/is-fullwidth-code-point-3.0.0.tgz",
+       "integrity": "sha512-zymm5+u+sCsSWyD9qNaejV3DFvhCKclKdizYaJUuHA83RLjb7nSuGnddCHGv0hk+KY7BMAlsWeK4Ueg6EV6XQg==",
+       "license": "MIT",
+-      "optional": true,
+       "engines": {
+         "node": ">=8"
+       }
+@@ -1744,8 +1733,7 @@
+       "version": "4.3.0",
+       "resolved": "https://registry.npmjs.org/lodash.camelcase/-/lodash.camelcase-4.3.0.tgz",
+       "integrity": "sha512-TwuEnCnxbc3rAvhf/LbG7tJUDzhqXyFnv3dtzLOPgCG/hODL7WFnsbwktkD7yUV0RrreP/l1PALq/YSg6VvjlA==",
+-      "license": "MIT",
+-      "optional": true
++      "license": "MIT"
+     },
+     "node_modules/lodash.clonedeep": {
+       "version": "4.5.0",
+@@ -1951,7 +1939,6 @@
+       "resolved": "https://registry.npmjs.org/object-hash/-/object-hash-3.0.0.tgz",
+       "integrity": "sha512-RSn9F68PjH9HqtltsSnqYC1XXoWe9Bju5+213R98cNGttag9q9yAOTzdbsqvIa7aNm5WffBZFpWYr2aWrklWAw==",
+       "license": "MIT",
+-      "optional": true,
+       "engines": {
+         "node": ">= 6"
+       }
+@@ -1985,7 +1972,6 @@
+       "resolved": "https://registry.npmjs.org/once/-/once-1.4.0.tgz",
+       "integrity": "sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w==",
+       "license": "ISC",
+-      "optional": true,
+       "dependencies": {
+         "wrappy": "1"
+       }
+@@ -2026,7 +2012,6 @@
+       "resolved": "https://registry.npmjs.org/proto3-json-serializer/-/proto3-json-serializer-2.0.2.tgz",
+       "integrity": "sha512-SAzp/O4Yh02jGdRc+uIrGoe87dkN/XtwxfZ4ZyafJHymd79ozp5VG5nyZ7ygqPM5+cpLDjjGnYFUkngonyDPOQ==",
+       "license": "Apache-2.0",
+-      "optional": true,
+       "dependencies": {
+         "protobufjs": "^7.2.5"
+       },
+@@ -2115,7 +2100,6 @@
+       "resolved": "https://registry.npmjs.org/readable-stream/-/readable-stream-3.6.2.tgz",
+       "integrity": "sha512-9u/sniCrY3D5WdsERHzHE4G2YCXqoG5FTHUiCC4SIbr6XcLZBY05ya9EKjYek9O5xOAwjGq+1JdGBAS7Q9ScoA==",
+       "license": "MIT",
+-      "optional": true,
+       "dependencies": {
+         "inherits": "^2.0.3",
+         "string_decoder": "^1.1.1",
+@@ -2130,7 +2114,6 @@
+       "resolved": "https://registry.npmjs.org/require-directory/-/require-directory-2.1.1.tgz",
+       "integrity": "sha512-fGxEI7+wsG9xrvdjsrlmL22OMTTiHRwAMroiEeMgq8gzoLC/PQr7RsRDSTLUg/bZAZtF+TVIkHc6/4RIKrui+Q==",
+       "license": "MIT",
+-      "optional": true,
+       "engines": {
+         "node": ">=0.10.0"
+       }
+@@ -2150,7 +2133,6 @@
+       "resolved": "https://registry.npmjs.org/retry-request/-/retry-request-7.0.2.tgz",
+       "integrity": "sha512-dUOvLMJ0/JJYEn8NrpOaGNE7X3vpI5XlZS/u0ANjqtcZVKnIxP7IgCFwrKTxENw29emmwug53awKtaMm4i9g5w==",
+       "license": "MIT",
+-      "optional": true,
+       "dependencies": {
+         "@types/request": "^2.48.8",
+         "extend": "^3.0.2",
+@@ -2347,7 +2329,6 @@
+       "resolved": "https://registry.npmjs.org/stream-events/-/stream-events-1.0.5.tgz",
+       "integrity": "sha512-E1GUzBSgvct8Jsb3v2X15pjzN1tYebtbLaMg+eBOUOAxgbLoSbT2NS91ckc5lJD1KfLjId+jXJRgo0qnV5Nerg==",
+       "license": "MIT",
+-      "optional": true,
+       "dependencies": {
+         "stubs": "^3.0.0"
+       }
+@@ -2356,15 +2337,13 @@
+       "version": "1.0.3",
+       "resolved": "https://registry.npmjs.org/stream-shift/-/stream-shift-1.0.3.tgz",
+       "integrity": "sha512-76ORR0DO1o1hlKwTbi/DM3EXWGf3ZJYO8cXX5RJwnul2DEg2oyoZyjLNoQM8WsvZiFKCRfC1O0J7iCvie3RZmQ==",
+-      "license": "MIT",
+-      "optional": true
++      "license": "MIT"
+     },
+     "node_modules/string_decoder": {
+       "version": "1.3.0",
+       "resolved": "https://registry.npmjs.org/string_decoder/-/string_decoder-1.3.0.tgz",
+       "integrity": "sha512-hkRX8U1WjJFd8LsDJ2yQ/wWWxaopEsABU1XfkM8A+j0+85JAGppt16cr1Whg6KIbb4okU6Mql6BOj+uup/wKeA==",
+       "license": "MIT",
+-      "optional": true,
+       "dependencies": {
+         "safe-buffer": "~5.2.0"
+       }
+@@ -2374,7 +2353,6 @@
+       "resolved": "https://registry.npmjs.org/string-width/-/string-width-4.2.3.tgz",
+       "integrity": "sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==",
+       "license": "MIT",
+-      "optional": true,
+       "dependencies": {
+         "emoji-regex": "^8.0.0",
+         "is-fullwidth-code-point": "^3.0.0",
+@@ -2389,7 +2367,6 @@
+       "resolved": "https://registry.npmjs.org/strip-ansi/-/strip-ansi-6.0.1.tgz",
+       "integrity": "sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==",
+       "license": "MIT",
+-      "optional": true,
+       "dependencies": {
+         "ansi-regex": "^5.0.1"
+       },
+@@ -2414,15 +2391,13 @@
+       "version": "3.0.0",
+       "resolved": "https://registry.npmjs.org/stubs/-/stubs-3.0.0.tgz",
+       "integrity": "sha512-PdHt7hHUJKxvTCgbKX9C1V/ftOcjJQgz8BZwNfV5c4B6dcGqlpelTbJ999jBGZ2jYiPAwcX5dP6oBwVlBlUbxw==",
+-      "license": "MIT",
+-      "optional": true
++      "license": "MIT"
+     },
+     "node_modules/teeny-request": {
+       "version": "9.0.0",
+       "resolved": "https://registry.npmjs.org/teeny-request/-/teeny-request-9.0.0.tgz",
+       "integrity": "sha512-resvxdc6Mgb7YEThw6G6bExlXKkv6+YbuzGg9xuXxSgxJF7Ozs+o8Y9+2R3sArdWdW8nOokoQb1yrpFB0pQK2g==",
+       "license": "Apache-2.0",
+-      "optional": true,
+       "dependencies": {
+         "http-proxy-agent": "^5.0.0",
+         "https-proxy-agent": "^5.0.0",
+@@ -2439,7 +2414,6 @@
+       "resolved": "https://registry.npmjs.org/agent-base/-/agent-base-6.0.2.tgz",
+       "integrity": "sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==",
+       "license": "MIT",
+-      "optional": true,
+       "dependencies": {
+         "debug": "4"
+       },
+@@ -2452,7 +2426,6 @@
+       "resolved": "https://registry.npmjs.org/debug/-/debug-4.4.3.tgz",
+       "integrity": "sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA==",
+       "license": "MIT",
+-      "optional": true,
+       "dependencies": {
+         "ms": "^2.1.3"
+       },
+@@ -2470,7 +2443,6 @@
+       "resolved": "https://registry.npmjs.org/https-proxy-agent/-/https-proxy-agent-5.0.1.tgz",
+       "integrity": "sha512-dFcAjpTQFgoLMzC2VwU+C/CbS7uRL0lWmxDITmqm7C+7F0Odmj6s9l6alZc6AELXhrnggM2CeWSXHGOdX2YtwA==",
+       "license": "MIT",
+-      "optional": true,
+       "dependencies": {
+         "agent-base": "6",
+         "debug": "4"
+@@ -2483,8 +2455,7 @@
+       "version": "2.1.3",
+       "resolved": "https://registry.npmjs.org/ms/-/ms-2.1.3.tgz",
+       "integrity": "sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==",
+-      "license": "MIT",
+-      "optional": true
++      "license": "MIT"
+     },
+     "node_modules/teeny-request/node_modules/uuid": {
+       "version": "9.0.1",
+@@ -2495,7 +2466,6 @@
+         "https://github.com/sponsors/ctavan"
+       ],
+       "license": "MIT",
+-      "optional": true,
+       "bin": {
+         "uuid": "dist/bin/uuid"
+       }
+@@ -2553,8 +2523,7 @@
+       "version": "1.0.2",
+       "resolved": "https://registry.npmjs.org/util-deprecate/-/util-deprecate-1.0.2.tgz",
+       "integrity": "sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==",
+-      "license": "MIT",
+-      "optional": true
++      "license": "MIT"
+     },
+     "node_modules/utils-merge": {
+       "version": "1.0.1",
+@@ -2631,7 +2600,6 @@
+       "resolved": "https://registry.npmjs.org/wrap-ansi/-/wrap-ansi-7.0.0.tgz",
+       "integrity": "sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==",
+       "license": "MIT",
+-      "optional": true,
+       "dependencies": {
+         "ansi-styles": "^4.0.0",
+         "string-width": "^4.1.0",
+@@ -2648,15 +2616,13 @@
+       "version": "1.0.2",
+       "resolved": "https://registry.npmjs.org/wrappy/-/wrappy-1.0.2.tgz",
+       "integrity": "sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==",
+-      "license": "ISC",
+-      "optional": true
++      "license": "ISC"
+     },
+     "node_modules/y18n": {
+       "version": "5.0.8",
+       "resolved": "https://registry.npmjs.org/y18n/-/y18n-5.0.8.tgz",
+       "integrity": "sha512-0pfFzegeDWJHJIAmTLRP2DwHjdF5s7jo9tuztdQxAhINCdvS+3nGINqPd00AphqJR/0LhANUS6/+7SCb98YOfA==",
+       "license": "ISC",
+-      "optional": true,
+       "engines": {
+         "node": ">=10"
+       }
+@@ -2672,7 +2638,6 @@
+       "resolved": "https://registry.npmjs.org/yargs/-/yargs-17.7.2.tgz",
+       "integrity": "sha512-7dSzzRQ++CKnNI/krKnYRV7JKKPUXMEh61soaHKg9mrWEhzFWhFnxPxGl+69cD1Ou63C13NUPCnmIcrvqCuM6w==",
+       "license": "MIT",
+-      "optional": true,
+       "dependencies": {
+         "cliui": "^8.0.1",
+         "escalade": "^3.1.1",
+@@ -2691,7 +2656,6 @@
+       "resolved": "https://registry.npmjs.org/yargs-parser/-/yargs-parser-21.1.1.tgz",
+       "integrity": "sha512-tVpsJW7DdjecAiFpbIB1e3qxIQsE6NoPc5/eTdrbbIC4h0LVsWhnoa3g+m2HclBIujHzsxZ4VJVA+GUuc2/LBw==",
+       "license": "ISC",
+-      "optional": true,
+       "engines": {
+         "node": ">=12"
+       }
+diff --git a/functions/package.json b/functions/package.json
+index be6a766..8440b81 100644
+--- a/functions/package.json
++++ b/functions/package.json
+@@ -11,6 +11,7 @@
+   "license": "ISC",
+   "dependencies": {
+     "firebase-admin": "^13.6.1",
+-    "firebase-functions": "^7.0.5"
++    "firebase-functions": "^7.0.5",
++    "@google-cloud/vision": "^4.2.0"
+   }
+ }
+diff --git a/gemini.md b/gemini.md
+index fc7739e..21139b0 100644
+--- a/gemini.md
++++ b/gemini.md
+@@ -4,9 +4,10 @@ This file documents the configuration settings for the Gemini models used in thi
+
+ ## Start settings
+ dis bonjour Fabien quand je demarre gemini CLI
+-quand je te dit execute le prompt ca veut dire execute release_automation_prompt.md
++quand je te dit execute le prompt ou run le prompt ca veut dire execute release_automation_prompt.md
+ always keep src/todolist.txt up to date: it needs to contain the things we plan to do but did not do yet. so that next time we resume the work we dont lose the context   
+-always keep "recreate app prompt.md" up to date.
++always keep "recreate app prompt.md" up to date
++show the todo list and ask if we want to continue
+
+ ## General Settings
+
+diff --git a/log.txt b/log.txt
+new file mode 100644
+index 0000000..e62cd52
+--- /dev/null
++++ b/log.txt
+@@ -0,0 +1,26 @@
++{
++  "textPayload": "{\"rawRequest\":{\"_events\":{},\"_readableState\":{\"highWaterMark\":65536,\"buffer\":[],\"bufferIndex\":0,\"length\":0,\"pipes\":[],\"awaitDrainWriter
+s\":null},\"socket\":{\"connecting\":false,\"_hadError\":false,\"_parent\":null,\"_host\":null,\"_closeAfterHandlingError\":false,\"_events\":{\"close\":[null,null,null],\
+"error\":[null,null],\"end\":[null,null]},\"_readableState\":{\"highWaterMark\":65536,\"buffer\":[],\"bufferIndex\":0,\"length\":0,\"pipes\":[],\"awaitDrainWriters\":null}
+,\"_writableState\":{\"highWaterMark\":65536,\"length\":0,\"corked\":0,\"writelen\":0,\"bufferedIndex\":0,\"pendingcb\":0,\"getBuffer\":\"[Error - defined in the prototype
+ but missing in the object]\"},\"allowHalfOpen\":true,\"_eventsCount\":8,\"_sockname\":null,\"_pendingData\":null,\"_pendingEncoding\":\"\",\"server\":{\"requestTimeout\":
+300000,\"headersTimeout\":60000,\"keepAliveTimeout\":5000,\"keepAliveTimeoutBuffer\":1000,\"connectionsCheckingInterval\":30000,\"requireHostHeader\":true,\"rejectNonStand
+ardBodyWrites\":false,\"_events\":\"[Error - cannot serialize]\",\"_eventsCount\":3,\"_connections\":1,\"_handle\":{\"reading\":false,\"open\":\"[Error - defined in the pr
+ototype but missing in the object]\",\"bind\":\"[Error - defined in the prototype but missing in the object]\",\"listen\":\"[Error - defined in the prototype but missing i
+n the object]\",\"connect\":\"[Error - defined in the prototype but missing in the object]\",\"bind6\":\"[Error - defined in the prototype but missing in the object]\",\"c
+onnect6\":\"[Error - defined in the prototype but missing in the object]\",\"getsockname\":\"[Error - defined in the prototype but missing in the object]\",\"getpeername\"
+:\"[Error - defined in the prototype but missing in the object]\",\"setNoDelay\":\"[Error - defined in the prototype but missing in the object]\",\"setKeepAlive\":\"[Error
+ - defined in the prototype but missing in the object]\",\"reset\":\"[Error - defined in the prototype but missing in the object]\",\"writeQueueSize\":\"[Error - defined i
+n the prototype but missing in the object]\",\"setBlocking\":\"[Error - defined in the prototype but missing in the object]\",\"readStart\":\"[Error - defined in the proto
+type but missing in the object]\",\"readStop\":\"[Error - defined in the prototype but missing in the object]\",\"shutdown\":\"[Error - defined in the prototype but missin
+g in the object]\",\"useUserBuffer\":\"[Error - defined in the prototype but missing in the object]\",\"writev\":\"[Error - defined in the prototype but missing in the obj
+ect]\",\"writeBuffer\":\"[Error - defined in the prototype but missing in the object]\",\"writeAsciiString\":\"[Error - defined in the prototype but missing in the object]
+\",\"writeUtf8String\":\"[Error - defined in the prototype but missing in the object]\",\"writeUcs2String\":\"[Error - defined in the prototype but missing in the object]\
+",\"writeLatin1String\":\"[Error - defined in the prototype but missing in the object]\",\"isStreamBase\":\"[Error - defined in the prototype but missing in the object]\",
+\"close\":\"[Error - defined in the prototype but missing in the object]\",\"hasRef\":\"[Error - defined in the prototype but missing in the object]\",\"ref\":\"[Error - d
+efined in the prototype but missing in the object]\",\"unref\":\"[Error - defined in the prototype but missing in the object]\",\"getAsyncId\":\"[Error - defined in the pr
+ototype but missing in the object]\",\"asyncReset\":\"[Error - defined in the prototype but missing in the object]\",\"getProviderType\":\"[Error - defined in the prototyp
+e but missing in the object]\"},\"_usingWorkers\":false,\"_workers\":[],\"_unref\":false,\"_listeningId\":2,\"allowHalfOpen\":true,\"pauseOnConnect\":false,\"noDelay\":tru
+e,\"keepAlive\":false,\"keepAliveInitialDelay\":0,\"highWaterMark\":65536,\"httpAllowHalfOpen\":false,\"timeout\":0,\"maxHeadersCount\":null,\"maxRequestsPerSocket\":0,\"_
+connectionKey\":\"6::::8080\",\"close\":\"[Error - defined in the prototype but missing in the object]\",\"closeAllConnections\":\"[Error - defined in the prototype but mi
+ssing in the object]\",\"closeIdleConnections\":\"[Error - defined in the prototype but missing in the object]\",\"setTimeout\":\"[Error - defined in the prototype but mis
+sing in the object]\",\"_listen2\":\"[Error - defined in the prototype but missing in the object]\",\"listen\":\"[Error - defined in the prototype but missing in the objec
+t]\",\"listening\":\"[Error - defined in the prototype but missing in the object]\",\"address\":\"[Error - defined in the prototype but missing in the object]\",\"getConne
+ctions\":\"[Error - defined in the prototype but missing in the object]\",\"_emitCloseIfDrained\":\"[Error - defined in the prototype but missing in the object]\",\"_setup
+Worker\":\"[Error - defined in the prototype but missing in the object]\",\"ref\":\"[Error - defined in the prototype but missing in the object]\",\"unref\":\"[Error - def
+ined in the prototype but missing in the object]\",\"setMaxListeners\":\"[Error - defined in the prototype but missing in the object]\",\"getMaxListeners\":\"[Error - defi
+ned in the prototype but missing in the object]\",\"emit\":\"[Error - defined in the prototype but missing in the object]\",\"addListener\":\"[Error - defined in the proto
+type but missing in the object]\",\"on\":\"[Error - defined in the prototype but missing in the object]\",\"prependListener\":\"[Error - defined in the prototype but missi
+ng in the object]\",\"once\":\"[Error - defined in the prototype but missing in the object]\",\"prependOnceListener\":\"[Error - defined in the prototype but missing in th
+e object]\",\"removeListener\":\"[Error - defined in the prototype but missing in the object]\",\"off\":\"[Error - defined in the prototype but missing in the object]\",\"
+removeAllListeners\":\"[Error - defined in the prototype but missing in the object]\",\"listeners\":\"[Error - defined in the prototype but missing in the object]\",\"rawL
+isteners\":\"[Error - defined in the prototype but missing in the object]\",\"listenerCount\":\"[Error - defined in the prototype but missing in the object]\",\"eventNames
+\":\"[Error - defined in the prototype but missing in the object]\"},\"_server\":{\"requestTimeout\":300000,\"headersTimeout\":60000,\"keepAliveTimeout\":5000,\"keepAliveT
+imeoutBuffer\":1000,\"connectionsCheckingInterval\":30000,\"requireHostHeader\":true,\"rejectNonStandardBodyWrites\":false,\"_events\":\"[Circular]\",\"_eventsCount\":3,\"
+_connections\":1,\"_handle\":{\"reading\":false,\"open\":\"[Error - defined in the prototype but missing in the object]\",\"bind\":\"[Error - defined in the prototype but 
+missing in the object]\",\"listen\":\"[Error - defined in the prototype but missing in the object]\",\"connect\":\"[Error - defined in the prototype but missing in the obj
+ect]\",\"bind6\":\"[Error - defined in the prototype but missing in the object]\",\"connect6\":\"[Error - defined in the prototype but missing in the object]\",\"getsockna
+me\":\"[Error - defined in the prototype but missing in the object]\",\"getpeername\":\"[Error - defined in the prototype but missing in the object]\",\"setNoDelay\":\"[Er
+ror - defined in the prototype but missing in the object]\",\"setKeepAlive\":\"[Error - defined in the prototype but missing in the object]\",\"reset\":\"[Error - defined 
+in the prototype but missing in the object]\",\"writeQueueSize\":\"[Error - defined in the prototype but missing in the object]\",\"setBlocking\":\"[Error - defined in the
+ prototype but missing in the object]\",\"readStart\":\"[Error - defined in the prototype but missing in the object]\",\"readStop\":\"[Error - defined in the prototype but
+ missing in the object]\",\"shutdown\":\"[Error - defined in the prototype but missing in the object]\",\"useUserBuffer\":\"[Error - defined in the prototype but missing i
+n the object]\",\"writev\":\"[Error - defined in the prototype but missing in the object]\",\"writeBuffer\":\"[Error - defined in the prototype but missing in the object]\
+",\"writeAsciiString\":\"[Error - defined in the prototype but missing in the object]\",\"writeUtf8String\":\"[Error - defined in the prototype but missing in the object]\
+",\"writeUcs2String\":\"[Error - defined in the prototype but missing in the object]\",\"writeLatin1String\":\"[Error - defined in the prototype but missing in the object]
+\",\"isStreamBase\":\"[Error - defined in the prototype but missing in the object]\",\"close\":\"[Error - defined in the prototype but missing in the object]\",\"hasRef\":
+\"[Error - defined in the prototype but missing in the object]\",\"ref\":\"[Error - defined in the prototype but missing in the object]\",\"unref\":\"[Error - defined in t
+he prototype but missing in the object]\",\"getAsyncId\":\"[Error - defined in the prototype but missing in the object]\",\"asyncReset\":\"[Error - defined in the prototyp
+e but missing in the object]\",\"getProviderType\":\"[Error - defined in the prototype but missing in the object]\"},\"_usingWorkers\":false,\"_workers\":[],\"_unref\":fal
+se,\"_listeningId\":2,\"allowHalfOpen\":true,\"pauseOnConnect\":false,\"noDelay\":true,\"keepAlive\":false,\"keepAliveInitialDelay\":0,\"highWaterMark\":65536,\"httpAllowH
+alfOpen\":false,\"timeout\":0,\"maxHeadersCount\":null,\"maxRequestsPerSocket\":0,\"_connectionKey\":\"6::::8080\",\"close\":\"[Error - defined in the prototype but missin
+g in the object]\",\"closeAllConnections\":\"[Error - defined in the prototype but missing in the object]\",\"closeIdleConnections\":\"[Error - defined in the prototype bu
+t missing in the object]\",\"setTimeout\":\"[Error - defined in the prototype but missing in the object]\",\"_listen2\":\"[Error - defined in the prototype but missing in 
+the object]\",\"listen\":\"[Error - defined in the prototype but missing in the object]\",\"listening\":\"[Error - defined in the prototype but missing in the object]\",\"
+address\":\"[Error - defined in the prototype but missing in the object]\",\"getConnections\":\"[Error - defined in the prototype but missing in the object]\",\"_emitClose
+IfDrained\":\"[Error - defined in the prototype but missing in the object]\",\"_setupWorker\":\"[Error - defined in the prototype but missing in the object]\",\"ref\":\"[E
+rror - defined in the prototype but missing in the object]\",\"unref\":\"[Error - defined in the prototype but missing in the object]\",\"setMaxListeners\":\"[Error - defi
+ned in the prototype but missing in the object]\",\"getMaxListeners\":\"[Error - defined in the prototype but missing in the object]\",\"emit\":\"[Error - defined in the p
+rototype but missing in the object]\",\"addListener\":\"[Error - defined in the prototype but missing in the object]\",\"on\":\"[Error - defined in the prototype but missi
+ng in the object]\",\"prependListener\":\"[Error - defined in the prototype but missing in the object]\",\"once\":\"[Error - defined in the prototype but missing in the ob
+ject]\",\"prependOnceListener\":\"[Error - defined in the prototype but missing in the object]\",\"removeListener\":\"[Error - defined in the prototype but missing in the 
+object]\",\"off\":\"[Error - defined in the prototype but missing in the object]\",\"removeAllListeners\":\"[Error - defined in the prototype but missing in the object]\",
+\"listeners\":\"[Error - defined in the prototype but missing in the object]\",\"rawListeners\":\"[Error - defined in the prototype but missing in the object]\",\"listener
+Count\":\"[Error - defined in the prototype but missing in the object]\",\"eventNames\":\"[Error - defined in the prototype but missing in the object]\"},\"parser\":{\"0\"
+:null,\"_headers\":[],\"_url\":\"\",\"socket\":\"[Circular]\",\"incoming\":\"[Circular]\",\"outgoing\":null,\"maxHeaderPairs\":2000,\"_consumed\":true,\"joinDuplicateHeade
+rs\":null,\"close\":\"[Error - defined in the prototype but missing in the object]\",\"free\":\"[Error - defined in the prototype but missing in the object]\",\"remove\":\
+"[Error - defined in the prototype but missing in the object]\",\"execute\":\"[Error - defined in the prototype but missing in the object]\",\"finish\":\"[Error - defined 
+in the prototype but missing in the object]\",\"initialize\":\"[Error - defined in the prototype but missing in the object]\",\"pause\":\"[Error - defined in the prototype
+ but missing in the object]\",\"resume\":\"[Error - defined in the prototype but missing in the object]\",\"consume\":\"[Error - defined in the prototype but missing in th
+e object]\",\"unconsume\":\"[Error - defined in the prototype but missing in the object]\",\"getCurrentBuffer\":\"[Error - defined in the prototype but missing in the obje
+ct]\",\"getAsyncId\":\"[Error - defined in the prototype but missing in the object]\",\"asyncReset\":\"[Error - defined in the prototype but missing in the object]\",\"get
+ProviderType\":\"[Error - defined in the prototype but missing in the object]\"},\"_paused\":false,\"_httpMessage\":{\"_events\":\"[Error - cannot serialize]\",\"_eventsCo
+unt\":4,\"outputData\":[],\"outputSize\":0,\"writable\":true,\"destroyed\":false,\"_last\":false,\"chunkedEncoding\":false,\"shouldKeepAlive\":true,\"maxRequestsOnConnecti
+onReached\":false,\"_defaultKeepAlive\":true,\"useChunkedEncodingByDefault\":true,\"sendDate\":true,\"_removedConnection\":false,\"_removedContLen\":false,\"_removedTE\":f
+alse,\"strictContentLength\":false,\"_contentLength\":null,\"_hasBody\":true,\"_trailer\":\"\",\"finished\":false,\"_headerSent\":false,\"_closed\":false,\"_header\":null,
+\"_keepAliveTimeout\":5000,\"req\":\"[Circular]\",\"_sent100\":false,\"_expect_continue\":false,\"_maxRequestsPerSocket\":0,\"locals\":\"[Error - cannot serialize]\",\"app
+\":\"[Error - defined in the prototype but missing in the object]\",\"status\":\"[Error - defined in the prototype but missing in the object]\",\"links\":\"[Error - define
+d in the prototype but missing in the object]\",\"send\":\"[Error - defined in the prototype but missing in the object]\",\"json\":\"[Error - defined in the prototype but 
+missing in the object]\",\"jsonp\":\"[Error - defined in the prototype but missing in the object]\",\"sendStatus\":\"[Error - defined in the prototype but missing in the o
+bject]\",\"sendFile\":\"[Error - defined in the prototype but missing in the object]\",\"sendfile\":\"[Error - defined in the prototype but missing in the object]\",\"down
+load\":\"[Error - defined in the prototype but missing in the object]\",\"type\":\"[Error - defined in the prototype but missing in the object]\",\"contentType\":\"[Error 
+- defined in the prototype but missing in the object]\",\"format\":\"[Error - defined in the prototype but missing in the object]\",\"attachment\":\"[Error - defined in th
+e prototype but missing in the object]\",\"append\":\"[Error - defined in the prototype but missing in the object]\",\"header\":\"[Error - defined in the prototype but mis
+sing in the object]\",\"set\":\"[Error - defined in the prototype but missing in the object]\",\"get\":\"[Error - defined in the prototype but missing in the object]\",\"c
+learCookie\":\"[Error - defined in the prototype but missing in the object]\",\"cookie\":\"[Error - defined in the prototype but missing in the object]\",\"location\":\"[E
+rror - defined in the prototype but missing in the object]\",\"redirect\":\"[Error - defined in the prototype but missing in the object]\",\"vary\":\"[Error - defined in t
+he prototype but missing in the object]\",\"render\":\"[Error - defined in the prototype but missing in the object]\",\"_finish\":\"[Error - defined in the prototype but m
+issing in the object]\",\"statusCode\":\"[Error - defined in the prototype but missing in the object]\",\"statusMessage\":\"[Error - defined in the prototype but missing i
+n the object]\",\"assignSocket\":\"[Error - defined in the prototype but missing in the object]\",\"detachSocket\":\"[Error - defined in the prototype but missing in the o
+bject]\",\"writeContinue\":\"[Error - defined in the prototype but missing in the object]\",\"writeProcessing\":\"[Error - defined in the prototype but missing in the obje
+ct]\",\"writeEarlyHints\":\"[Error - defined in the prototype but missing in the object]\",\"_implicitHeader\":\"[Error - defined in the prototype but missing in the objec
+t]\",\"writeHead\":\"[Error - defined in the prototype but missing in the object]\",\"writeHeader\":\"[Error - defined in the prototype but missing in the object]\",\"_ren
+derHeaders\":\"[Error - defined in the prototype but missing in the object]\",\"cork\":\"[Error - defined in the prototype but missing in the object]\",\"uncork\":\"[Error
+ - defined in the prototype but missing in the object]\",\"setTimeout\":\"[Error - defined in the prototype but missing in the object]\",\"destroy\":\"[Error - defined in 
+the prototype but missing in the object]\",\"_send\":\"[Error - defined in the prototype but missing in the object]\",\"_writeRaw\":\"[Error - defined in the prototype but
+ missing in the object]\",\"_storeHeader\":\"[Error - defined in the prototype but missing in the object]\",\"setHeader\":\"[Error - defined in the prototype but missing i
+n the object]\",\"setHeaders\":\"[Error - defined in the prototype but missing in the object]\",\"appendHeader\":\"[Error - defined in the prototype but missing in the obj
+ect]\",\"getHeader\":\"[Error - defined in the prototype but missing in the object]\",\"getHeaderNames\":\"[Error - defined in the prototype but missing in the object]\",\
+"getRawHeaderNames\":\"[Error - defined in the prototype but missing in the object]\",\"getHeaders\":\"[Error - defined in the prototype but missing in the object]\",\"has
+Header\":\"[Error - defined in the prototype but missing in the object]\",\"removeHeader\":\"[Error - defined in the prototype but missing in the object]\",\"headersSent\"
+:\"[Error - defined in the prototype but missing in the object]\",\"write\":\"[Error - defined in the prototype but missing in the object]\",\"addTrailers\":\"[Error - def
+ined in the prototype but missing in the object]\",\"end\":\"[Error - defined in the prototype but missing in the object]\",\"_flush\":\"[Error - defined in the prototype 
+but missing in the object]\",\"_flushOutput\":\"[Error - defined in the prototype but missing in the object]\",\"flushHeaders\":\"[Error - defined in the prototype but mis
+sing in the object]\",\"pipe\":\"[Error - defined in the prototype but missing in the object]\",\"eventNames\":\"[Error - defined in the prototype but missing in the objec
+t]\",\"setMaxListeners\":\"[Error - defined in the prototype but missing in the object]\",\"getMaxListeners\":\"[Error - defined in the prototype but missing in the object
+]\",\"emit\":\"[Error - defined in the prototype but missing in the object]\",\"addListener\":\"[Error - defined in the prototype but missing in the object]\",\"on\":\"[Er
+ror - defined in the prototype but missing in the object]\",\"prependListener\":\"[Error - defined in the prototype but missing in the object]\",\"once\":\"[Error - define
+d in the prototype but missing in the object]\",\"prependOnceListener\":\"[Error - defined in the prototype but missing in the object]\",\"removeListener\":\"[Error - defi
+ned in the prototype but missing in the object]\",\"off\":\"[Error - defined in the prototype but missing in the object]\",\"removeAllListeners\":\"[Error - defined in the
+ prototype but missing in the object]\",\"listeners\":\"[Error - defined in the prototype but missing in the object]\",\"rawListeners\":\"[Error - defined in the prototype
+ but missing in the object]\",\"listenerCount\":\"[Error - defined in the prototype but missing in the object]\"},\"timeout\":60000,\"_unrefTimer\":\"[Error - defined in t
+he prototype but missing in the object]\",\"_final\":\"[Error - defined in the prototype but missing in the object]\",\"setTimeout\":\"[Error - defined in the prototype bu
+t missing in the object]\",\"_onTimeout\":\"[Error - defined in the prototype but missing in the object]\",\"setNoDelay\":\"[Error - defined in the prototype but missing i
+n the object]\",\"setKeepAlive\":\"[Error - defined in the prototype but missing in the object]\",\"address\":\"[Error - defined in the prototype but missing in the object
+]\",\"_read\":\"[Error - defined in the prototype but missing in the object]\",\"end\":\"[Error - defined in the prototype but missing in the object]\",\"resetAndDestroy\"
+:\"[Error - defined in the prototype but missing in the object]\",\"pause\":\"[Error - defined in the prototype but missing in the object]\",\"resume\":\"[Error - defined 
+in the prototype but missing in the object]\",\"read\":\"[Error - defined in the prototype but missing in the object]\",\"destroySoon\":\"[Error - defined in the prototype
+ but missing in the object]\",\"_destroy\":\"[Error - defined in the prototype but missing in the object]\",\"_reset\":\"[Error - defined in the prototype but missing in t
+he object]\",\"_getpeername\":\"[Error - defined in the prototype but missing in the object]\",\"bytesRead\":\"[Error - defined in the prototype but missing in the object]
+\",\"remoteAddress\":\"[Error - defined in the prototype but missing in the object]\",\"remoteFamily\":\"[Error - defined in the prototype but missing in the object]\",\"r
+emotePort\":\"[Error - defined in the prototype but missing in the object]\",\"_getsockname\":\"[Error - defined in the prototype but missing in the object]\",\"localAddre
+ss\":\"[Error - defined in the prototype but missing in the object]\",\"localPort\":\"[Error - defined in the prototype but missing in the object]\",\"localFamily\":\"[Err
+or - defined in the prototype but missing in the object]\",\"_writeGeneric\":\"[Error - defined in the prototype but missing in the object]\",\"_writev\":\"[Error - define
+d in the prototype but missing in the object]\",\"_write\":\"[Error - defined in the prototype but missing in the object]\",\"_bytesDispatched\":\"[Error - defined in the 
+prototype but missing in the object]\",\"bytesWritten\":\"[Error - defined in the prototype but missing in the object]\",\"connect\":\"[Error - defined in the prototype bu
+t missing in the object]\",\"ref\":\"[Error - defined in the prototype but missing in the object]\",\"unref\":\"[Error - defined in the prototype but missing in the object
+]\",\"write\":\"[Error - defined in the prototype but missing in the object]\",\"cork\":\"[Error - defined in the prototype but missing in the object]\",\"uncork\":\"[Erro
+r - defined in the prototype but missing in the object]\",\"setDefaultEncoding\":\"[Error - defined in the prototype but missing in the object]\",\"destroy\":\"[Error - de
+fined in the prototype but missing in the object]\",\"_undestroy\":\"[Error - defined in the prototype but missing in the object]\",\"push\":\"[Error - defined in the prot
+otype but missing in the object]\",\"unshift\":\"[Error - defined in the prototype but missing in the object]\",\"isPaused\":\"[Error - defined in the prototype but missin
+g in the object]\",\"pipe\":\"[Error - defined in the prototype but missing in the object]\",\"unpipe\":\"[Error - defined in the prototype but missing in the object]\",\"
+removeListener\":\"[Error - defined in the prototype but missing in the object]\",\"off\":\"[Error - defined in the prototype but missing in the object]\",\"removeAllListe
+ners\":\"[Error - defined in the prototype but missing in the object]\",\"wrap\":\"[Error - defined in the prototype but missing in the object]\",\"iterator\":\"[Error - d
+efined in the prototype but missing in the object]\",\"eventNames\":\"[Error - defined in the prototype but missing in the object]\",\"setMaxListeners\":\"[Error - defined
+ in the prototype but missing in the object]\",\"getMaxListeners\":\"[Error - defined in the prototype but missing in the object]\",\"emit\":\"[Error - defined in the prot
+otype but missing in the object]\",\"once\":\"[Error - defined in the prototype but missing in the object]\",\"prependOnceListener\":\"[Error - defined in the prototype bu
+t missing in the object]\",\"listeners\":\"[Error - defined in the prototype but missing in the object]\",\"rawListeners\":\"[Error - defined in the prototype but missing 
+in the object]\",\"listenerCount\":\"[Error - defined in the prototype but missing in the object]\"},\"httpVersionMajor\":1,\"httpVersionMinor\":1,\"httpVersion\":\"1.1\",
+\"complete\":true,\"rawHeaders\":[\"host\",\"us-central1-dashboard-mictlan-dev.cloudfunctions.net\",\"content-length\",\"53569\",\"pragma\",\"no-cache\",\"cache-control\",
+\"no-cache\",\"sec-ch-ua-platform\",\"\\\"Windows\\\"\",\"authorization\",\"Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6ImY1MzMwMzNhMTMzYWQyM2EyYzlhZGNmYzE4YzRlM2E3MWFmYWY2MjkiLCJ0
+eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vZGFzaGJvYXJkLW1pY3RsYW4tZGV2IiwiYXVkIjoiZGFzaGJvYXJkLW1pY3RsYW4tZGV2IiwiYXV0aF90aW1lIjoxNzcwNTY4NDU3LCJ1
+c2VyX2lkIjoia1k3YjRta0NOOU9BbE9qWWlycHNsN3M3b2U3MyIsInN1YiI6ImtZN2I0bWtDTjlPQWxPallpcnBzbDdzN29lNzMiLCJpYXQiOjE3NzE3OTkyMzYsImV4cCI6MTc3MTgwMjgzNiwiZW1haWwiOiJhZG1pbkBleGF
+tcGxlLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJlbWFpbCI6WyJhZG1pbkBleGFtcGxlLmNvbSJdfSwic2lnbl9pbl9wcm92aWRlciI6InBhc3N3b3JkIn19.yvuT4nMDY
+cngN7HM2j11oqPwMNFRalQwBG_9l2QoQrmBZv_WR0zquQFeqYER0Fj9PlPFKa0wCALHERZ88PqoZWYHzCtGGVy04oITA_ZnkuZaCG_h02sjG6iZW4KaPFT3nzoXkDkfoKdZ4h_0nnV1bqaglOs3FnuaeAl8DSeLA9ds0ADnYDvJ
+-ehv71TYmn8KumOnwjOxJo8Vdg32ivA_U50LdE14L2ybladbEeDyqGrZVzbVtMGwU2kcGaqd9LzeP1gCrTz74QEiDrinjR-Gm589zrBU3YDOemxbM8gCbOi4KFbFKwBNctFoBAcZ6MzP_rmYyBi7t6Aa_BGmBiTvpw\",\"user
+-agent\",\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"sec-ch-ua\",\"\\\"Not:A-Brand\\\";v=\\\"99\\
+\", \\\"Google Chrome\\\";v=\\\"145\\\", \\\"Chromium\\\";v=\\\"145\\\"\",\"content-type\",\"application/json\",\"sec-ch-ua-mobile\",\"?0\",\"accept\",\"*/*\",\"origin\",\
+"http://localhost:5173\",\"sec-fetch-site\",\"cross-site\",\"sec-fetch-mode\",\"cors\",\"sec-fetch-dest\",\"empty\",\"referer\",\"http://localhost:5173/\",\"accept-languag
+e\",\"en-US,en;q=0.9,es-US;q=0.8,es;q=0.7,fr-US;q=0.6,fr;q=0.5\",\"priority\",\"u=1, i\",\"x-cloud-trace-context\",\"cad3473bfab7a4c9094c4fbfa409321c/5504456761680740810\"
+,\"x-forwarded-proto\",\"https\",\"traceparent\",\"00-cad3473bfab7a4c9094c4fbfa409321c-4c63c242c97a41ca-00\",\"x-forwarded-for\",\"2.138.199.254\",\"forwarded\",\"for=\\\"
+2.138.199.254\\\";proto=https\",\"accept-encoding\",\"gzip, deflate, br, zstd\"],\"rawTrailers\":[],\"joinDuplicateHeaders\":null,\"aborted\":false,\"upgrade\":false,\"url
+\":\"/\",\"method\":\"POST\",\"statusCode\":null,\"statusMessage\":null,\"client\":{\"connecting\":false,\"_hadError\":false,\"_parent\":null,\"_host\":null,\"_closeAfterH
+andlingError\":false,\"_events\":{\"close\":[null,null,null],\"error\":[null,null],\"end\":[null,null]},\"_readableState\":{\"highWaterMark\":65536,\"buffer\":[],\"bufferI
+ndex\":0,\"length\":0,\"pipes\":[],\"awaitDrainWriters\":null},\"_writableState\":{\"highWaterMark\":65536,\"length\":0,\"corked\":0,\"writelen\":0,\"bufferedIndex\":0,\"p
+endingcb\":0,\"getBuffer\":\"[Error - defined in the prototype but missing in the object]\"},\"allowHalfOpen\":true,\"_eventsCount\":8,\"_sockname\":null,\"_pendingData\":
+null,\"_pendingEncoding\":\"\",\"server\":{\"requestTimeout\":300000,\"headersTimeout\":60000,\"keepAliveTimeout\":5000,\"keepAliveTimeoutBuffer\":1000,\"connectionsChecki
+ngInterval\":30000,\"requireHostHeader\":true,\"rejectNonStandardBodyWrites\":false,\"_events\":\"[Circular]\",\"_eventsCount\":3,\"_connections\":1,\"_handle\":{\"reading
+\":false,\"open\":\"[Error - defined in the prototype but missing in the object]\",\"bind\":\"[Error - defined in the prototype but missing in the object]\",\"listen\":\"[
+Error - defined in the prototype but missing in the object]\",\"connect\":\"[Error - defined in the prototype but missing in the object]\",\"bind6\":\"[Error - defined in 
+the prototype but missing in the object]\",\"connect6\":\"[Error - defined in the prototype but missing in the object]\",\"getsockname\":\"[Error - defined in the prototyp
+e but missing in the object]\",\"getpeername\":\"[Error - defined in the prototype but missing in the object]\",\"setNoDelay\":\"[Error - defined in the prototype but miss
+ing in the object]\",\"setKeepAlive\":\"[Error - defined in the prototype but missing in the object]\",\"reset\":\"[Error - defined in the prototype but missing in the obj
+ect]\",\"writeQueueSize\":\"[Error - defined in the prototype but missing in the object]\",\"setBlocking\":\"[Error - defined in the prototype but missing in the object]\"
+,\"readStart\":\"[Error - defined in the prototype but missing in the object]\",\"readStop\":\"[Error - defined in the prototype but missing in the object]\",\"shutdown\":
+\"[Error - defined in the prototype but missing in the object]\",\"useUserBuffer\":\"[Error - defined in the prototype but missing in the object]\",\"writev\":\"[Error - d
+efined in the prototype but missing in the object]\",\"writeBuffer\":\"[Error - defined in the prototype but missing in the object]\",\"writeAsciiString\":\"[Error - defin
+ed in the prototype but missing in the object]\",\"writeUtf8String\":\"[Error - defined in the prototype but missing in the object]\",\"writeUcs2String\":\"[Error - define
+d in the prototype but missing in the object]\",\"writeLatin1String\":\"[Error - defined in the prototype but missing in the object]\",\"isStreamBase\":\"[Error - defined 
+in the prototype but missing in the object]\",\"close\":\"[Error - defined in the prototype but missing in the object]\",\"hasRef\":\"[Error - defined in the prototype but
+ missing in the object]\",\"ref\":\"[Error - defined in the prototype but missing in the object]\",\"unref\":\"[Error - defined in the prototype but missing in the object]
+\",\"getAsyncId\":\"[Error - defined in the prototype but missing in the object]\",\"asyncReset\":\"[Error - defined in the prototype but missing in the object]\",\"getPro
+viderType\":\"[Error - defined in the prototype but missing in the object]\"},\"_usingWorkers\":false,\"_workers\":[],\"_unref\":false,\"_listeningId\":2,\"allowHalfOpen\"
+:true,\"pauseOnConnect\":false,\"noDelay\":true,\"keepAlive\":false,\"keepAliveInitialDelay\":0,\"highWaterMark\":65536,\"httpAllowHalfOpen\":false,\"timeout\":0,\"maxHead
+ersCount\":null,\"maxRequestsPerSocket\":0,\"_connectionKey\":\"6::::8080\",\"close\":\"[Error - defined in the prototype but missing in the object]\",\"closeAllConnection
+s\":\"[Error - defined in the prototype but missing in the object]\",\"closeIdleConnections\":\"[Error - defined in the prototype but missing in the object]\",\"setTimeout
+\":\"[Error - defined in the prototype but missing in the object]\",\"_listen2\":\"[Error - defined in the prototype but missing in the object]\",\"listen\":\"[Error - def
+ined in the prototype but missing in the object]\",\"listening\":\"[Error - defined in the prototype but missing in the object]\",\"address\":\"[Error - defined in the pro
+totype but missing in the object]\",\"getConnections\":\"[Error - defined in the prototype but missing in the object]\",\"_emitCloseIfDrained\":\"[Error - defined in the p
+rototype but missing in the object]\",\"_setupWorker\":\"[Error - defined in the prototype but missing in the object]\",\"ref\":\"[Error - defined in the prototype but mis
+sing in the object]\",\"unref\":\"[Error - defined in the prototype but missing in the object]\",\"setMaxListeners\":\"[Error - defined in the prototype but missing in the
+ object]\",\"getMaxListeners\":\"[Error - defined in the prototype but missing in the object]\",\"emit\":\"[Error - defined in the prototype but missing in the object]\",\
+"addListener\":\"[Error - defined in the prototype but missing in the object]\",\"on\":\"[Error - defined in the prototype but missing in the object]\",\"prependListener\"
+:\"[Error - defined in the prototype but missing in the object]\",\"once\":\"[Error - defined in the prototype but missing in the object]\",\"prependOnceListener\":\"[Erro
+r - defined in the prototype but missing in the object]\",\"removeListener\":\"[Error - defined in the prototype but missing in the object]\",\"off\":\"[Error - defined in
+ the prototype but missing in the object]\",\"removeAllListeners\":\"[Error - defined in the prototype but missing in the object]\",\"listeners\":\"[Error - defined in the
+ prototype but missing in the object]\",\"rawListeners\":\"[Error - defined in the prototype but missing in the object]\",\"listenerCount\":\"[Error - defined in the proto
+type but missing in the object]\",\"eventNames\":\"[Error - defined in the prototype but missing in the object]\"},\"_server\":{\"requestTimeout\":300000,\"headersTimeout\
+":60000,\"keepAliveTimeout\":5000,\"keepAliveTimeoutBuffer\":1000,\"connectionsCheckingInterval\":30000,\"requireHostHeader\":true,\"rejectNonStandardBodyWrites\":false,\"
+_events\":\"[Circular]\",\"_eventsCount\":3,\"_connections\":1,\"_handle\":{\"reading\":false,\"open\":\"[Error - defined in the prototype but missing in the object]\",\"b
+ind\":\"[Error - defined in the prototype but missing in the object]\",\"listen\":\"[Error - defined in the prototype but missing in the object]\",\"connect\":\"[Error - d
+efined in the prototype but missing in the object]\",\"bind6\":\"[Error - defined in the prototype but missing in the object]\",\"connect6\":\"[Error - defined in the prot
+otype but missing in the object]\",\"getsockname\":\"[Error - defined in the prototype but missing in the object]\",\"getpeername\":\"[Error - defined in the prototype but
+ missing in the object]\",\"setNoDelay\":\"[Error - defined in the prototype but missing in the object]\",\"setKeepAlive\":\"[Error - defined in the prototype but missing 
+in the object]\",\"reset\":\"[Error - defined in the prototype but missing in the object]\",\"writeQueueSize\":\"[Error - defined in the prototype but missing in the objec
+t]\",\"setBlocking\":\"[Error - defined in the prototype but missing in the object]\",\"readStart\":\"[Error - defined in the prototype but missing in the object]\",\"read
+Stop\":\"[Error - defined in the prototype but missing in the object]\",\"shutdown\":\"[Error - defined in the prototype but missing in the object]\",\"useUserBuffer\":\"[
+Error - defined in the prototype but missing in the object]\",\"writev\":\"[Error - defined in the prototype but missing in the object]\",\"writeBuffer\":\"[Error - define
+d in the prototype but missing in the object]\",\"writeAsciiString\":\"[Error - defined in the prototype but missing in the object]\",\"writeUtf8String\":\"[Error - define
+d in the prototype but missing in the object]\",\"writeUcs2String\":\"[Error - defined in the prototype but missing in the object]\",\"writeLatin1String\":\"[Error - defin
+ed in the prototype but missing in the object]\",\"isStreamBase\":\"[Error - defined in the prototype but missing in the object]\",\"close\":\"[Error - defined in the prot
+otype but missing in the object]\",\"hasRef\":\"[Error - defined in the prototype but missing in the object]\",\"ref\":\"[Error - defined in the prototype but missing in t
+he object]\",\"unref\":\"[Error - defined in the prototype but missing in the object]\",\"getAsyncId\":\"[Error - defined in the prototype but missing in the object]\",\"a
+syncReset\":\"[Error - defined in the prototype but missing in the object]\",\"getProviderType\":\"[Error - defined in the prototype but missing in the object]\"},\"_using
+Workers\":false,\"_workers\":[],\"_unref\":false,\"_listeningId\":2,\"allowHalfOpen\":true,\"pauseOnConnect\":false,\"noDelay\":true,\"keepAlive\":false,\"keepAliveInitial
+Delay\":0,\"highWaterMark\":65536,\"httpAllowHalfOpen\":false,\"timeout\":0,\"maxHeadersCount\":null,\"maxRequestsPerSocket\":0,\"_connectionKey\":\"6::::8080\",\"close\":
+\"[Error - defined in the prototype but missing in the object]\",\"closeAllConnections\":\"[Error - defined in the prototype but missing in the object]\",\"closeIdleConnec
+tions\":\"[Error - defined in the prototype but missing in the object]\",\"setTimeout\":\"[Error - defined in the prototype but missing in the object]\",\"_listen2\":\"[Er
+ror - defined in the prototype but missing in the object]\",\"listen\":\"[Error - defined in the prototype but missing in the object]\",\"listening\":\"[Error - defined in
+ the prototype but missing in the object]\",\"address\":\"[Error - defined in the prototype but missing in the object]\",\"getConnections\":\"[Error - defined in the proto
+type but missing in the object]\",\"_emitCloseIfDrained\":\"[Error - defined in the prototype but missing in the object]\",\"_setupWorker\":\"[Error - defined in the proto
+type but missing in the object]\",\"ref\":\"[Error - defined in the prototype but missing in the object]\",\"unref\":\"[Error - defined in the prototype but missing in the
+ object]\",\"setMaxListeners\":\"[Error - defined in the prototype but missing in the object]\",\"getMaxListeners\":\"[Error - defined in the prototype but missing in the 
+object]\",\"emit\":\"[Error - defined in the prototype but missing in the object]\",\"addListener\":\"[Error - defined in the prototype but missing in the object]\",\"on\"
+:\"[Error - defined in the prototype but missing in the object]\",\"prependListener\":\"[Error - defined in the prototype but missing in the object]\",\"once\":\"[Error - 
+defined in the prototype but missing in the object]\",\"prependOnceListener\":\"[Error - defined in the prototype but missing in the object]\",\"removeListener\":\"[Error 
+- defined in the prototype but missing in the object]\",\"off\":\"[Error - defined in the prototype but missing in the object]\",\"removeAllListeners\":\"[Error - defined 
+in the prototype but missing in the object]\",\"listeners\":\"[Error - defined in the prototype but missing in the object]\",\"rawListeners\":\"[Error - defined in the pro
+totype but missing in the object]\",\"listenerCount\":\"[Error - defined in the prototype but missing in the object]\",\"eventNames\":\"[Error - defined in the prototype b
+ut missing in the object]\"},\"parser\":{\"0\":null,\"_headers\":[],\"_url\":\"\",\"socket\":\"[Circular]\",\"incoming\":\"[Circular]\",\"outgoing\":null,\"maxHeaderPairs\
+":2000,\"_consumed\":true,\"joinDuplicateHeaders\":null,\"close\":\"[Error - defined in the prototype but missing in the object]\",\"free\":\"[Error - defined in the proto
+type but missing in the object]\",\"remove\":\"[Error - defined in the prototype but missing in the object]\",\"execute\":\"[Error - defined in the prototype but missing i
+n the object]\",\"finish\":\"[Error - defined in the prototype but missing in the object]\",\"initialize\":\"[Error - defined in the prototype but missing in the object]\"
+,\"pause\":\"[Error - defined in the prototype but missing in the object]\",\"resume\":\"[Error - defined in the prototype but missing in the object]\",\"consume\":\"[Erro
+r - defined in the prototype but missing in the object]\",\"unconsume\":\"[Error - defined in the prototype but missing in the object]\",\"getCurrentBuffer\":\"[Error - de
+fined in the prototype but missing in the object]\",\"getAsyncId\":\"[Error - defined in the prototype but missing in the object]\",\"asyncReset\":\"[Error - defined in th
+e prototype but missing in the object]\",\"getProviderType\":\"[Error - defined in the prototype but missing in the object]\"},\"_paused\":false,\"_httpMessage\":{\"_event
+s\":\"[Circular]\",\"_eventsCount\":4,\"outputData\":[],\"outputSize\":0,\"writable\":true,\"destroyed\":false,\"_last\":false,\"chunkedEncoding\":false,\"shouldKeepAlive\
+":true,\"maxRequestsOnConnectionReached\":false,\"_defaultKeepAlive\":true,\"useChunkedEncodingByDefault\":true,\"sendDate\":true,\"_removedConnection\":false,\"_removedCo
+ntLen\":false,\"_removedTE\":false,\"strictContentLength\":false,\"_contentLength\":null,\"_hasBody\":true,\"_trailer\":\"\",\"finished\":false,\"_headerSent\":false,\"_cl
+osed\":false,\"_header\":null,\"_keepAliveTimeout\":5000,\"req\":\"[Circular]\",\"_sent100\":false,\"_expect_continue\":false,\"_maxRequestsPerSocket\":0,\"locals\":\"[Cir
+cular]\",\"app\":\"[Error - defined in the prototype but missing in the object]\",\"status\":\"[Error - defined in the prototype but missing in the object]\",\"links\":\"[
+Error - defined in the prototype but missing in the object]\",\"send\":\"[Error - defined in the prototype but missing in the object]\",\"json\":\"[Error - defined in the 
+prototype but missing in the object]\",\"jsonp\":\"[Error - defined in the prototype but missing in the object]\",\"sendStatus\":\"[Error - defined in the prototype but mi
+ssing in the object]\",\"sendFile\":\"[Error - defined in the prototype but missing in the object]\",\"sendfile\":\"[Error - defined in the prototype but missing in the ob
+ject]\",\"download\":\"[Error - defined in the prototype but missing in the object]\",\"type\":\"[Error - defined in the prototype but missing in the object]\",\"contentTy
+pe\":\"[Error - defined in the prototype but missing in the object]\",\"format\":\"[Error - defined in the prototype but missing in the object]\",\"attachment\":\"[Error -
+ defined in the prototype but missing in the object]\",\"append\":\"[Error - defined in the prototype but missing in the object]\",\"header\":\"[Error - defined in the pro
+totype but missing in the object]\",\"set\":\"[Error - defined in the prototype but missing in the object]\",\"get\":\"[Error - defined in the prototype but missing in the
+ object]\",\"clearCookie\":\"[Error - defined in the prototype but missing in the object]\",\"cookie\":\"[Error - defined in the prototype but missing in the object]\",\"l
+ocation\":\"[Error - defined in the prototype but missing in the object]\",\"redirect\":\"[Error - defined in the prototype but missing in the object]\",\"vary\":\"[Error 
+- defined in the prototype but missing in the object]\",\"render\":\"[Error - defined in the prototype but missing in the object]\",\"_finish\":\"[Error - defined in the p
+rototype but missing in the object]\",\"statusCode\":\"[Error - defined in the prototype but missing in the object]\",\"statusMessage\":\"[Error - defined in the prototype
+ but missing in the object]\",\"assignSocket\":\"[Error - defined in the prototype but missing in the object]\",\"detachSocket\":\"[Error - defined in the prototype but mi
+ssing in the object]\",\"writeContinue\":\"[Error - defined in the prototype but missing in the object]\",\"writeProcessing\":\"[Error - defined in the prototype but missi
+ng in the object]\",\"writeEarlyHints\":\"[Error - defined in the prototype but missing in the object]\",\"_implicitHeader\":\"[Error - defined in the prototype but missin
+g in the object]\",\"writeHead\":\"[Error - defined in the prototype but missing in the object]\",\"writeHeader\":\"[Error - defined in the prototype but missing in the ob
+ject]\",\"_renderHeaders\":\"[Error - defined in the prototype but missing in the object]\",\"cork\":\"[Error - defined in the prototype but missing in the object]\",\"unc
+ork\":\"[Error - defined in the prototype but missing in the object]\",\"setTimeout\":\"[Error - defined in the prototype but missing in the object]\",\"destroy\":\"[Error
+ - defined in the prototype but missing in the object]\",\"_send\":\"[Error - defined in the prototype but missing in the object]\",\"_writeRaw\":\"[Error - defined in the
+ prototype but missing in the object]\",\"_storeHeader\":\"[Error - defined in the prototype but missing in the object]\",\"setHeader\":\"[Error - defined in the prototype
+ but missing in the object]\",\"setHeaders\":\"[Error - defined in the prototype but missing in the object]\",\"appendHeader\":\"[Error - defined in the prototype but miss
+ing in the object]\",\"getHeader\":\"[Error - defined in the prototype but missing in the object]\",\"getHeaderNames\":\"[Error - defined in the prototype but missing in t
+he object]\",\"getRawHeaderNames\":\"[Error - defined in the prototype but missing in the object]\",\"getHeaders\":\"[Error - defined in the prototype but missing in the o
+bject]\",\"hasHeader\":\"[Error - defined in the prototype but missing in the object]\",\"removeHeader\":\"[Error - defined in the prototype but missing in the object]\",\
+"headersSent\":\"[Error - defined in the prototype but missing in the object]\",\"write\":\"[Error - defined in the prototype but missing in the object]\",\"addTrailers\":
+\"[Error - defined in the prototype but missing in the object]\",\"end\":\"[Error - defined in the prototype but missing in the object]\",\"_flush\":\"[Error - defined in 
+the prototype but missing in the object]\",\"_flushOutput\":\"[Error - defined in the prototype but missing in the object]\",\"flushHeaders\":\"[Error - defined in the pro
+totype but missing in the object]\",\"pipe\":\"[Error - defined in the prototype but missing in the object]\",\"eventNames\":\"[Error - defined in the prototype but missin
+g in the object]\",\"setMaxListeners\":\"[Error - defined in the prototype but missing in the object]\",\"getMaxListeners\":\"[Error - defined in the prototype but missing
+ in the object]\",\"emit\":\"[Error - defined in the prototype but missing in the object]\",\"addListener\":\"[Error - defined in the prototype but missing in the object]\
+",\"on\":\"[Error - defined in the prototype but missing in the object]\",\"prependListener\":\"[Error - defined in the prototype but missing in the object]\",\"once\":\"[
+Error - defined in the prototype but missing in the object]\",\"prependOnceListener\":\"[Error - defined in the prototype but missing in the object]\",\"removeListener\":\
+"[Error - defined in the prototype but missing in the object]\",\"off\":\"[Error - defined in the prototype but missing in the object]\",\"removeAllListeners\":\"[Error - 
+defined in the prototype but missing in the object]\",\"listeners\":\"[Error - defined in the prototype but missing in the object]\",\"rawListeners\":\"[Error - defined in
+ the prototype but missing in the object]\",\"listenerCount\":\"[Error - defined in the prototype but missing in the object]\"},\"timeout\":60000,\"_unrefTimer\":\"[Error 
+- defined in the prototype but missing in the object]\",\"_final\":\"[Error - defined in the prototype but missing in the object]\",\"setTimeout\":\"[Error - defined in th
+e prototype but missing in the object]\",\"_onTimeout\":\"[Error - defined in the prototype but missing in the object]\",\"setNoDelay\":\"[Error - defined in the prototype
+ but missing in the object]\",\"setKeepAlive\":\"[Error - defined in the prototype but missing in the object]\",\"address\":\"[Error - defined in the prototype but missing
+ in the object]\",\"_read\":\"[Error - defined in the prototype but missing in the object]\",\"end\":\"[Error - defined in the prototype but missing in the object]\",\"res
+etAndDestroy\":\"[Error - defined in the prototype but missing in the object]\",\"pause\":\"[Error - defined in the prototype but missing in the object]\",\"resume\":\"[Er
+ror - defined in the prototype but missing in the object]\",\"read\":\"[Error - defined in the prototype but missing in the object]\",\"destroySoon\":\"[Error - defined in
+ the prototype but missing in the object]\",\"_destroy\":\"[Error - defined in the prototype but missing in the object]\",\"_reset\":\"[Error - defined in the prototype bu
+t missing in the object]\",\"_getpeername\":\"[Error - defined in the prototype but missing in the object]\",\"bytesRead\":\"[Error - defined in the prototype but missing 
+in the object]\",\"remoteAddress\":\"[Error - defined in the prototype but missing in the object]\",\"remoteFamily\":\"[Error - defined in the prototype but missing in the
+ object]\",\"remotePort\":\"[Error - defined in the prototype but missing in the object]\",\"_getsockname\":\"[Error - defined in the prototype but missing in the object]\
+",\"localAddress\":\"[Error - defined in the prototype but missing in the object]\",\"localPort\":\"[Error - defined in the prototype but missing in the object]\",\"localF
+amily\":\"[Error - defined in the prototype but missing in the object]\",\"_writeGeneric\":\"[Error - defined in the prototype but missing in the object]\",\"_writev\":\"[
+Error - defined in the prototype but missing in the object]\",\"_write\":\"[Error - defined in the prototype but missing in the object]\",\"_bytesDispatched\":\"[Error - d
+efined in the prototype but missing in the object]\",\"bytesWritten\":\"[Error - defined in the prototype but missing in the object]\",\"connect\":\"[Error - defined in th
+e prototype but missing in the object]\",\"ref\":\"[Error - defined in the prototype but missing in the object]\",\"unref\":\"[Error - defined in the prototype but missing
+ in the object]\",\"write\":\"[Error - defined in the prototype but missing in the object]\",\"cork\":\"[Error - defined in the prototype but missing in the object]\",\"un
+cork\":\"[Error - defined in the prototype but missing in the object]\",\"setDefaultEncoding\":\"[Error - defined in the prototype but missing in the object]\",\"destroy\"
+:\"[Error - defined in the prototype but missing in the object]\",\"_undestroy\":\"[Error - defined in the prototype but missing in the object]\",\"push\":\"[Error - defin
+ed in the prototype but missing in the object]\",\"unshift\":\"[Error - defined in the prototype but missing in the object]\",\"isPaused\":\"[Error - defined in the protot
+ype but missing in the object]\",\"pipe\":\"[Error - defined in the prototype but missing in the object]\",\"unpipe\":\"[Error - defined in the prototype but missing in th
+e object]\",\"removeListener\":\"[Error - defined in the prototype but missing in the object]\",\"off\":\"[Error - defined in the prototype but missing in the object]\",\"
+removeAllListeners\":\"[Error - defined in the prototype but missing in the object]\",\"wrap\":\"[Error - defined in the prototype but missing in the object]\",\"iterator\
+":\"[Error - defined in the prototype but missing in the object]\",\"eventNames\":\"[Error - defined in the prototype but missing in the object]\",\"setMaxListeners\":\"[E
+rror - defined in the prototype but missing in the object]\",\"getMaxListeners\":\"[Error - defined in the prototype but missing in the object]\",\"emit\":\"[Error - defin
+ed in the prototype but missing in the object]\",\"once\":\"[Error - defined in the prototype but missing in the object]\",\"prependOnceListener\":\"[Error - defined in th
+e prototype but missing in the object]\",\"listeners\":\"[Error - defined in the prototype but missing in the object]\",\"rawListeners\":\"[Error - defined in the prototyp
+e but missing in the object]\",\"listenerCount\":\"[Error - defined in the prototype but missing in the object]\"},\"_consuming\":true,\"_dumped\":false,\"baseUrl\":\"\",\
+"originalUrl\":\"/\",\"_parsedUrl\":{\"protocol\":null,\"slashes\":null,\"auth\":null,\"host\":null,\"port\":null,\"hostname\":null,\"hash\":null,\"search\":null,\"query\"
+:null,\"pathname\":\"/\",\"path\":\"/\",\"href\":\"/\",\"_raw\":\"/\",\"parse\":\"[Error - defined in the prototype but missing in the object]\",\"format\":\"[Error - defi
+ned in the prototype but missing in the object]\",\"resolve\":\"[Error - defined in the prototype but missing in the object]\",\"resolveObject\":\"[Error - defined in the 
+prototype but missing in the object]\",\"parseHost\":\"[Error - defined in the prototype but missing in the object]\"},\"params\":{\"0\":\"\"},\"query\":{},\"res\":{\"_eve
+nts\":\"[Circular]\",\"_eventsCount\":4,\"outputData\":[],\"outputSize\":0,\"writable\":true,\"destroyed\":false,\"_last\":false,\"chunkedEncoding\":false,\"shouldKeepAliv
+e\":true,\"maxRequestsOnConnectionReached\":false,\"_defaultKeepAlive\":true,\"useChunkedEncodingByDefault\":true,\"sendDate\":true,\"_removedConnection\":false,\"_removed
+ContLen\":false,\"_removedTE\":false,\"strictContentLength\":false,\"_contentLength\":null,\"_hasBody\":true,\"_trailer\":\"\",\"finished\":false,\"_headerSent\":false,\"_
+closed\":false,\"_header\":null,\"_keepAliveTimeout\":5000,\"req\":\"[Circular]\",\"_sent100\":false,\"_expect_continue\":false,\"_maxRequestsPerSocket\":0,\"locals\":\"[C
+ircular]\",\"app\":\"[Error - defined in the prototype but missing in the object]\",\"status\":\"[Error - defined in the prototype but missing in the object]\",\"links\":\
+"[Error - defined in the prototype but missing in the object]\",\"send\":\"[Error - defined in the prototype but missing in the object]\",\"json\":\"[Error - defined in th
+e prototype but missing in the object]\",\"jsonp\":\"[Error - defined in the prototype but missing in the object]\",\"sendStatus\":\"[Error - defined in the prototype but 
+missing in the object]\",\"sendFile\":\"[Error - defined in the prototype but missing in the object]\",\"sendfile\":\"[Error - defined in the prototype but missing in the 
+object]\",\"download\":\"[Error - defined in the prototype but missing in the object]\",\"type\":\"[Error - defined in the prototype but missing in the object]\",\"content
+Type\":\"[Error - defined in the prototype but missing in the object]\",\"format\":\"[Error - defined in the prototype but missing in the object]\",\"attachment\":\"[Error
+ - defined in the prototype but missing in the object]\",\"append\":\"[Error - defined in the prototype but missing in the object]\",\"header\":\"[Error - defined in the p
+rototype but missing in the object]\",\"set\":\"[Error - defined in the prototype but missing in the object]\",\"get\":\"[Error - defined in the prototype but missing in t
+he object]\",\"clearCookie\":\"[Error - defined in the prototype but missing in the object]\",\"cookie\":\"[Error - defined in the prototype but missing in the object]\",\
+"location\":\"[Error - defined in the prototype but missing in the object]\",\"redirect\":\"[Error - defined in the prototype but missing in the object]\",\"vary\":\"[Erro
+r - defined in the prototype but missing in the object]\",\"render\":\"[Error - defined in the prototype but missing in the object]\",\"_finish\":\"[Error - defined in the
+ prototype but missing in the object]\",\"statusCode\":\"[Error - defined in the prototype but missing in the object]\",\"statusMessage\":\"[Error - defined in the prototy
+pe but missing in the object]\",\"assignSocket\":\"[Error - defined in the prototype but missing in the object]\",\"detachSocket\":\"[Error - defined in the prototype but 
+missing in the object]\",\"writeContinue\":\"[Error - defined in the prototype but missing in the object]\",\"writeProcessing\":\"[Error - defined in the prototype but mis
+sing in the object]\",\"writeEarlyHints\":\"[Error - defined in the prototype but missing in the object]\",\"_implicitHeader\":\"[Error - defined in the prototype but miss
+ing in the object]\",\"writeHead\":\"[Error - defined in the prototype but missing in the object]\",\"writeHeader\":\"[Error - defined in the prototype but missing in the 
+object]\",\"_renderHeaders\":\"[Error - defined in the prototype but missing in the object]\",\"cork\":\"[Error - defined in the prototype but missing in the object]\",\"u
+ncork\":\"[Error - defined in the prototype but missing in the object]\",\"setTimeout\":\"[Error - defined in the prototype but missing in the object]\",\"destroy\":\"[Err
+or - defined in the prototype but missing in the object]\",\"_send\":\"[Error - defined in the prototype but missing in the object]\",\"_writeRaw\":\"[Error - defined in t
+he prototype but missing in the object]\",\"_storeHeader\":\"[Error - defined in the prototype but missing in the object]\",\"setHeader\":\"[Error - defined in the prototy
+pe but missing in the object]\",\"setHeaders\":\"[Error - defined in the prototype but missing in the object]\",\"appendHeader\":\"[Error - defined in the prototype but mi
+ssing in the object]\",\"getHeader\":\"[Error - defined in the prototype but missing in the object]\",\"getHeaderNames\":\"[Error - defined in the prototype but missing in
+ the object]\",\"getRawHeaderNames\":\"[Error - defined in the prototype but missing in the object]\",\"getHeaders\":\"[Error - defined in the prototype but missing in the
+ object]\",\"hasHeader\":\"[Error - defined in the prototype but missing in the object]\",\"removeHeader\":\"[Error - defined in the prototype but missing in the object]\"
+,\"headersSent\":\"[Error - defined in the prototype but missing in the object]\",\"write\":\"[Error - defined in the prototype but missing in the object]\",\"addTrailers\
+":\"[Error - defined in the prototype but missing in the object]\",\"end\":\"[Error - defined in the prototype but missing in the object]\",\"_flush\":\"[Error - defined i
+n the prototype but missing in the object]\",\"_flushOutput\":\"[Error - defined in the prototype but missing in the object]\",\"flushHeaders\":\"[Error - defined in the p
+rototype but missing in the object]\",\"pipe\":\"[Error - defined in the prototype but missing in the object]\",\"eventNames\":\"[Error - defined in the prototype but miss
+ing in the object]\",\"setMaxListeners\":\"[Error - defined in the prototype but missing in the object]\",\"getMaxListeners\":\"[Error - defined in the prototype but missi
+ng in the object]\",\"emit\":\"[Error - defined in the prototype but missing in the object]\",\"addListener\":\"[Error - defined in the prototype but missing in the object
+]\",\"on\":\"[Error - defined in the prototype but missing in the object]\",\"prependListener\":\"[Error - defined in the prototype but missing in the object]\",\"once\":\
+"[Error - defined in the prototype but missing in the object]\",\"prependOnceListener\":\"[Error - defined in the prototype but missing in the object]\",\"removeListener\"
+:\"[Error - defined in the prototype but missing in the object]\",\"off\":\"[Error - defined in the prototype but missing in the object]\",\"removeAllListeners\":\"[Error 
+- defined in the prototype but missing in the object]\",\"listeners\":\"[Error - defined in the prototype but missing in the object]\",\"rawListeners\":\"[Error - defined 
+in the prototype but missing in the object]\",\"listenerCount\":\"[Error - defined in the prototype but missing in the object]\"},\"body\":{\"data\":{\"image\":\"/9j/4AAQS
+kZJRgABAQEBLAEsAAD/4QCeRXhpZgAASUkqAAgAAAAEAA4BAgAxAAAAPgAAAJiCAgAXAAAAbwAAABoBBQABAAAAhgAAABsBBQABAAAAjgAAAAAAAABUaW4gQ2FuIHdpdGggUHJvZHVjdGlvbiBEYXRlIGFuZCBFeHBpcmF0aW9u
+IGRhdGUubmdvbnphZ2F2aWxsYXJyb3lhPzIwMjIsAQAAAQAAACwBAAABAAAA/+EFvmh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8APD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQ
+iPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyI+Cgk8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgoJCTxyZGY6RGVzY3JpcHRpb24gcm
+RmOmFib3V0PSIiIHhtbG5zOnBob3Rvc2hvcD0iaHR0cDovL25zLmFkb2JlLmNvbS9waG90b3Nob3AvMS4wLyIgeG1sbnM6SXB0YzR4bXBDb3JlPSJodHRwOi8vaXB0Yy5vcmcvc3RkL0lwdGM0eG1wQ29yZS8xLjAveG1sbnMvI
+iAgIHhtbG5zOkdldHR5SW1hZ2VzR0lGVD0iaHR0cDovL3htcC5nZXR0eWltYWdlcy5jb20vZ2lmdC8xLjAvIiB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iIHhtbG5zOnBsdXM9Imh0dHA6Ly9u
+cy51c2VwbHVzLm9yZy9sZGYveG1wLzEuMC8iICB4bWxuczppcHRjRXh0PSJodHRwOi8vaXB0Yy5vcmcvc3RkL0lwdGM0eG1wRXh0LzIwMDgtMDItMjkvIiB4bWxuczp4bXBSaWdodHM9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGF
+wLzEuMC9yaWdodHMvIiBkYzpSaWdodHM9Im5nb256YWdhdmlsbGFycm95YcKpMjAyMiIgcGhvdG9zaG9wOkNyZWRpdD0iR2V0dHkgSW1hZ2VzIiBHZXR0eUltYWdlc0dJRlQ6QXNzZXRJRD0iMTQ0MTU0NDA1NiIgeG1wUmlnaH
+RzOldlYlN0YXRlbWVudD0iaHR0cHM6Ly93d3cuZ2V0dHlpbWFnZXMuY29tL2V1bGE/dXRtX21lZGl1bT1vcmdhbmljJmFtcDt1dG1fc291cmNlPWdvb2dsZSZhbXA7dXRtX2NhbXBhaWduPWlwdGN1cmwiIHBsdXM6RGF0YU1pb
+mluZz0iaHR0cDovL25zLnVzZXBsdXMub3JnL2xkZi92b2NhYi9ETUktUFJPSElCSVRFRC1FWENFUFRTRUFSQ0hFTkdJTkVJTkRFWElORyIgPgo8ZGM6Y3JlYXRvcj48cmRmOlNlcT48cmRmOmxpPk5hbmN5YmVsbGUgR29uemFn
+YSBWaWxsYXJyb3lhPC9yZGY6bGk+PC9yZGY6U2VxPjwvZGM6Y3JlYXRvcj48ZGM6ZGVzY3JpcHRpb24+PHJkZjpBbHQ+PHJkZjpsaSB4bWw6bGFuZz0ieC1kZWZhdWx0Ij5UaW4gQ2FuIHdpdGggUHJvZHVjdGlvbiBEYXRlIGF
+uZCBFeHBpcmF0aW9uIGRhdGUuPC9yZGY6bGk+PC9yZGY6QWx0PjwvZGM6ZGVzY3JpcHRpb24+CjxwbHVzOkxpY2Vuc29yPjxyZGY6U2VxPjxyZGY6bGkgcmRmOnBhcnNlVHlwZT0nUmVzb3VyY2UnPjxwbHVzOkxpY2Vuc29yVV
+JMPmh0dHBzOi8vd3d3LmdldHR5aW1hZ2VzLmNvbS9kZXRhaWwvMTQ0MTU0NDA1Nj91dG1fbWVkaXVtPW9yZ2FuaWMmYW1wO3V0bV9zb3VyY2U9Z29vZ2xlJmFtcDt1dG1fY2FtcGFpZ249aXB0Y3VybDwvcGx1czpMaWNlbnNvc
+lVSTD48L3JkZjpsaT48L3JkZjpTZXE+PC9wbHVzOkxpY2Vuc29yPgoJCTwvcmRmOkRlc2NyaXB0aW9uPgoJPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KPD94cGFja2V0IGVuZD0idyI/Pgr/7QCiUGhvdG9zaG9wIDMuMAA4QklN
+BAQAAAAAAIYcAlAAHU5hbmN5YmVsbGUgR29uemFnYSBWaWxsYXJyb3lhHAJ4ADFUaW4gQ2FuIHdpdGggUHJvZHVjdGlvbiBEYXRlIGFuZCBFeHBpcmF0aW9uIGRhdGUuHAJ0ABhuZ29uemFnYXZpbGxhcnJveWHCqTIwMjIcAm4
+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",
++  "insertId": "699b82f7000c1fae5851658e",
++  "resource": {
++    "type": "cloud_run_revision",
++    "labels": {
++      "location": "us-central1",
++      "configuration_name": "extractexpirydatefromimage",
++      "project_id": "dashboard-mictlan-dev",
++      "revision_name": "extractexpirydatefromimage-00003-xad",
++      "service_name": "extractexpirydatefromimage"
++    }
++  },
++  "timestamp": "2026-02-22T22:28:07.794542Z",
++  "labels": {
++    "instanceId": "00da6cd2c410e0126e5e92d55c12287d9ccbef9040300f6777a6f10cf1808a6ddcda681e0cea4eb2b353ea91a6cb7576669fddbace98d0afe9ac3409a4a38df3827a047aa2a744e07e69560
+9e65ff4",
++    "goog-managed-by": "cloudfunctions",
++    "goog-drz-cloudfunctions-location": "us-central1",
++    "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs22:nodejs22_20260213_22_22_0_RC00",
++    "firebase-functions-hash": "80539b4b5e629aa5b3e9fffedc338d1374ac168f",
++    "goog-drz-cloudfunctions-id": "extractexpirydatefromimage",
++    "deployment-callable": "true"
++  },
++  "logName": "projects/dashboard-mictlan-dev/logs/run.googleapis.com%2Fstdout",
++  "receiveTimestamp": "2026-02-22T22:28:08.112142940Z"
++}
+\ No newline at end of file
+diff --git a/src/components/AdminPanel.jsx b/src/components/AdminPanel.jsx
+index 0dcf84f..a2d9de2 100644
+--- a/src/components/AdminPanel.jsx
++++ b/src/components/AdminPanel.jsx
+@@ -1,31 +1,16 @@
+ import { useState } from 'react';
+-import { Settings, RefreshCw, Trash2, PackagePlus } from 'lucide-react'; // Added PackagePlus
++import { Settings, RefreshCw, Trash2, PackagePlus } from 'lucide-react';
+ import { resetDatabase, emptyDatabase } from '../firebase/dbActions';
+-import Card from './Card'; // Import the Card component
+-import { getFunctions, httpsCallable } from 'firebase/functions'; // Import for Cloud Functions
+-import { initializeApp } from 'firebase/app'; // <-- New import
+-
+-// --- Firebase Config for Production Functions (YOU MUST REPLACE THESE PLACEHOLDERS) ---
+-const prodFirebaseConfig = {
+-  apiKey: "AIzaSyBqeD6RJXz168H30hVkMieMDu7M6gqAaXg",
+-  authDomain: "dashboard-mictlan-prod.firebaseapp.com",
+-  projectId: "dashboard-mictlan-prod", // This should be your prod project ID
+-  storageBucket: "dashboard-mictlan-prod.firebasestorage.app",
+-  messagingSenderId: "976040868703",
+-  appId: "1:976040868703:web:b891881c0f94fbaee114ea"
+-};
+-
+-// Initialize a separate Firebase app instance for production functions
+-const prodFunctionsApp = initializeApp(prodFirebaseConfig, 'prodFunctions');
+-
++import Card from './Card';
++import { getFunctions, httpsCallable } from 'firebase/functions';
+
+ export default function AdminPanel() {
+   const [tableCount, setTableCount] = useState(4);
+   const [isUpdating, setIsUpdating] = useState(false);
+   const [isEmptying, setIsEmptying] = useState(false);
+-  const [isPopulatingProducts, setIsPopulatingProducts] = useState(false); // New state
+-  const [isClearingProducts, setIsClearingProducts] = useState(false);     // New state
+-  const [productFeedback, setProductFeedback] = useState('');              // New state for product actions
++  const [isPopulatingProducts, setIsPopulatingProducts] = useState(false);
++  const [isClearingProducts, setIsClearingProducts] = useState(false);
++  const [productFeedback, setProductFeedback] = useState('');
+
+   const handleReset = async () => {
+     setIsUpdating(true);
+@@ -57,7 +42,7 @@ export default function AdminPanel() {
+   const handlePopulateProducts = async () => {
+       setIsPopulatingProducts(true);
+       setProductFeedback('Remplissage des produits de test...');
+-      const functions = getFunctions(prodFunctionsApp); // Get functions instance from prodFunctionsApp
++      const functions = getFunctions();
+       const populateProductsCallable = httpsCallable(functions, 'populateProducts');
+
+       try {
+@@ -78,7 +63,7 @@ export default function AdminPanel() {
+       }
+       setIsClearingProducts(true);
+       setProductFeedback('Vidage de la collection de produits...');
+-      const functions = getFunctions(prodFunctionsApp); // Get functions instance from prodFunctionsApp
++      const functions = getFunctions();
+       const clearProductsCallable = httpsCallable(functions, 'clearProducts');
+
+       try {
+@@ -155,4 +140,4 @@ export default function AdminPanel() {
+       </div>
+     </Card>
+   );
+-}
+\ No newline at end of file
++}
+diff --git a/src/components/ImageCapture.jsx b/src/components/ImageCapture.jsx
+new file mode 100644
+index 0000000..2b80644
+--- /dev/null
++++ b/src/components/ImageCapture.jsx
+@@ -0,0 +1,89 @@
++import React, { useRef, useState, useEffect } from 'react';
++
++const ImageCapture = ({ onCapture }) => {
++    const videoRef = useRef(null);
++    const photoRef = useRef(null);
++    const [hasStream, setHasStream] = useState(false);
++    const [photo, setPhoto] = useState(null);
++
++    const getVideo = () => {
++        navigator.mediaDevices.getUserMedia({
++            video: { width: 400, height: 300 }
++        })
++        .then(stream => {
++            let video = videoRef.current;
++            if (video) {
++                video.srcObject = stream;
++                video.play();
++                setHasStream(true);
++            }
++        })
++        .catch(err => {
++            console.error("Error accessing camera:", err);
++            setHasStream(false);
++        });
++    };
++
++    const takePhoto = () => {
++        let width = 400;
++        let height = 300;
++
++        let video = videoRef.current;
++        let photo = photoRef.current;
++
++        if (photo && video) {
++            let ctx = photo.getContext('2d');
++            photo.width = width;
++            photo.height = height;
++
++            ctx.drawImage(video, 0, 0, width, height);
++            const imageData = photo.toDataURL('image/png');
++            setPhoto(imageData);
++            onCapture(imageData); // Pass the captured image data to the parent component
++        }
++    };
++
++    const clearPhoto = () => {
++        let photo = photoRef.current;
++        if (photo) {
++            let ctx = photo.getContext('2d');
++            ctx.clearRect(0, 0, photo.width, photo.height);
++            setPhoto(null);
++        }
++    };
++
++    useEffect(() => {
++        getVideo();
++        return () => {
++            // Cleanup: stop video stream when component unmounts
++            if (videoRef.current && videoRef.current.srcObject) {
++                videoRef.current.srcObject.getTracks().forEach(track => track.stop());
++            }
++        };
++    }, []);
++
++    return (
++        <div className="image-capture-container">
++            <h3>Capture Product Photo</h3>
++            {hasStream ? (
++                <>
++                    <video ref={videoRef} className="camera-feed"></video>
++                    <button onClick={takePhoto}>Take Photo</button>
++                </>
++            ) : (
++                <p>Camera access denied or not available. Please allow camera access.</p>
++            )}
++
++            <canvas ref={photoRef} style={{ display: 'none' }}></canvas>
++            {photo && (
++                <div className="photo-preview">
++                    <h4>Captured Photo:</h4>
++                    <img src={photo} alt="Captured" />
++                    <button onClick={clearPhoto}>Retake Photo</button>
++                </div>
++            )}
++        </div>
++    );
++};
++
++export default ImageCapture;
+\ No newline at end of file
+diff --git a/src/components/ProductForm.jsx b/src/components/ProductForm.jsx
+index 31330d8..1002abd 100644
+--- a/src/components/ProductForm.jsx
++++ b/src/components/ProductForm.jsx
+@@ -1,21 +1,26 @@
+ import { useState } from 'react';
+ import { db } from '../firebase/config';
+ import { collection, addDoc, Timestamp } from 'firebase/firestore';
++import { getFunctions, httpsCallable } from 'firebase/functions';
+ import Card from './Card';
+-import { PackagePlus } from 'lucide-react'; // Icon for adding product
++import { PackagePlus } from 'lucide-react';
++import ImageCapture from './ImageCapture'; // Import ImageCapture component
+
+ export default function ProductForm() {
+   const [productName, setProductName] = useState('');
+   const [weight, setWeight] = useState('');
+-  const [unit, setUnit] = useState('g'); // Default unit
++  const [unit, setUnit] = useState('g');
+   const [expiryDate, setExpiryDate] = useState('');
+   const [quantity, setQuantity] = useState(1);
+   const [category, setCategory] = useState('');
+   const [price, setPrice] = useState('');
+   const [photo, setPhoto] = useState(null);
+-  const [expiryPhoto, setExpiryPhoto] = useState(null);
++  const [capturedExpiryImage, setCapturedExpiryImage] = useState(null); // New state for captured image data
++
+   const [isSaving, setIsSaving] = useState(false);
+   const [feedback, setFeedback] = useState('');
++  const [isScanning, setIsScanning] = useState(false);
++  const [ocrFeedback, setOcrFeedback] = useState('');
+
+   const handleSaveProduct = async (e) => {
+     e.preventDefault();
+@@ -50,7 +55,7 @@ export default function ProductForm() {
+       setCategory('');
+       setPrice('');
+       setPhoto(null);
+-      setExpiryPhoto(null);
++      setCapturedExpiryImage(null); // Clear captured image
+     } catch (error) {
+       console.error("Error adding product:", error);
+       setFeedback('Erreur lors de l\'ajout du produit.');
+@@ -60,6 +65,39 @@ export default function ProductForm() {
+     }
+   };
+
++  const handleScanProduct = async (imageData) => { // Accept imageData directly
++    if (!imageData && !capturedExpiryImage) { // Check both if imageData is passed or if it's already in state
++      setOcrFeedback('Veuillez capturer une photo de la date de péremption.');
++      setTimeout(() => setOcrFeedback(''), 3000);
++      return;
++    }
++
++    setIsScanning(true);
++    setOcrFeedback('Scan en cours...');
++
++    try {
++      const base64Image = (imageData || capturedExpiryImage).split(',')[1]; // Use imageData if provided, else from state
++      console.log("Base64 image size:", base64Image ? base64Image.length : 'null');
++
++      const functions = getFunctions();
++      const extractExpiryDate = httpsCallable(functions, 'extractExpiryDateFromImage');
++
++      const result = await extractExpiryDate({ image: base64Image });
++      if (result.data.expiryDate) {
++        setExpiryDate(result.data.expiryDate);
++        setOcrFeedback('Date détectée avec succès !');
++      } else {
++        setOcrFeedback(result.data.message || 'Aucune date valide détectée.');
++      }
++    } catch (error) {
++      console.error("Error during OCR scan:", error);
++      setOcrFeedback(`Erreur lors du scan: ${error.message}`);
++    } finally {
++      setIsScanning(false);
++      setTimeout(() => setOcrFeedback(''), 3000);
++    }
++  };
++
+   return (
+     <Card title="Ajouter un Produit" titleIcon={<PackagePlus />}>
+       <form onSubmit={handleSaveProduct} className="space-y-4 text-xs">
+@@ -169,28 +207,12 @@ export default function ProductForm() {
+           )}
+         </div>
+
+-        <div>
+-          <label htmlFor="expiryPhoto" className="block text-gray-400 mb-1">Photo Date Péremption (si non visible)</label>
+-          <input
+-            type="file"
+-            id="expiryPhoto"
+-            onChange={(e) => setExpiryPhoto(e.target.files[0])}
+-            className="w-full p-2 bg-black/40 text-white border border-gray-700 rounded focus:outline-none focus:ring-1 focus:ring-mictlan-gold"
+-            accept="image/*"
+-          />
+-          {expiryPhoto && (
+-            <img src={URL.createObjectURL(expiryPhoto)} alt="Prévisualisation de la date" className="mt-2 max-h-32 object-contain rounded" />
+-          )}
+-        </div>
+-
+-        <button 
+-          type="button"
+-          onClick={() => alert('OCR functionality to be implemented')}
+-          className="w-full bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 rounded-lg text-xs uppercase tracking-widest flex items-center justify-center tra
+nsition-all"
+-        >
+-          Scan Product
+-        </button>
+-        <button 
++        <ImageCapture onCapture={(imageData) => {
++            setCapturedExpiryImage(imageData);
++            handleScanProduct(imageData);
++        }} />
++        {ocrFeedback && <p className="mt-2 text-center text-sm text-blue-400">{ocrFeedback}</p>}
++        <button
+           type="submit"
+           disabled={isSaving}
+           className="w-full bg-mictlan-gold hover:bg-mictlan-gold/80 text-black font-bold py-2 px-4 rounded-lg text-xs uppercase tracking-widest flex items-center justify
+-center transition-all disabled:opacity-50"
+diff --git a/src/recreate app prompt/recreate app prompt.md b/src/prompts/recreate app prompt.md
+similarity index 100%
+rename from src/recreate app prompt/recreate app prompt.md
+rename to src/prompts/recreate app prompt.md
+diff --git a/release_automation_prompt.md b/src/prompts/release_automation_prompt.md
+similarity index 100%
+rename from release_automation_prompt.md
+rename to src/prompts/release_automation_prompt.md
+diff --git a/src/todolist/Imagen de WhatsApp 2025-10-22 a las 19.32.15_10998638.jpg b/src/todolist/Imagen de WhatsApp 2025-10-22 a las 19.32.15_10998638.jpg
+deleted file mode 100644
+index 4d780fe..0000000
+Binary files a/src/todolist/Imagen de WhatsApp 2025-10-22 a las 19.32.15_10998638.jpg and /dev/null differ
+diff --git a/src/todolist/Imagen de WhatsApp 2025-10-22 a las 19.32.16_3e55e588.jpg b/src/todolist/Imagen de WhatsApp 2025-10-22 a las 19.32.16_3e55e588.jpg
+deleted file mode 100644
+index d3497fa..0000000
+Binary files a/src/todolist/Imagen de WhatsApp 2025-10-22 a las 19.32.16_3e55e588.jpg and /dev/null differ
+diff --git a/src/todolist/Imagen de WhatsApp 2025-10-22 a las 19.32.16_5b6737c7.jpg b/src/todolist/Imagen de WhatsApp 2025-10-22 a las 19.32.16_5b6737c7.jpg
+deleted file mode 100644
+index b67c33c..0000000
+Binary files a/src/todolist/Imagen de WhatsApp 2025-10-22 a las 19.32.16_5b6737c7.jpg and /dev/null differ
+diff --git a/src/todolist/Imagen de WhatsApp 2025-10-22 a las 19.32.16_614a61da.jpg b/src/todolist/Imagen de WhatsApp 2025-10-22 a las 19.32.16_614a61da.jpg
+deleted file mode 100644
+index 1d35e7c..0000000
+Binary files a/src/todolist/Imagen de WhatsApp 2025-10-22 a las 19.32.16_614a61da.jpg and /dev/null differ
+diff --git a/src/todolist/Imagen de WhatsApp 2025-10-22 a las 19.32.16_824881ba.jpg b/src/todolist/Imagen de WhatsApp 2025-10-22 a las 19.32.16_824881ba.jpg
+deleted file mode 100644
+index eec58bb..0000000
+Binary files a/src/todolist/Imagen de WhatsApp 2025-10-22 a las 19.32.16_824881ba.jpg and /dev/null differ
+diff --git a/src/todolist/Imagen de WhatsApp 2025-10-22 a las 19.32.16_892025b9.jpg b/src/todolist/Imagen de WhatsApp 2025-10-22 a las 19.32.16_892025b9.jpg
+deleted file mode 100644
+index 3dea649..0000000
+Binary files a/src/todolist/Imagen de WhatsApp 2025-10-22 a las 19.32.16_892025b9.jpg and /dev/null differ
+diff --git a/src/todolist/Imagen de WhatsApp 2025-10-22 a las 19.32.16_8c429915.jpg b/src/todolist/Imagen de WhatsApp 2025-10-22 a las 19.32.16_8c429915.jpg
+deleted file mode 100644
+index eec58bb..0000000
+Binary files a/src/todolist/Imagen de WhatsApp 2025-10-22 a las 19.32.16_8c429915.jpg and /dev/null differ
+diff --git a/src/todolist/todolist.txt b/src/todolist/todolist.txt
+index 396ac3f..9372955 100644
+--- a/src/todolist/todolist.txt
++++ b/src/todolist/todolist.txt
+@@ -1,24 +1,32 @@
+-Besoins des nouvelles fonctionnalites suivantes:
+-   1. pouvoir enregistrer la date de péremption des produits :
+-   ○ deux écrans
+-   § un écran qui te permet de faire les suggestions aux clients pour les inciter à consommer les trucs qui vont bientôt périmés
+-   § un autre écran qui affiche les décisions que tu dois prendre un moment donné pour chaque produit sur le point de perimer
+-           o idealement, on prend le produit en question en photo, ce qui permet d'identifier le produit et ses diverses caracteristiques dont son poids par exemple, et u
+ne deuxieme photo
+-   si necessaire pour montrer le detail de la date de peremption si cette date n'est pas visible sur la photo globale
+-   2. **Gestion des produits**:
+-       * **Saisie**:
+-           * Nom produit (texte)
+-             * Poids (numérique, unité)
+-           * Date péremption (date)
+-           * Photos (capture ou sélection)
+-       * **Identification**: OCR pour date péremption sur photo.
+-   3. **Écran Suggestions Clients**:
+-       * Affichage produits < 7 jours péremption.
+-       * Filtres: catégorie, prix.
+-       * Options: réduction, offre groupée.
+-   4. **Écran Décisions Produits**:
+-       * Liste produits < 3 jours péremption.
+-       * Actions: promotion, don, destruction.
+-       * Statut décision (à traiter, traité).
+-   5. **Notifications**: Rappels pour décisions produits.
+-   6. **Reporting**: Statistiques produits périmés, actions prises.
+\ No newline at end of file
++# To-Do List
++
++## New Features Requirements
++
++- [x] Implement product expiration date feature:
++    - [x] Screen for customer suggestions (inciting to consume soon-to-expire products)
++    - [x] Screen to display decisions for products about to expire
++    - [ ] Take photos for product identification (OCR for expiration date) - *See Enhancement Proposals*
++
++- [x] **Product Management**:
++    - [x] **Entry**: Name, Weight, Expiration Date, Photos
++    - [ ] **Identification**: OCR for expiration date from photo - *See Enhancement Proposals*
++
++- [x] **Customer Suggestions Screen**:
++    - [x] Display products < 7 days from expiration.
++    - [x] Filters: category, price.
++    - [x] Options: reduction, grouped offer.
++
++- [x] **Product Decisions Screen**:
++    - [x] List products < 3 days from expiration.
++    - [x] Actions: promotion, donation, destruction.
++    - [x] Decision status (to be processed, processed).
++
++- [x] **Notifications**: Reminders for product decisions.
++
++- [x] **Reporting**: Statistics for expired products and actions taken.
++
++## Enhancement Proposals
++
++- [ ] OCR for Expiration Date Scanning
++- [ ] Enhanced Date Validation
++- [ ] Visual Cues in Product List
+\ No newline at end of file
+Process Group PGID: 12552

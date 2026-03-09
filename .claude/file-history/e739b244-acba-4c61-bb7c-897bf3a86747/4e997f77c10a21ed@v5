@@ -1,0 +1,61 @@
+{
+  "name": "El Mictlan Dashboard",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:24",
+  "postCreateCommand": "bash .devcontainer/setup.sh",
+  "forwardPorts": [3000, 5000],
+  "portsAttributes": {
+    "3000": { "label": "App", "onAutoForward": "openBrowser" },
+    "5000": { "label": "Dev Server" }
+  },
+  "secrets": {
+    "VITE_FIREBASE_API_KEY": {
+      "description": "Firebase API key (found in Firebase console > Project settings)"
+    },
+    "VITE_FIREBASE_AUTH_DOMAIN": {
+      "description": "Firebase auth domain, e.g. your-project.firebaseapp.com"
+    },
+    "VITE_FIREBASE_PROJECT_ID": {
+      "description": "Firebase project ID, e.g. your-project-dev"
+    },
+    "VITE_FIREBASE_STORAGE_BUCKET": {
+      "description": "Firebase storage bucket, e.g. your-project.firebasestorage.app"
+    },
+    "VITE_FIREBASE_MESSAGING_SENDER_ID": {
+      "description": "Firebase messaging sender ID (found in Firebase console > Project settings)"
+    },
+    "VITE_FIREBASE_APP_ID": {
+      "description": "Firebase app ID (found in Firebase console > Project settings)"
+    },
+    "VITE_OPENWEATHER_API_KEY": {
+      "description": "OpenWeather API key (found at openweathermap.org/api_keys)"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "firebase.vscode-firebase-explorer",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "anthropic.claude-code",
+        "continue.continue",
+        "github.vscode-github-actions",
+        "github.vscode-pull-request-github",
+        "google.gemini-cli-vscode-ide-companion",
+        "google.geminicodeassist",
+        "ms-vscode-remote.remote-containers",
+        "ms-vscode.powershell",
+        "redhat.vscode-yaml",
+        "ritwickdey.liveserver"
+      ],
+      "settings": {
+        "claudeCode.preferredLocation": "panel",
+        "claudeCode.selectedModel": "haiku",
+        "workbench.editor.showTabs": "single",
+        "diffEditor.ignoreTrimWhitespace": false,
+        "diffEditor.renderSideBySide": true,
+        "liveServer.settings.port": 8080,
+        "liveServer.settings.ignoreFiles": [".vscode/**", "**/*.scss", "**/*.sass", "**/*.ts"]
+      }
+    }
+  }
+}

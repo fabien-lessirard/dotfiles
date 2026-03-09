@@ -1,0 +1,3 @@
+Output: fatal: not under version control, source=cloud_function_deployment_summary.txt, destination=docs/cloud_function_deployment_summary.txt
+Exit Code: 1
+Process Group PGID: 14184

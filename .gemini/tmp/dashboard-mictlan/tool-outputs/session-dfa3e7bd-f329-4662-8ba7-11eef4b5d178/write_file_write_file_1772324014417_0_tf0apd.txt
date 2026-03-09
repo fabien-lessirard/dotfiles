@@ -1,0 +1,3 @@
+{
+  "error": "Path not in workspace: Attempted path \"C:\\Users\\acodu\\.gemini\\tmp\\cleaning_commit_msg.txt\" resolves outside the allowed workspace directories: C:\\Users\\acodu\\dev\\dashboard_mictlan or the project temp directory: C:\\Users\\acodu\\.gemini\\tmp\\dashboard-mictlan"
+}

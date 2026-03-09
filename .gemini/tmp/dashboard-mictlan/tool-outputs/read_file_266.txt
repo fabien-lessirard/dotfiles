@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+@theme {
+  --color-mictlan-gold: #FFD700;
+  --color-mictlan-red: #DC2626;
+  --color-mictlan-black: #000000;
+  --color-mictlan-dark-gray: #1A1A1A;
+}
+
+:root {
+  background-color: var(--color-mictlan-black);
+  color: white;
+}

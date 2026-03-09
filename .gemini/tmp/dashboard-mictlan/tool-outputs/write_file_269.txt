@@ -1,0 +1,46 @@
+Successfully overwrote file: C:\Users\acodu\dev\dashboard_mictlan\src\todolist\todolist.txt. User modified the `content` to be: # To-Do List
+
+## Backend Environment Setup
+
+- [ ] Rename `sa-key-admin.json` to `sa-key-staging.json`.
+- [ ] Create dedicated service account keys for development and production (`sa-key-dev.json`, `sa-key-prod.json`).
+- [ ] Modify CJS scripts to dynamically load the correct service account key based on `FIREBASE_ADMIN_SA_KEY_PATH` environment variable.
+- [ ] Update `package.json` with scripts to set the `FIREBASE_ADMIN_SA_KEY_PATH` environment variable for different environments.
+- [ ] Modify `populate-products-db.cjs` to use the dynamic key loading.
+
+fix the following:
+- remplir produits
+    - sur dev, modifie la db de staging
+    - sur staging: "Erreur lors du remplissage des produits: Response is missing data field." et modifie la db de staging (ok)
+    - sur prod: modifie la db de staging
+
+## New Features Requirements
+
+- [x] Implement product expiration date feature:
+    - [x] Screen for customer suggestions (inciting to consume soon-to-expire products)
+    - [x] Screen to display decisions for products about to expire
+    - [ ] Take photos for product identification (OCR for expiration date) - *See Enhancement Proposals*
+
+- [x] **Product Management**:
+    - [x] **Entry**: Name, Weight, Expiration Date, Photos
+    - [ ] **Identification**: OCR for expiration date from photo - *See Enhancement Proposals*
+
+- [x] **Customer Suggestions Screen**:
+    - [x] Display products < 7 days from expiration.
+    - [x] Filters: category, price.
+    - [x] Options: reduction, grouped offer.
+
+- [x] **Product Decisions Screen**:
+    - [x] List products < 3 days from expiration.
+    - [x] Actions: promotion, donation, destruction.
+    - [x] Decision status (to be processed, processed).
+
+- [x] **Notifications**: Reminders for product decisions.
+
+- [x] **Reporting**: Statistics for expired products and actions taken.
+
+## Enhancement Proposals
+
+- [ ] OCR for Expiration Date Scanning
+- [ ] Enhanced Date Validation
+- [ ] Visual Cues in Product List

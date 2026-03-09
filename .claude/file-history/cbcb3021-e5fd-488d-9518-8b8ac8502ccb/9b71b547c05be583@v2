@@ -1,0 +1,32 @@
+import { useState, useEffect } from 'react';
+import { db } from '../firebase/config';
+import { collection, query, orderBy, limit, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore';
+
+export function useLogs() {
+  const [logs, setLogs] = useState([]);
+
+  useEffect(() => {
+    const q = query(collection(db, "logs"), orderBy("timestamp", "desc"), limit(500));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setLogs(data);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const addLog = async (message, type = 'info', user = null, category = 'system') => {
+    try {
+      await addDoc(collection(db, "logs"), {
+        message,
+        type,
+        category,
+        user: user ? (user.isAnonymous ? 'Anonyme' : user.email) : null,
+        timestamp: serverTimestamp()
+      });
+    } catch (err) {
+      console.error("Erreur log:", err);
+    }
+  };
+
+  return { logs, addLog };
+}

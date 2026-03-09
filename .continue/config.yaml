@@ -1,0 +1,37 @@
+name: Local Config
+version: 1.0.0
+schema: v1
+
+models:
+  # --- Tes modèles Cloud (Identiques) ---
+  - uses: anthropic/claude-3.5-sonnet
+    with:
+      OPENROUTER_API_KEY: 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
+  - uses: google/gemini-2.5-pro
+    with:
+      GEMINI_API_KEY: AIzaSyCwKb7RYzqIdZm1Xmq52tQIzKFlr8EbFTI
+  - uses: google/gemini-2.0-flash
+    with:
+      GEMINI_API_KEY: AIzaSyCwKb7RYzqIdZm1Xmq52tQIzKFlr8EbFTI
+
+  # --- Tes nouveaux modèles Locaux (Via host.docker.internal) ---
+  - name: "Qwen 2.5 Coder 7B (Generation)"
+    provider: ollama
+    model: qwen2.5-coder:7b
+    apiBase: http://host.docker.internal:11434
+    # On force un petit contexte pour éviter le crash sur 6 Go
+    contextLength: 2048 
+
+# Désactive l'auto-complétion pour économiser 1.5 Go de VRAM
+tabAutocompleteModel:
+  disabled: true
+
+# Indispensable pour que l'IA "lise" ton code avant de générer
+embeddingsProvider:
+  provider: ollama
+  model: nomic-embed-text
+  apiBase: http://host.docker.internal:11434
+
+
+
+

@@ -1,0 +1,80 @@
+import React, { useState } from 'react';
+import ClientSuggestions from './ClientSuggestions';
+import ProductDecisions from './ProductDecisions';
+import ProductList from './ProductList';
+import ProductForm from './ProductForm';
+import DishForm from './DishForm'; // Import DishForm
+import DishList from './DishList'; // Import DishList
+import ProductReporting from './ProductReporting'; // Import ProductReporting
+import TestDataManager from './TestDataManager'; // Import TestDataManager
+import OpeningDaysManager from './OpeningDaysManager'; // Import OpeningDaysManager
+import Card from './Card';
+import { Package, Utensils } from 'lucide-react'; // Import icons
+
+const InventoryManagementDashboard = () => {
+  const [activeTab, setActiveTab] = useState('products-list'); // 'products-list', 'products-suggestions', 'products-decisions', 'add-product', 'dishes-list', 'add-dish', 'product-reports', 'test-data', 'opening-days'
+
+  const getTabClassName = (tabName) => {
+    return `px-4 py-2 text-sm font-medium ${
+      activeTab === tabName
+        ? 'bg-mictlan-gold text-black rounded-t-lg'
+        : 'text-gray-400 hover:text-mictlan-gold'
+    }`;
+  };
+
+  return (
+    <Card title="Gestion des Stocks">
+      <div className="mb-4 border-b border-gray-700 overflow-x-auto">
+        <nav className="-mb-px flex space-x-4">
+          <button onClick={() => setActiveTab('products-list')} className={getTabClassName('products-list')}>
+            Liste Produits
+          </button>
+          <button onClick={() => setActiveTab('products-suggestions')} className={getTabClassName('products-suggestions')}>
+            Suggestions Produits
+          </button>
+          <button onClick={() => setActiveTab('products-decisions')} className={getTabClassName('products-decisions')}>
+            Décisions Produits
+          </button>
+          <button onClick={() => setActiveTab('add-product')} className={getTabClassName('add-product')}>
+            Ajouter Produit
+          </button>
+          <button onClick={() => setActiveTab('dishes-list')} className={getTabClassName('dishes-list')}>
+            Liste Plats
+          </button>
+          <button onClick={() => setActiveTab('add-dish')} className={getTabClassName('add-dish')}>
+            Ajouter Plat
+          </button>
+          <button onClick={() => setActiveTab('product-reports')} className={getTabClassName('product-reports')}>
+            Rapports Produits
+          </button>
+          <button onClick={() => setActiveTab('test-data')} className={getTabClassName('test-data')}>
+            Données de Test
+          </button>
+          <button onClick={() => setActiveTab('opening-days')} className={getTabClassName('opening-days')}>
+            Jours d'Ouverture
+          </button>
+        </nav>
+      </div>
+
+      <div className="space-y-4">
+        {activeTab === 'products-list' && <ProductList />}
+        {activeTab === 'products-suggestions' && <ClientSuggestions />}
+        {activeTab === 'products-decisions' && <ProductDecisions />}
+        {activeTab === 'add-product' && <ProductForm />}
+        {activeTab === 'dishes-list' && <DishList />}
+        {activeTab === 'add-dish' && <DishForm />}
+        {activeTab === 'product-reports' && <ProductReporting />}
+        {activeTab === 'test-data' && (
+            <div className="flex flex-col gap-4">
+                <TestDataManager type="products" />
+                <div className="border-t border-gray-700 pt-4" /> {/* Separator */}
+                <TestDataManager type="dishes" />
+            </div>
+        )}
+        {activeTab === 'opening-days' && <OpeningDaysManager />}
+      </div>
+    </Card>
+  );
+};
+
+export default InventoryManagementDashboard;

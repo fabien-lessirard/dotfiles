@@ -1,0 +1,210 @@
+{
+  "sessionId": "4574729b-64b1-4f10-82fe-706e9a81a541",
+  "title": "Custom",
+  "workspaceDirectory": "file:///c%3A/Users/acodu/dev/dashboard_mictlan",
+  "history": [
+    {
+      "message": {
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "how to change shortcuts"
+          }
+        ],
+        "id": "38114a84-9320-4801-8403-adea5159c46c"
+      },
+      "contextItems": [],
+      "editorState": {
+        "type": "doc",
+        "content": [
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "how to change shortcuts"
+              }
+            ]
+          }
+        ]
+      },
+      "appliedRules": []
+    },
+    {
+      "message": {
+        "id": "69ead397-33b6-4b70-b8e0-94ea5a5b543e",
+        "role": "assistant",
+        "content": "I will start by listing the files in the current directory recursively to understand the repository's structure. Then, I'll search for \"shortcut\" or \"keybinding\" to find relevant files for modification. This will help me determine the best way to change the shortcuts.",
+        "toolCalls": [
+          {
+            "id": "f59622f5-cc1b-4d43-9568-12ada55fd3f9",
+            "type": "function",
+            "function": {
+              "name": "run_terminal_command",
+              "arguments": "{\"command\":\"ls -R\"}"
+            }
+          }
+        ]
+      },
+      "contextItems": [],
+      "toolCallStates": [
+        {
+          "status": "canceled",
+          "toolCall": {
+            "id": "f59622f5-cc1b-4d43-9568-12ada55fd3f9",
+            "type": "function",
+            "function": {
+              "name": "run_terminal_command",
+              "arguments": "{\"command\":\"ls -R\"}"
+            }
+          },
+          "toolCallId": "f59622f5-cc1b-4d43-9568-12ada55fd3f9",
+          "parsedArgs": {
+            "command": "ls -R"
+          },
+          "tool": {
+            "type": "function",
+            "displayTitle": "Run Terminal Command",
+            "wouldLikeTo": "run the following terminal command:",
+            "isCurrently": "running the following terminal command:",
+            "hasAlready": "ran the following terminal command:",
+            "readonly": false,
+            "group": "Built-In",
+            "function": {
+              "name": "run_terminal_command",
+              "description": "Run a terminal command in the current directory.\nThe shell is not stateful and will not remember any previous commands.      When a command is run in the background ALWAYS suggest using shell commands to stop it; NEVER suggest using Ctrl+C.      When suggesting subsequent shell commands ALWAYS format them in shell command blocks.      Do NOT perform actions requiring special/admin privileges.      IMPORTANT: To edit files, use Edit/MultiEdit tools instead of bash commands (sed, awk, etc).      Choose terminal commands and scripts optimized for win32 and x64 and shell powershell.exe.",
+              "parameters": {
+                "type": "object",
+                "required": [
+                  "command"
+                ],
+                "properties": {
+                  "command": {
+                    "type": "string",
+                    "description": "The command to run. This will be passed directly into the IDE shell."
+                  },
+                  "waitForCompletion": {
+                    "type": "boolean",
+                    "description": "Whether to wait for the command to complete before returning. Default is true. Set to false to run the command in the background. Set to true to run the command in the foreground and wait to collect the output."
+                  }
+                }
+              }
+            },
+            "defaultToolPolicy": "allowedWithPermission",
+            "systemMessageDescription": {
+              "prefix": "To run a terminal command, use the run_terminal_command tool\nThe shell is not stateful and will not remember any previous commands.      When a command is run in the background ALWAYS suggest using shell commands to stop it; NEVER suggest using Ctrl+C.      When suggesting subsequent shell commands ALWAYS format them in shell command blocks.      Do NOT perform actions requiring special/admin privileges.      IMPORTANT: To edit files, use Edit/MultiEdit tools instead of bash commands (sed, awk, etc).      Choose terminal commands and scripts optimized for win32 and x64 and shell powershell.exe.\nYou can also optionally include the waitForCompletion argument set to false to run the command in the background.      \nFor example, to see the git log, you could respond with:",
+              "exampleArgs": [
+                [
+                  "command",
+                  "git log"
+                ]
+              ]
+            }
+          }
+        }
+      ],
+      "promptLogs": [
+        {
+          "modelTitle": "Gemini 2.5 Pro",
+          "modelProvider": "gemini",
+          "prompt": "<system>\n<important_rules>\n  You are in agent mode.\n\n  If you need to use multiple tools, you can call multiple read-only tools simultaneously.\n\n  Always include the language and file name in the info string when you write code blocks.\n  If you are editing \"src/main.py\" for example, your code block should start with '```python src/main.py'\n\n\nFor larger codeblocks (>20 lines), use brief language-appropriate placeholders for unmodified sections, e.g. '// ... existing code ...'\n\nHowever, only output codeblocks for suggestion and demonstration purposes, for example, when enumerating multiple hypothetical options. For implementing changes, use the edit tools.\n\n</important_rules>\n\n<user>\nhow to change shortcuts\n\n",
+          "completion": "<assistant>\nI will start by listing the files in the current\n\n<assistant>\n directory recursively to understand the repository's structure. Then, I'll search for \"shortcut\" or \"keybinding\" to\n\n<assistant>\n find relevant files for modification. This will help me determine the best way to change the shortcuts.\n\n<assistant>\n\nrun_terminal_command({\"command\":\"ls -R\"})\n\n"
+        }
+      ],
+      "isGatheringContext": false
+    },
+    {
+      "message": {
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "I mean continue shortcuts"
+          }
+        ],
+        "id": "e5a7e2b4-f3c2-4812-b999-07e8582192f9"
+      },
+      "contextItems": [],
+      "editorState": {
+        "type": "doc",
+        "content": [
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "I mean continue shortcuts"
+              }
+            ]
+          }
+        ]
+      },
+      "appliedRules": []
+    },
+    {
+      "message": {
+        "id": "5c7c2168-15eb-40f0-99c2-70ec32cfbda6",
+        "role": "assistant",
+        "content": "Could you please clarify what \"Continue shortcuts\" you are referring to? Are you talking about keyboard shortcuts for the Continue extension in your IDE (like VS Code)? Or are you referring to something else?"
+      },
+      "contextItems": [],
+      "promptLogs": [
+        {
+          "modelTitle": "Gemini 2.5 Pro",
+          "modelProvider": "gemini",
+          "prompt": "<system>\n<important_rules>\n  You are in agent mode.\n\n  If you need to use multiple tools, you can call multiple read-only tools simultaneously.\n\n  Always include the language and file name in the info string when you write code blocks.\n  If you are editing \"src/main.py\" for example, your code block should start with '```python src/main.py'\n\n\nFor larger codeblocks (>20 lines), use brief language-appropriate placeholders for unmodified sections, e.g. '// ... existing code ...'\n\nHowever, only output codeblocks for suggestion and demonstration purposes, for example, when enumerating multiple hypothetical options. For implementing changes, use the edit tools.\n\n</important_rules>\n\n<user>\nhow to change shortcuts\n\n<assistant>\nI will start by listing the files in the current directory recursively to understand the repository's structure. Then, I'll search for \"shortcut\" or \"keybinding\" to find relevant files for modification. This will help me determine the best way to change the shortcuts.\nrun_terminal_command({\"command\":\"ls -R\"})\n\n<tool>\nThe user cancelled this tool call.\n\n<user>\nI mean continue shortcuts\n\n",
+          "completion": "<assistant>\nCould you please clarify\n\n<assistant>\n what \"Continue shortcuts\" you are referring to? Are you talking about keyboard shortcuts for the Continue extension in your IDE (\n\n<assistant>\nlike VS Code)? Or are you referring to something else?\n\n"
+        }
+      ],
+      "isGatheringContext": false
+    },
+    {
+      "message": {
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "yes"
+          }
+        ],
+        "id": "ffe46705-0e70-4548-ae4d-4efbe357d927"
+      },
+      "contextItems": [],
+      "editorState": {
+        "type": "doc",
+        "content": [
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "yes"
+              }
+            ]
+          }
+        ]
+      },
+      "appliedRules": []
+    },
+    {
+      "message": {
+        "id": "0da24bb9-5ac9-4950-9129-acb7a66a895e",
+        "role": "assistant",
+        "content": "Of course. To change the keyboard shortcuts for the Continue extension in VS Code, you can follow these steps:\n\n1.  **Open Keyboard Shortcuts**:\n    *   Go to `File > Preferences > Keyboard Shortcuts`.\n    *   Alternatively, you can use the shortcut `Ctrl+K Ctrl+S` (or `Cmd+K Cmd+S` on Mac).\n\n2.  **Find the Continue Shortcuts**:\n    *   In the search bar at the top of the Keyboard Shortcuts editor, type `continue` to filter the list to only show shortcuts related to the Continue extension.\n\n3.  **Change a Shortcut**:\n    *   You will see a list of commands from the Continue extension.\n    *   Find the command you want to change the shortcut for.\n    *   Double-click on the keybinding in the `Keybinding` column.\n    *   A dialog will appear. Press the key combination you want to assign to the command and then press `Enter`.\n\n![Steps to change a VS Code shortcut](https://code.visualstudio.com/assets/docs/getstarted/keybindings/keybinding-editor.png)\n\nIf you prefer to edit the JSON file directly, you can click on the `Open Keyboard Shortcuts (JSON)` icon in the top right of the editor. This will open your `keybindings.json` file where you can manually define your keybindings.\n\nFor example, to change the shortcut for \"Ask a question with the selected code\", you would add an entry like this to your `keybindings.json`:\n\n```json\n[\n    {\n        \"key\": \"ctrl+shift+alt+c\",\n        \"command\": \"continue.quickFix\",\n        \"when\": \"editorTextFocus\"\n    }\n]\n```\n\nDo you have a specific shortcut you would like to change? I can guide you through it."
+      },
+      "contextItems": [],
+      "promptLogs": [
+        {
+          "modelTitle": "Gemini 2.5 Pro",
+          "modelProvider": "gemini",
+          "prompt": "<system>\n<important_rules>\n  You are in agent mode.\n\n  If you need to use multiple tools, you can call multiple read-only tools simultaneously.\n\n  Always include the language and file name in the info string when you write code blocks.\n  If you are editing \"src/main.py\" for example, your code block should start with '```python src/main.py'\n\n\nFor larger codeblocks (>20 lines), use brief language-appropriate placeholders for unmodified sections, e.g. '// ... existing code ...'\n\nHowever, only output codeblocks for suggestion and demonstration purposes, for example, when enumerating multiple hypothetical options. For implementing changes, use the edit tools.\n\n</important_rules>\n\n<user>\nhow to change shortcuts\n\n<assistant>\nI will start by listing the files in the current directory recursively to understand the repository's structure. Then, I'll search for \"shortcut\" or \"keybinding\" to find relevant files for modification. This will help me determine the best way to change the shortcuts.\nrun_terminal_command({\"command\":\"ls -R\"})\n\n<tool>\nThe user cancelled this tool call.\n\n<user>\nI mean continue shortcuts\n\n<assistant>\nCould you please clarify what \"Continue shortcuts\" you are referring to? Are you talking about keyboard shortcuts for the Continue extension in your IDE (like VS Code)? Or are you referring to something else?\n\n<user>\nyes\n\n",
+          "completion": "<assistant>\nOf course. To change the keyboard\n\n<assistant>\n shortcuts for the Continue extension in VS Code, you can follow these steps:\n\n1.  **Open Keyboard Shortcuts**:\n\n<assistant>\n\n    *   Go to `File > Preferences > Keyboard Shortcuts`.\n    *   Alternatively, you can use the shortcut\n\n<assistant>\n `Ctrl+K Ctrl+S` (or `Cmd+K Cmd+S` on Mac).\n\n2.\n\n<assistant>\n  **Find the Continue Shortcuts**:\n    *   In the search bar at the top of the Keyboard Shortcuts editor, type \n\n<assistant>\n`continue` to filter the list to only show shortcuts related to the Continue extension.\n\n3.  **Change a Shortcut**:\n    \n\n<assistant>\n*   You will see a list of commands from the Continue extension.\n    *   Find the command you want to change the\n\n<assistant>\n shortcut for.\n    *   Double-click on the keybinding in the `Keybinding` column.\n    *   A\n\n<assistant>\n dialog will appear. Press the key combination you want to assign to the command and then press `Enter`.\n\n\n\n<assistant>\n![Steps\n\n<assistant>\n to change a VS Code shortcut](https://code.visualstudio.com/assets/docs/getstarted/key\n\n<assistant>\nbindings/keybinding-editor.png)\n\n<assistant>\n\n\nIf you prefer to edit the JSON file directly, you can click on the `Open\n\n<assistant>\n Keyboard Shortcuts (JSON)` icon in the top right of the editor. This will open your `keybindings.json` file where\n\n<assistant>\n you can manually define your keybindings.\n\nFor example, to change the shortcut for \"Ask a question with the selected\n\n<assistant>\n code\", you would add an entry like this to your `keybindings.json`:\n\n\n\n<assistant>\n```json\n[\n    {\n\n<assistant>\n\n        \"key\": \"ctrl+shift+alt+c\",\n        \"command\": \"continue.quickFix\",\n\n<assistant>\n\n        \"when\": \"editorTextFocus\"\n    }\n]\n\n\n<assistant>\n```\n\n<assistant>\n\n\nDo you have a specific shortcut you would\n\n<assistant>\n like to change? I can guide you through it.\n\n"
+        }
+      ],
+      "isGatheringContext": false
+    }
+  ],
+  "mode": "agent",
+  "chatModelTitle": "Gemini 2.5 Pro"
+}

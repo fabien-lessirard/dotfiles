@@ -1,0 +1,3 @@
+{
+  "output": "Directory listing for C:\\Users\\acodu\\dev\\dashboard_mictlan\\functions:\n[DIR] node_modules\nindex.js\npackage-lock.json\npackage.json\n\n(1 ignored)"
+}

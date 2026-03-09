@@ -1,0 +1,37 @@
+{
+  "lastSelectedProfileForWorkspace": {
+    "file:///c%3A/Users/acodu/dev/dashboard_mictlan:::personal": "local",
+    "file:///c%3A/Users/acodu:::personal": "local",
+    "file:///c%3A/Users/acodu/dev/dashboard_mictlan&file:///c%3A/Users/acodu:::personal": "local",
+    ":::personal": "local",
+    "vscode-remote://dev-container%2B7b22686f737450617468223a22633a5c5c55736572735c5c61636f64755c5c6465765c5c64617368626f6172645f6d6963746c616e222c226c6f63616c446f636b6572223a66616c73652c22636f6e66696746696c65223a7b22246d6964223a312c2270617468223a222f433a2f55736572732f61636f64752f6465762f64617368626f6172645f6d6963746c616e2f2e646576636f6e7461696e65722f646576636f6e7461696e65722e6a736f6e222c22736368656d65223a2266696c65227d7d/workspaces/dashboard_mictlan:::personal": "local",
+    "vscode-remote://codespaces%2Bexpert-spoon-v6vqgxj5xqgvhx54p/workspaces/dashboard-mictlan-v1:::personal": "local",
+    "vscode-remote://codespaces%2Bsupreme-lamp-pjrpgx56xjv4hrj76/workspaces/dashboard-mictlan-v1:::personal": "local",
+    "vscode-remote://codespaces%2Borganic-tribble-v6vqgxj5xg4xcpqgx/workspaces/dashboard-mictlan-v1:::personal": "local"
+  },
+  "lastSelectedOrgIdForWorkspace": {
+    "file:///c%3A/Users/acodu/dev/dashboard_mictlan": "personal",
+    "file:///c%3A/Users/acodu": "personal",
+    "file:///c%3A/Users/acodu/dev/dashboard_mictlan&file:///c%3A/Users/acodu": "personal",
+    "": "personal",
+    "vscode-remote://dev-container%2B7b22686f737450617468223a22633a5c5c55736572735c5c61636f64755c5c6465765c5c64617368626f6172645f6d6963746c616e222c226c6f63616c446f636b6572223a66616c73652c22636f6e66696746696c65223a7b22246d6964223a312c2270617468223a222f433a2f55736572732f61636f64752f6465762f64617368626f6172645f6d6963746c616e2f2e646576636f6e7461696e65722f646576636f6e7461696e65722e6a736f6e222c22736368656d65223a2266696c65227d7d/workspaces/dashboard_mictlan": "personal",
+    "vscode-remote://codespaces%2Bexpert-spoon-v6vqgxj5xqgvhx54p/workspaces/dashboard-mictlan-v1": "personal",
+    "vscode-remote://codespaces%2Bsupreme-lamp-pjrpgx56xjv4hrj76/workspaces/dashboard-mictlan-v1": "personal",
+    "vscode-remote://codespaces%2Borganic-tribble-v6vqgxj5xg4xcpqgx/workspaces/dashboard-mictlan-v1": "personal"
+  },
+  "selectedModelsByProfileId": {
+    "local": {
+      "chat": "Gemini 2.5 Pro",
+      "edit": "Gemini 2.0 Flash",
+      "apply": "Gemini 2.0 Flash",
+      "embed": "Transformers.js (Built-In)",
+      "autocomplete": null,
+      "rerank": null,
+      "summarize": null,
+      "subagent": null
+    }
+  },
+  "sharedConfig": {
+    "showSessionTabs": true
+  }
+}

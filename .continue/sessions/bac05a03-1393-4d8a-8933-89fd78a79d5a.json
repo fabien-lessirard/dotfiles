@@ -1,0 +1,62 @@
+{
+  "sessionId": "bac05a03-1393-4d8a-8933-89fd78a79d5a",
+  "title": "Code",
+  "workspaceDirectory": "C:\\Users\\acodu\\dev\\dashboard_mictlan",
+  "history": [
+    {
+      "message": {
+        "role": "user",
+        "content": "?"
+      },
+      "contextItems": [],
+      "editorState": "?"
+    },
+    {
+      "message": {
+        "role": "assistant",
+        "content": "I can help you with the following:\n\n*   **Code:** I can read, write, and edit code. I can also list files in your current directory and execute terminal commands.\n*   **General Questions:** I can answer questions about programming, git, and more.\n*   **Running commands:** I can run terminal commands for you. For example, I can run `git diff` to see your current changes.",
+        "usage": {
+          "prompt_tokens": 1942,
+          "completion_tokens": 88,
+          "total_tokens": 2167,
+          "model": "gemini-2.5-pro",
+          "cost_cents": 0
+        }
+      },
+      "contextItems": []
+    },
+    {
+      "message": {
+        "role": "user",
+        "content": "hello"
+      },
+      "contextItems": [],
+      "editorState": "hello"
+    },
+    {
+      "message": {
+        "role": "user",
+        "content": "hello"
+      },
+      "contextItems": [],
+      "editorState": "hello"
+    },
+    {
+      "message": {
+        "role": "user",
+        "content": "hello"
+      },
+      "contextItems": [],
+      "editorState": "hello"
+    }
+  ],
+  "usage": {
+    "totalCost": 0.002118,
+    "promptTokens": 1942,
+    "completionTokens": 88,
+    "promptTokensDetails": {
+      "cachedTokens": 0,
+      "cacheWriteTokens": 0
+    }
+  }
+}

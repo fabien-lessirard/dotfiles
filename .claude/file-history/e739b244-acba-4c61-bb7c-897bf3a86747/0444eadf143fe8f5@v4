@@ -1,0 +1,64 @@
+# Plan: Merge branch-v2.3.0-dev → main (PR + Release)
+
+## Context
+La branche `branch-v2.3.0-dev` a divergé de main : elle a été créée depuis v2.2.0 alors que main était déjà passé à v2.3.0. Pour faire un PR propre, on doit d'abord merger main dans la branche (résoudre le conflit sur TableGrid.jsx), puis faire le PR via le release prompt.
+
+Décision utilisateur : garder la version **main** de `TableGrid.jsx` (avec les logs de tables).
+
+## Fichiers concernés
+- `.env.development.local` — stash (secrets, ne pas committer)
+- `CLAUDE.md` — changements locaux à committer
+- `.devcontainer/devcontainer.json` — changements locaux à committer
+- `.devcontainer/setup.sh` — changements locaux à committer
+- `gemini.md` — changements locaux à committer
+- `src/components/TableGrid.jsx` — conflit à résoudre (garder version main)
+
+---
+
+## Étape 1 : Stash de .env.development.local
+```bash
+git stash push -m "env local before merge" -- .env.development.local
+```
+
+## Étape 2 : Committer les changements locaux
+Suivre les étapes 2-5 du release prompt :
+- Lister les changements (CLAUDE.md, devcontainer.json, setup.sh, gemini.md)
+- Générer un commit message complet
+- Committer et pusher la branche
+
+## Étape 3 : Merger main dans la branche (résolution de conflits)
+```bash
+git merge main --ignore-cr-at-eol
+```
+- Conflit attendu sur `src/components/TableGrid.jsx`
+- Résoudre en gardant la version main :
+```bash
+git checkout --theirs src/components/TableGrid.jsx
+git add src/components/TableGrid.jsx
+git commit -m "chore: merge main into branch-v2.3.0-dev, keep table logs from main"
+```
+
+## Étape 4 : Pop du stash
+```bash
+git stash pop
+```
+
+## Étape 5 : PR + Release (release prompt étapes 5-13)
+- Pousser la branche mise à jour
+- Créer le PR vers main
+- Monitorer le déploiement preview
+- Squash merge + delete branch
+- Bump version → **2.4.0** (minor bump : nomenclature + user logging + devcontainer)
+- Créer tag v2.4.0
+- Push main + tags
+- Monitorer déploiement production
+- ⚠️ `branch-v2.4.0-dev` existe déjà en remote (empty commit `bf86752`) — ne pas créer une nouvelle branche, juste checkout + pull :
+```bash
+git checkout branch-v2.4.0-dev
+git pull origin branch-v2.4.0-dev
+```
+
+## Vérification
+- `git log --oneline --graph` pour confirmer que le merge est propre
+- Preview URL fonctionne (TableGrid logs visibles, nomenclature /stocks-cuisine OK)
+- Production déployée avec succès

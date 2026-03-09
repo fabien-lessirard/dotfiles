@@ -1,0 +1,3 @@
+{
+  "output": "Found 7 matches for pattern \"playNotificationSound\" in path \".\":\n---\nFile: src\\hooks\\useAudio.js\nL38:   const playNotificationSound = useCallback(() => {\nL76:   return { isAudioEnabled, initAudio, disableAudio, playNotificationSound };\n---\nFile: src\\App.jsx\nL38:   const { isAudioEnabled, initAudio, disableAudio, playNotificationSound } = useAudio(tables, inventory, settings);\nL98:                   playNotificationSound={playNotificationSound}\n---\nFile: src\\components\\TableGrid.jsx\nL63: export default function TableGrid({ playNotificationSound, showAdminView, userData }) {\nL99:         playNotificationSound();\nL104:   }, [tables, settings.enableRecurringAlerts, loading, playNotificationSound]);\n---"
+}

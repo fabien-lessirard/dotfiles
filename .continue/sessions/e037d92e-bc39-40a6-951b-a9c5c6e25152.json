@@ -1,0 +1,15 @@
+{
+  "sessionId": "e037d92e-bc39-40a6-951b-a9c5c6e25152",
+  "title": "Untitled Session",
+  "workspaceDirectory": "C:\\Users\\acodu\\dev\\dashboard_mictlan",
+  "history": [],
+  "usage": {
+    "totalCost": 0,
+    "promptTokens": 0,
+    "completionTokens": 0,
+    "promptTokensDetails": {
+      "cachedTokens": 0,
+      "cacheWriteTokens": 0
+    }
+  }
+}

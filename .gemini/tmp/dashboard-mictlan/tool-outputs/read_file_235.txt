@@ -1,0 +1,33 @@
+const admin = require('firebase-admin');
+const serviceAccount = require('./sa-key-admin.json');
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
+
+const db = admin.firestore();
+
+async function clearProductsCollection() {
+  try {
+    const collectionRef = db.collection('products');
+    const snapshot = await collectionRef.get();
+    
+    if (snapshot.empty) {
+      console.log('No documents found in "products" collection. Nothing to delete.');
+      return;
+    }
+
+    const batch = db.batch();
+    snapshot.docs.forEach(doc => {
+      batch.delete(doc.ref);
+    });
+    await batch.commit();
+    console.log(`Successfully deleted ${snapshot.docs.length} documents from "products" collection.`);
+  } catch (error) {
+    console.error('Error clearing "products" collection:', error);
+  } finally {
+    admin.app().delete();
+  }
+}
+
+clearProductsCollection();

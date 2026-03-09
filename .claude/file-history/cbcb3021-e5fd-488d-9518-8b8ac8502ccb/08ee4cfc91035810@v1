@@ -1,0 +1,808 @@
+import { useState, useEffect } from 'react';
+import { useAuth } from '../hooks/useAuth';
+import { useLogs } from '../hooks/useLogs';
+import { db } from '../firebase/config';
+import {
+  collection,
+  query,
+  onSnapshot,
+  addDoc,
+  Timestamp,
+  orderBy,
+  updateDoc,
+  doc as firestoreDoc, // Alias doc to avoid conflict with react 'doc'
+  getDocs,
+  writeBatch,
+  deleteDoc,
+  where, // Add where for category query
+  setDoc // Add setDoc for explicit document creation
+} from 'firebase/firestore';
+import HistoryModal from './HistoryModal';
+import { History, PlusCircle, Trash2, Filter } from 'lucide-react'; // Added PlusCircle, Trash2, Filter icon
+
+// Frequency constants in milliseconds
+const FREQUENCY_MS = {
+  SECONDE: 1 * 1000,
+  MINUTE: 60 * 1000,
+  HEURE: 60 * 60 * 1000,
+  JOUR: 24 * 60 * 60 * 1000,
+  SEMAINE: 7 * 24 * 60 * 60 * 1000,
+  MOIS: 30 * 24 * 60 * 60 * 1000, // Approximate
+  AN: 365 * 24 * 60 * 60 * 1000, // Approximate
+};
+
+// Helper to get human-readable frequency
+const getHumanReadableFrequency = (ms) => {
+  if (ms <= 0) return 'Jamais'; // Handle 0 or negative frequency gracefully
+  if (ms >= FREQUENCY_MS.AN && ms % FREQUENCY_MS.AN === 0) {
+    return `${ms / FREQUENCY_MS.AN}/an`;
+  }
+  if (ms >= FREQUENCY_MS.MOIS && ms % FREQUENCY_MS.MOIS === 0) {
+    return `${ms / FREQUENCY_MS.MOIS}/mois`;
+  }
+  if (ms >= FREQUENCY_MS.SEMAINE && ms % FREQUENCY_MS.SEMAINE === 0) {
+    return `${ms / FREQUENCY_MS.SEMAINE}/semaine`;
+  }
+  if (ms >= FREQUENCY_MS.JOUR && ms % FREQUENCY_MS.JOUR === 0) {
+    return `${ms / FREQUENCY_MS.JOUR}/jour`;
+  }
+  if (ms >= FREQUENCY_MS.HEURE && ms % FREQUENCY_MS.HEURE === 0) {
+    return `${ms / FREQUENCY_MS.HEURE}/heure`;
+  }
+  if (ms >= FREQUENCY_MS.MINUTE && ms % FREQUENCY_MS.MINUTE === 0) {
+    return `${ms / FREQUENCY_MS.MINUTE}/min`;
+  }
+  return `${Math.round(ms / FREQUENCY_MS.SECONDE)} sec`; // Fallback to seconds
+};
+
+// Helper to format time remaining
+const formatTimeRemaining = (ms) => {
+  const seconds = Math.floor((ms / 1000) % 60);
+  const minutes = Math.floor((ms / (1000 * 60)) % 60);
+  const hours = Math.floor((ms / (1000 * 60 * 60)) % 24);
+  const days = Math.floor((ms / (1000 * 60 * 60 * 24)) % 30); // Approximate days in a month
+  const months = Math.floor(ms / (1000 * 60 * 60 * 24 * 30)); // Approximate months
+
+  let parts = [];
+  if (months > 0) parts.push(`${months} mois`);
+  if (days > 0) parts.push(`${days} jours`);
+  if (hours > 0) parts.push(`${hours} heures`);
+  if (minutes > 0) parts.push(`${minutes} minutes`);
+  if (seconds > 0) parts.push(`${seconds} secondes`);
+
+  if (parts.length === 0) return 'Moins d\'une seconde';
+  
+  return parts.join(', ');
+};
+
+// Helper to infer display values from ms for initial seeding
+const inferDisplayValues = (ms) => {
+  if (ms <= 0) return { frequencyDisplayValue: 0, frequencyDisplayUnit: 'JOUR' }; // Or some default for "never"
+  if (ms % FREQUENCY_MS.AN === 0) return { frequencyDisplayValue: ms / FREQUENCY_MS.AN, frequencyDisplayUnit: 'AN' };
+  if (ms % FREQUENCY_MS.MOIS === 0) return { frequencyDisplayValue: ms / FREQUENCY_MS.MOIS, frequencyDisplayUnit: 'MOIS' };
+  if (ms % FREQUENCY_MS.SEMAINE === 0) return { frequencyDisplayValue: ms / FREQUENCY_MS.SEMAINE, frequencyDisplayUnit: 'SEMAINE' };
+  if (ms % FREQUENCY_MS.JOUR === 0) return { frequencyDisplayValue: ms / FREQUENCY_MS.JOUR, frequencyDisplayUnit: 'JOUR' };
+  if (ms % FREQUENCY_MS.HEURE === 0) return { frequencyDisplayValue: ms / FREQUENCY_MS.HEURE, frequencyDisplayUnit: 'HEURE' };
+  if (ms % FREQUENCY_MS.MINUTE === 0) return { frequencyDisplayValue: ms / FREQUENCY_MS.MINUTE, frequencyDisplayUnit: 'MINUTE' };
+  return { frequencyDisplayValue: Math.round(ms / FREQUENCY_MS.SECONDE), frequencyDisplayUnit: 'SECONDE' };
+};
+
+// Helper to get status info based on time remaining and frequency
+const getTaskStatusInfo = (timeRemainingMs, frequencyMs) => {
+  if (timeRemainingMs <= 0) {
+    return { status: 'overdue', baseColor: '#7f1d1d', lightColor: '#991b1b' }; // Red
+  }
+
+  const elapsedPercentage = 1 - (timeRemainingMs / frequencyMs);
+
+  if (elapsedPercentage <= 0.1) {
+    return { status: 'recent', baseColor: '#064e3b', lightColor: '#065f46' }; // Green
+  } else if (elapsedPercentage <= 0.9) {
+    return { status: 'normal', baseColor: '#374151', lightColor: '#4b5563' }; // Gray
+  } else {
+    return { status: 'soon', baseColor: '#7c2d12', lightColor: '#9a3412' }; // Orange
+  }
+};
+
+const initialTasksForSeeding = {
+  toilettes: {
+    title: 'Toilettes',
+    points: [
+      { id: 't1', name: 'Cuvette', frequency: 3600000 * 2, ...inferDisplayValues(3600000 * 2) }, // 2 hours -> 1/2 heure
+      { id: 't2', name: 'Sol', frequency: 3600000 * 4, ...inferDisplayValues(3600000 * 4) }, // 4 hours -> 1/4 heure
+      { id: 't3', name: 'Surfaces', frequency: 3600000 * 2, ...inferDisplayValues(3600000 * 2) }, // 2 hours -> 1/2 heure
+      { id: 't4', name: 'Poignée', frequency: 3600000, ...inferDisplayValues(3600000) }, // 1 hour -> 1/1 heure
+    ],
+    refills: [
+      { id: 'tr1', name: 'Savon', frequency: 86400000, ...inferDisplayValues(86400000) }, // 24 hours -> 1/1 jour
+      { id: 'tr2', name: 'Papier', frequency: 86400000, ...inferDisplayValues(86400000) }, // 24 hours -> 1/1 jour
+      { id: 'tr3', name: 'PQ', frequency: 86400000, ...inferDisplayValues(86400000) }, // 24 hours -> 1/1 jour
+      { id: 'tr4', name: 'Serviette hygiénique', frequency: 86400000, ...inferDisplayValues(86400000) }, // 24 hours -> 1/1 jour
+    ],
+  },
+  barCuisine: {
+    title: 'Bar & Cuisine',
+    points: [
+      { id: 'bc1', name: 'Grille de la hotte', frequency: 604800000, ...inferDisplayValues(604800000) }, // 7 days -> 1/1 semaine
+      { id: 'bc2', name: 'Murs', frequency: 2592000000, ...inferDisplayValues(2592000000) }, // 30 days -> 1/1 mois
+      { id: 'bc3', name: "Système d'aspiration", frequency: 31536000000, ...inferDisplayValues(31536000000) }, // 365 days -> 1/1 an
+    ],
+  },
+};
+
+// --- ChecklistItem Component ---
+function ChecklistItem({ item, onLogEvent, onShowHistory, isDone, log, isAdmin, onFrequencyChange, onDeleteTask, nextDueDate, timeRemainingMs, onNameChange }) {
+  const displayTimestamp = log?.timestamp?.toDate ? log.timestamp.toDate() : null;
+  const [editingFrequency, setEditingFrequency] = useState(false);
+  const [editingFrequencyValue, setEditingFrequencyValue] = useState(item.frequencyDisplayValue || 1);
+  const [editingFrequencyUnit, setEditingFrequencyUnit] = useState(item.frequencyDisplayUnit || 'HEURE');
+
+  const [editingName, setEditingName] = useState(false); // New state for editing name
+  const [editingNameValue, setEditingNameValue] = useState(item.name); // New state for editing name value
+
+  useEffect(() => {
+    // Initialize value and unit from stored display values
+    setEditingFrequencyValue(item.frequencyDisplayValue || 1);
+    setEditingFrequencyUnit(item.frequencyDisplayUnit || 'HEURE');
+  }, [item.frequencyDisplayValue, item.frequencyDisplayUnit]);
+
+  useEffect(() => {
+    // Initialize name value
+    setEditingNameValue(item.name);
+  }, [item.name]);
+
+  const handleFrequencySave = () => {
+    if (editingFrequencyValue <= 0) {
+      alert("La fréquence doit être un nombre positif.");
+      return;
+    }
+    const newFrequencyMs = FREQUENCY_MS[editingFrequencyUnit] / editingFrequencyValue; // Use division
+    onFrequencyChange(item.id, newFrequencyMs, editingFrequencyValue, editingFrequencyUnit); // Pass display values
+    setEditingFrequency(false);
+  };
+
+  const handleNameSave = () => {
+    if (!editingNameValue.trim()) {
+      alert("Le nom de la tâche ne peut pas être vide.");
+      return;
+    }
+    onNameChange(item.id, editingNameValue.trim());
+    setEditingName(false);
+  };
+
+  const statusInfo = getTaskStatusInfo(timeRemainingMs, item.frequency);
+  const elapsedPercentage = Math.min(1, Math.max(0, 1 - (timeRemainingMs / item.frequency)));
+  const progressPercent = elapsedPercentage * 100;
+
+  // Background style with gradient to show progress
+  const backgroundStyle = {
+    background: `linear-gradient(to right, ${statusInfo.baseColor} ${progressPercent}%, ${statusInfo.lightColor} ${progressPercent}%)`
+  };
+
+  return (
+    <div 
+      className="flex items-center justify-between p-2 rounded-lg transition-all duration-300 shadow-sm border border-white/5"
+      style={backgroundStyle}
+    >
+      <div className="flex-1 mr-2">
+        {editingName ? (
+          <input
+            type="text"
+            value={editingNameValue}
+            onChange={(e) => setEditingNameValue(e.target.value)}
+            className="w-full bg-black border border-gray-800 rounded p-1 text-white text-xs outline-none focus:border-mictlan-gold"
+          />
+        ) : (
+          item.name
+        )}{' '}
+        {item.frequencyDisplayValue && item.frequencyDisplayUnit
+          ? `(${item.frequencyDisplayValue}/${item.frequencyDisplayUnit.toLowerCase()})`
+          : getHumanReadableFrequency(item.frequency)}
+      </div>
+      
+      <div className="flex flex-col items-end gap-1 text-xs text-gray-200 mr-2 font-medium text-right min-w-[150px]">
+        <span>{timeRemainingMs <= 0 && !isDone ? "Nettoyage dû depuis" : "Prochain nettoyage"}: {nextDueDate.toLocaleString('fr-FR')}</span>
+        <span className={timeRemainingMs <= 0 && !isDone ? "text-red-300 font-bold" : ""}>
+          {timeRemainingMs <= 0 
+            ? `En retard de ${formatTimeRemaining(Math.abs(timeRemainingMs))}`
+            : `Il reste ${formatTimeRemaining(timeRemainingMs)}`
+          }
+        </span>
+      </div>
+
+      <div className="flex items-center gap-2">
+        {isAdmin && !editingName && !editingFrequency && (
+          <span className="text-sm text-gray-300 cursor-pointer hover:text-white transition-colors" onClick={() => setEditingName(true)} title="Modifier le nom de la tâche">
+            Modifier Nom
+          </span>
+        )}
+        {isAdmin && editingName && (
+          <div className="flex items-center gap-1">
+            <button onClick={handleNameSave} className="bg-blue-600 px-2 py-1 text-xs rounded hover:bg-blue-500">
+              OK
+            </button>
+            <button onClick={() => setEditingName(false)} className="bg-gray-500 px-2 py-1 text-xs rounded hover:bg-gray-400">
+              X
+            </button>
+          </div>
+        )}
+
+        {isAdmin && !editingFrequency && !editingName && (
+          <span className="text-sm text-gray-300 cursor-pointer hover:text-white transition-colors" onClick={() => setEditingFrequency(true)} title="Modifier la fréquence">
+            Modifier Fréq.
+          </span>
+        )}
+        {isAdmin && editingFrequency && (
+          <div className="flex items-center gap-1">
+            <input
+              type="number"
+              value={editingFrequencyValue}
+              onChange={(e) => setEditingFrequencyValue(parseInt(e.target.value) || 1)}
+              className="w-16 bg-black border border-gray-800 rounded p-1 text-white text-xs outline-none focus:border-mictlan-gold"
+              min="1"
+            />
+            <select
+              value={editingFrequencyUnit}
+              onChange={(e) => setEditingFrequencyUnit(e.target.value)}
+              className="bg-black border border-gray-800 rounded p-1 text-white text-xs outline-none focus:border-mictlan-gold"
+            >
+              {Object.keys(FREQUENCY_MS).map(unit => (
+                <option key={unit} value={unit}>
+                  {unit.toLowerCase()}
+                </option>
+              ))}
+            </select>
+            <button onClick={handleFrequencySave} className="bg-blue-600 px-2 py-1 text-xs rounded hover:bg-blue-500">
+              OK
+            </button>
+            <button onClick={() => setEditingFrequency(false)} className="bg-gray-500 px-2 py-1 text-xs rounded hover:bg-gray-400">
+              X
+            </button>
+          </div>
+        )}
+
+
+        {log && displayTimestamp && (
+          <div className="text-xs text-gray-300 text-right min-w-[120px]">
+            {log.action === 'done' ? (
+                <span className="font-semibold">Nettoyage réalisé par {log.userEmail}</span>
+            ) : log.action === 'undone' ? (
+                <span className="font-semibold">Saleté relevée par {log.userEmail}</span>
+            ) : null}
+            <br />
+            {displayTimestamp.toLocaleString('fr-FR')}
+          </div>
+        )}
+        <button
+          onClick={() => onShowHistory(item)}
+          className="p-2 text-gray-300 hover:text-white"
+          title="Voir l'historique"
+        >
+          <History size={18} />
+        </button>
+        {isAdmin && (
+          <button
+            onClick={() => onDeleteTask(item.id, item.name)}
+            className="p-2 text-red-300 hover:text-red-500"
+            title="Supprimer la tâche"
+          >
+            <Trash2 size={18} />
+          </button>
+        )}
+        <button
+          onClick={() => onLogEvent(item.id, item.name, isDone)}
+          className={`px-4 py-2 rounded w-28 font-bold ${isDone ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'} shadow-md`}
+        >
+          {isDone ? 'C\'est sale' : 'J\'ai nettoyé!'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// --- Main CleaningChecklist Component ---
+export default function CleaningChecklist({ userData, showAdminView }) {
+  const { user } = useAuth();
+  const { addLog } = useLogs(); // Added useLogs
+  const isAdmin = userData?.role === 'admin' && showAdminView;
+  const [taskConfig, setTaskConfig] = useState({});
+  const [lastEvents, setLastEvents] = useState({});
+  const [modalTask, setModalTask] = useState(null);
+  const [now, setNow] = useState(Date.now());
+  const [loggedOverdueTasksThisSession, setLoggedOverdueTasksThisSession] = useState({});
+
+  const [showAddItemForm, setShowAddItemForm] = useState(false);
+  const [newItemName, setNewItemName] = useState('');
+  const [newItemFrequencyValue, setNewItemFrequencyValue] = useState(1);
+  const [newItemFrequencyUnit, setNewItemFrequencyUnit] = useState('HEURE');
+  const [newItemCategory, setNewItemCategory] = useState('');
+  const [newCategoryNameInput, setNewCategoryNameInput] = useState('');
+  const [isAddingItem, setIsAddingItem] = useState(false);
+
+  const [sortBy, setSortBy] = useState('category');
+  const [showOnlyCritical, setShowOnlyCritical] = useState(false);
+
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    const seedTasks = async () => {
+      const tasksCollectionRef = collection(db, 'cleaning_tasks');
+      const snapshot = await getDocs(tasksCollectionRef);
+      if (snapshot.empty) {
+        const batch = writeBatch(db);
+        Object.values(initialTasksForSeeding).forEach(category => {
+          const allTasks = [...(category.points || []), ...(category.refills || [])];
+          allTasks.forEach(task => {
+            const docRef = firestoreDoc(tasksCollectionRef, task.id);
+            batch.set(docRef, { ...task, category: category.title });
+          });
+        });
+        await batch.commit();
+        console.log("Cleaning tasks seeded successfully!");
+      }
+    };
+    seedTasks();
+  }, []);
+
+  useEffect(() => {
+    const tasksCollectionRef = collection(db, 'cleaning_tasks');
+    const unsubscribe = onSnapshot(tasksCollectionRef, (snapshot) => {
+      const groupedTasks = {};
+      snapshot.forEach(doc => {
+        const taskData = doc.data();
+        const task = { id: doc.id, ...taskData };
+        if (!groupedTasks[task.category]) {
+          groupedTasks[task.category] = [];
+        }
+        groupedTasks[task.category].push(task);
+      });
+      Object.keys(groupedTasks).forEach(category => {
+        groupedTasks[category].sort((a, b) => a.name.localeCompare(b.name));
+      });
+      setTaskConfig(groupedTasks);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const historyCollectionRef = collection(db, 'cleaning_history');
+    const q = query(historyCollectionRef, orderBy('timestamp', 'asc'));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const eventMap = new Map();
+      querySnapshot.forEach((doc) => {
+        eventMap.set(doc.data().taskId, doc.data());
+      });
+      setLastEvents(Object.fromEntries(eventMap.entries()));
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleLogEvent = async (itemId, itemName, isCurrentlyDone) => {
+    if (!user) return console.error("User not authenticated");
+    const actionType = isCurrentlyDone ? 'undone' : 'done';
+    const logMessage = actionType === 'done' 
+      ? `NETTOYAGE : "${itemName}" a été réalisé.` 
+      : `NETTOYAGE : Saleté relevée pour "${itemName}".`;
+    
+    await addDoc(collection(db, 'cleaning_history'), {
+      taskId: itemId,
+      action: actionType,
+      userId: user.uid,
+      userEmail: user.email || 'Utilisateur inconnu',
+      timestamp: Timestamp.now(),
+    });
+
+    await addLog(logMessage, 'info', user);
+  };
+
+  const handleFrequencyChange = async (taskId, newFrequencyMs, displayValue, displayUnit) => {
+    try {
+      const taskDocRef = firestoreDoc(db, 'cleaning_tasks', taskId);
+      await updateDoc(taskDocRef, {
+        frequency: newFrequencyMs,
+        frequencyDisplayValue: displayValue,
+        frequencyDisplayUnit: displayUnit,
+      });
+      alert(`Fréquence mise à jour.`);
+      await addLog(`NETTOYAGE : Fréquence de "${taskId}" mise à jour à ${displayValue}/${displayUnit.toLowerCase()}.`, 'info', user);
+    } catch (error) {
+      console.error("Erreur:", error);
+    }
+  };
+
+  const handleNameChange = async (taskId, newName) => {
+    try {
+      const taskDocRef = firestoreDoc(db, 'cleaning_tasks', taskId);
+      await updateDoc(taskDocRef, {
+        name: newName,
+      });
+      alert(`Nom mis à jour.`);
+      await addLog(`NETTOYAGE : Tâche "${taskId}" renommée en "${newName}".`, 'info', user);
+    } catch (error) {
+      console.error("Erreur:", error);
+    }
+  };
+
+  const handleDeleteTask = async (taskId, taskName) => {
+    if (!window.confirm(`Supprimer "${taskName}" ?`)) return;
+    try {
+      await deleteDoc(firestoreDoc(db, 'cleaning_tasks', taskId));
+      await addLog(`NETTOYAGE : Tâche "${taskName}" supprimée.`, 'info', user);
+    } catch (error) {
+      console.error("Erreur:", error);
+    }
+  };
+
+  const handleDeleteCategory = async (categoryTitle) => {
+    if (!window.confirm(`Supprimer la catégorie "${categoryTitle}" ?`)) return;
+    try {
+      const tasksCollectionRef = collection(db, 'cleaning_tasks');
+      const q = query(tasksCollectionRef, where('category', '==', categoryTitle));
+      const querySnapshot = await getDocs(q);
+      const batch = writeBatch(db);
+      querySnapshot.forEach((doc) => {
+        batch.delete(doc.ref);
+      });
+      await batch.commit();
+      await addLog(`NETTOYAGE : Catégorie "${categoryTitle}" et toutes ses tâches supprimées.`, 'info', user);
+    } catch (error) {
+      console.error("Erreur:", error);
+    }
+  };
+
+  const handleAddItem = async () => {
+    const finalCategoryName = newItemCategory === "Nouvelle Catégorie" ? newCategoryNameInput : newItemCategory;
+    if (!newItemName || !finalCategoryName || newItemFrequencyValue <= 0) {
+      alert("Veuillez tout remplir.");
+      return;
+    }
+    const newFrequencyMs = FREQUENCY_MS[newItemFrequencyUnit] / newItemFrequencyValue;
+    setIsAddingItem(true);
+    try {
+      const tasksCollectionRef = collection(db, 'cleaning_tasks');
+      const newDocRef = firestoreDoc(tasksCollectionRef);
+      await setDoc(newDocRef, {
+        name: newItemName,
+        category: finalCategoryName,
+        frequency: newFrequencyMs,
+        frequencyDisplayValue: newItemFrequencyValue,
+        frequencyDisplayUnit: newItemFrequencyUnit,
+      });
+      await addLog(`NETTOYAGE : Nouvelle tâche "${newItemName}" ajoutée à "${finalCategoryName}".`, 'info', user);
+      setNewItemName('');
+      setShowAddItemForm(false);
+    } catch (error) {
+      console.error("Erreur:", error);
+    } finally {
+      setIsAddingItem(false);
+    }
+  };
+
+  const handleShowHistory = (task) => setModalTask(task);
+  const handleCloseModal = () => setModalTask(null);
+  
+  const allCategories = Object.keys(taskConfig);
+
+  const getProcessedTasks = () => {
+    const allTasksFlat = [];
+    Object.entries(taskConfig).forEach(([categoryTitle, tasks]) => {
+      tasks.forEach(item => {
+        const lastEvent = lastEvents[item.id];
+        let isDone = false;
+        let nextDueDateMs;
+
+        // Ensure frequency is a valid positive number. Default to 1 day if 0 or invalid.
+        const effectiveFrequency = (item.frequency && item.frequency > 0) ? item.frequency : FREQUENCY_MS.JOUR;
+
+        if (lastEvent) {
+          const lastEventTimestamp = lastEvent.timestamp.toDate().getTime();
+          if (lastEvent.action === 'done') {
+            // Base the next due date on the last completion time.
+            nextDueDateMs = lastEventTimestamp + effectiveFrequency;
+          } else { // 'undone' or 'overdue'
+            // Task was explicitly marked as not clean, so it's due since that time.
+            nextDueDateMs = lastEventTimestamp;
+          }
+        } else {
+          // This is a new task with no history. Schedule its first cleaning from 'now'.
+          // The due date will move, but it avoids being stuck and prompts a first cleaning.
+          nextDueDateMs = now + effectiveFrequency;
+        }
+
+        // A task is only considered "done" if its last action was 'done'
+        // and we are still within the frequency period.
+        isDone = lastEvent?.action === 'done' && now < nextDueDateMs;
+        
+        // Final check to prevent NaN
+        if (isNaN(nextDueDateMs)) {
+            console.warn(`Invalid nextDueDateMs calculated for task ${item.name}. Defaulting to now.`);
+            nextDueDateMs = now;
+        }
+        
+        const nextDueDate = new Date(nextDueDateMs);
+        const timeRemainingMs = nextDueDateMs - now;
+
+        allTasksFlat.push({
+          ...item,
+          categoryTitle,
+          isDone,
+          lastEvent,
+          nextDueDate,
+          timeRemainingMs
+        });
+      });
+    });
+
+    let filtered = allTasksFlat;
+    if (showOnlyCritical) {
+      filtered = allTasksFlat.filter(t => t.timeRemainingMs <= 0 && !t.isDone);
+    }
+
+    const sorted = [...filtered].sort((a, b) => {
+      if (sortBy === 'name') {
+        return a.name.localeCompare(b.name);
+      } else if (sortBy === 'delay') {
+        return a.timeRemainingMs - b.timeRemainingMs;
+      } else {
+        const catCompare = a.categoryTitle.localeCompare(b.categoryTitle);
+        if (catCompare !== 0) return catCompare;
+        return a.name.localeCompare(b.name);
+      }
+    });
+
+    return sorted;
+  };
+
+  const processedTasks = getProcessedTasks();
+
+  useEffect(() => {
+    // This effect runs every time processedTasks or now changes (i.e., every second)
+    processedTasks.forEach(async (task) => {
+      const isOverdue = task.timeRemainingMs <= 0 && !task.isDone;
+      const wasLoggedOverdueThisSession = loggedOverdueTasksThisSession[task.id];
+
+      if (isOverdue && !wasLoggedOverdueThisSession) {
+        // Check if the last event in cleaning_history for this task is already 'overdue' for this cycle.
+        // This prevents re-logging if the app reloads or the component re-renders.
+        const lastEventForTask = lastEvents[task.id];
+        const alreadyLoggedOverdueInDb = lastEventForTask &&
+                                       lastEventForTask.action === 'overdue' &&
+                                       lastEventForTask.timestamp.toDate().getTime() >= task.nextDueDate.getTime();
+
+        if (!alreadyLoggedOverdueInDb) {
+          console.log(`[System] Logging overdue event for task: ${task.name}`);
+          const logMessage = `NETTOYAGE : La tâche "${task.name}" est en retard!`;
+
+          await addDoc(collection(db, 'cleaning_history'), {
+            taskId: task.id,
+            action: 'overdue',
+            userId: 'system', // Indicate it's a system-generated event
+            userEmail: 'system@mictlan.com', // Placeholder or dedicated system email
+            timestamp: Timestamp.now(),
+            message: `Tâche "${task.name}" est en retard.`, // Adding a specific message field for overdue events
+          });
+
+          // Log to general application logs as well
+          await addLog(logMessage, 'warning', user);
+          
+          // Mark this task as having its overdue status logged for the current session
+          setLoggedOverdueTasksThisSession(prev => ({ ...prev, [task.id]: true }));
+        }
+      } else if (!isOverdue && wasLoggedOverdueThisSession) {
+        // If a task was overdue and logged, but is now no longer overdue
+        // (e.g., it was cleaned, or its nextDueDate was updated),
+        // reset its session logging status so it can be logged again if it becomes overdue later.
+        setLoggedOverdueTasksThisSession(prev => {
+          const newLogged = { ...prev };
+          delete newLogged[task.id];
+          return newLogged;
+        });
+      }
+    });
+  }, [processedTasks, now, loggedOverdueTasksThisSession, addLog, lastEvents, user]);
+
+  return (
+    <div className="p-4 sm:p-6 text-white max-w-4xl mx-auto">
+      <h1 className="text-3xl font-bold text-yellow-500 mb-6 text-center">Checklist de Nettoyage</h1>
+      
+      <div className="mb-6 p-4 bg-gray-800/50 rounded-xl border border-gray-700 flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center gap-4 flex-wrap">
+          <div className="flex items-center gap-2">
+            <Filter size={18} className="text-mictlan-gold" />
+            <span className="text-sm font-semibold uppercase tracking-wider text-gray-400">Trier par :</span>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="bg-black border border-gray-700 rounded-lg p-2 text-sm text-white outline-none focus:border-mictlan-gold"
+            >
+              <option value="category">Catégorie</option>
+              <option value="name">Nom</option>
+              <option value="delay">Retard</option>
+            </select>
+          </div>
+
+          <label className="flex items-center gap-2 cursor-pointer group">
+            <input
+              type="checkbox"
+              checked={showOnlyCritical}
+              onChange={(e) => setShowOnlyCritical(e.target.checked)}
+              className="w-5 h-5 bg-black border border-gray-700 rounded text-mictlan-gold focus:ring-mictlan-gold cursor-pointer"
+            />
+            <span className="text-sm font-semibold text-gray-400 group-hover:text-white transition-colors">
+              Retards critiques uniquement
+            </span>
+          </label>
+        </div>
+
+        {isAdmin && (
+          <button 
+            onClick={() => setShowAddItemForm(!showAddItemForm)}
+            className="px-4 py-2 bg-blue-600/80 text-white rounded-lg hover:bg-blue-500 transition-colors flex items-center gap-2 text-sm font-bold"
+          >
+            <PlusCircle size={18} />
+            {showAddItemForm ? 'Annuler' : 'Ajouter tâche'}
+          </button>
+        )}
+      </div>
+
+      {showAddItemForm && isAdmin && (
+        <div className="mb-6 p-4 bg-gray-800 rounded-lg space-y-3 border border-blue-900/30">
+          <h3 className="text-xl font-semibold text-yellow-500">Nouvelle Tâche</h3>
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Nom de la tâche</label>
+            <input
+              type="text"
+              value={newItemName}
+              onChange={(e) => setNewItemName(e.target.value)}
+              className="w-full bg-black border border-gray-700 rounded p-2 text-white text-xs outline-none focus:border-mictlan-gold"
+              placeholder="Ex: Nettoyage tables"
+            />
+          </div>
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Fréquence</label>
+            <div className="flex gap-2">
+              <input
+                type="number"
+                value={newItemFrequencyValue}
+                onChange={(e) => setNewItemFrequencyValue(parseInt(e.target.value) || 1)}
+                className="w-24 bg-black border border-gray-700 rounded p-2 text-white outline-none focus:border-mictlan-gold"
+                min="1"
+              />
+              <select
+                value={newItemFrequencyUnit}
+                onChange={(e) => setNewItemFrequencyUnit(e.target.value)}
+                className="w-full bg-black border border-gray-700 rounded p-2 text-white outline-none focus:border-mictlan-gold"
+              >
+                {Object.keys(FREQUENCY_MS).map(unit => (
+                  <option key={unit} value={unit}>
+                    {unit.toLowerCase()}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Catégorie</label>
+            <select
+              value={newItemCategory}
+              onChange={(e) => {
+                setNewItemCategory(e.target.value);
+                if (e.target.value === "Nouvelle Catégorie") {
+                  setNewCategoryNameInput('');
+                }
+              }}
+              className="w-full bg-black border border-gray-700 rounded p-2 text-white outline-none focus:border-mictlan-gold"
+            >
+              <option value="">-- Sélectionner ou créer une catégorie --</option>
+              {allCategories.map(cat => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+              <option value="Nouvelle Catégorie">-- Nouvelle Catégorie --</option>
+            </select>
+            {newItemCategory === "Nouvelle Catégorie" && (
+              <input
+                type="text"
+                value={newCategoryNameInput}
+                onChange={(e) => setNewCategoryNameInput(e.target.value)}
+                className="w-full mt-2 bg-black border border-gray-700 rounded p-2 text-white outline-none focus:border-mictlan-gold"
+                placeholder="Nom de la nouvelle catégorie"
+              />
+            )}
+          </div>
+          <button
+            onClick={handleAddItem}
+            disabled={isAddingItem}
+            className="px-4 py-2 bg-green-600/80 text-white rounded-lg hover:bg-green-500 transition-colors font-bold"
+          >
+            {isAddingItem ? 'Ajout en cours...' : 'Sauvegarder la tâche'}
+          </button>
+        </div>
+      )}
+      
+      {sortBy === 'category' ? (
+        allCategories.map(categoryTitle => {
+          const tasksInCategory = processedTasks.filter(t => t.categoryTitle === categoryTitle);
+          if (tasksInCategory.length === 0) return null;
+
+          return (
+            <div key={categoryTitle} className="mb-8">
+              <h2 className="text-2xl font-semibold border-b-2 border-gray-600 pb-2 mb-4 flex items-center justify-between">
+                {categoryTitle}
+                {isAdmin && (
+                  <button
+                    onClick={() => handleDeleteCategory(categoryTitle)}
+                    className="ml-4 p-2 text-red-400 hover:text-red-600"
+                    title="Supprimer la catégorie et toutes ses tâches"
+                  >
+                    <Trash2 size={20} />
+                  </button>
+                )}
+              </h2>
+              <div className="space-y-3">
+                {tasksInCategory.map(item => (
+                  <ChecklistItem 
+                    key={item.id} 
+                    item={item} 
+                    onLogEvent={handleLogEvent}
+                    onShowHistory={handleShowHistory}
+                    isDone={item.isDone}
+                    log={item.lastEvent} 
+                    isAdmin={isAdmin}
+                    onFrequencyChange={handleFrequencyChange}
+                    onDeleteTask={handleDeleteTask}
+                    nextDueDate={item.nextDueDate}
+                    timeRemainingMs={item.timeRemainingMs}
+                    onNameChange={handleNameChange}
+                  />
+                ))}
+              </div>
+            </div>
+          );
+        })
+      ) : (
+        <div className="space-y-3">
+          {processedTasks.length > 0 ? (
+            processedTasks.map(item => (
+              <div key={item.id}>
+                {sortBy !== 'category' && (
+                  <div className="text-[10px] text-gray-500 uppercase tracking-widest font-black ml-1 mb-1">
+                    {item.categoryTitle}
+                  </div>
+                )}
+                <ChecklistItem 
+                  item={item} 
+                  onLogEvent={handleLogEvent}
+                  onShowHistory={handleShowHistory}
+                  isDone={item.isDone}
+                  log={item.lastEvent} 
+                  isAdmin={isAdmin}
+                  onFrequencyChange={handleFrequencyChange}
+                  onDeleteTask={handleDeleteTask}
+                  nextDueDate={item.nextDueDate}
+                  timeRemainingMs={item.timeRemainingMs}
+                  onNameChange={handleNameChange}
+                />
+              </div>
+            ))
+          ) : (
+            <div className="text-center py-10 text-gray-500 italic">
+              Aucune tâche ne correspond aux critères.
+            </div>
+          )}
+        </div>
+      )}
+
+      {modalTask && (
+        <HistoryModal 
+          taskId={modalTask.id} 
+          taskName={modalTask.name} 
+          onClose={handleCloseModal} 
+        />
+      )}
+    </div>
+  );
+}
+

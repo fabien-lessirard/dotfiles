@@ -1,0 +1,38 @@
+# El Mictlan Dashboard
+
+## Startup
+- Dis bonjour à Fabien quand je démarre une session
+- Vérifier si le remote main est plus récent que le local :
+  ```
+  git fetch origin main && git log main..origin/main --oneline
+  ```
+  - Si oui → mettre à jour le local : `git checkout main && git pull origin main`
+  - Si une branche de dev était active → y retourner et merger main : `git checkout <branche> && git merge main -X ignore-cr-at-eol`
+
+## Shortcuts
+- Quand tu me dis "execute le prompt" ou "run le prompt" → exécute `release_automation_prompt.md`
+
+## Context Persistence
+- Always keep `src/prompts/todolist.md` up to date: it must contain planned but unfinished tasks so context is not lost between sessions
+- Always keep `recreate app prompt.md` up to date
+- At the start of each session, show the todo list and ask if we want to continue
+
+## Edit Failure Protocol
+If a string replace fails ("String to replace not found"):
+1. Re-read the full file immediately — do not rely on conversation history (Prettier/ESLint may have reformatted it)
+2. For import errors: check if multiple imports are on one line or if braces have variable spacing ({ Test } vs {Test}). Replace the entire import block rather than a single line.
+3. For JSX: indentation and line breaks between props matter. Use a shorter old_string starting just before the opening tag. Avoid including long static text blocks inside.
+4. Use the shortest unique old_string possible — fewer characters = fewer chances of invisible character mismatch
+5. Before submitting a replace, verify spaces and line endings (LF/CRLF). If unsure, rewrite the entire function or component rather than attempting a micro-replacement.
+
+## Codespace Environment Sync
+Whenever any of the following change, update the devcontainer config to persist it:
+
+- **Extensions changed** → update `.devcontainer/devcontainer.json` extensions array (`code --list-extensions` to get current list)
+- **VSCode settings changed** → update `.devcontainer/devcontainer.json` settings (exclude Windows-specific settings and local absolute paths)
+- **Keybindings changed** → update keybindings block in `.devcontainer/setup.sh`
+- **New dev tools/dependencies** → update `.devcontainer/setup.sh`
+- **New secrets/env vars** → add to `secrets` section in `.devcontainer/devcontainer.json`
+
+## CLAUDE.md Mirror
+Whenever you modify this gemini.md, you MUST also mirror the same changes to `CLAUDE.md` to keep the Claude Code setup in sync. This allows switching between Gemini CLI and Claude Code without losing any workflow instructions.

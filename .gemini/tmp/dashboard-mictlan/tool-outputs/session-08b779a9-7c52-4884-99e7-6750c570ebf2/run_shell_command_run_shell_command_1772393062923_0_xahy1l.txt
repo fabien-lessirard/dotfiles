@@ -1,0 +1,3 @@
+{
+  "output": "Output: ✔ You are about to delete the following Cloud Functions:\n        populateDishes(us-central1)\n  Are you sure? Yes\ni  functions: deleting Node.js 22 (2nd Gen) function populateDishes(us-central1)...\n+  functions[populateDishes(us-central1)] Successful delete operation.\nProcess Group PGID: 6848"
+}

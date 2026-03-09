@@ -1,0 +1,3 @@
+{
+  "output": "Found 1 match for pattern \"Nettoyage réalisé par\" in path \".\":\n---\nFile: src\\components\\CleaningChecklist.jsx\nL261:                 <span>Nettoyage réalisé par {log.userEmail}</span>\n---"
+}

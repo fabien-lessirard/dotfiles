@@ -1,0 +1,4 @@
+Output: ✓ Created workflow_dispatch event for ci-cd.yml at branch-v1.1.0-dev
+
+To see runs for this workflow, try: gh run list --workflow="ci-cd.yml"
+Process Group PGID: 22048

@@ -1,0 +1,9 @@
+Output: 
+
+    Directorio: C:\Users\acodu\dev\dashboard_mictlan
+
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----        23/02/2026     11:35                agent_notes
+Process Group PGID: 9188

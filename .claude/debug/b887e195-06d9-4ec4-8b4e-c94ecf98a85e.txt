@@ -1,0 +1,222 @@
+2026-03-06T15:57:16.896Z [DEBUG] MDM settings load completed in 229ms
+2026-03-06T15:57:16.965Z [DEBUG] [init] configureGlobalMTLS starting
+2026-03-06T15:57:16.965Z [DEBUG] [init] configureGlobalMTLS complete
+2026-03-06T15:57:16.966Z [DEBUG] [init] configureGlobalAgents starting
+2026-03-06T15:57:16.966Z [DEBUG] [init] configureGlobalAgents complete
+2026-03-06T15:57:17.068Z [DEBUG] Using bash path: "C:\Program Files\Git\bin\bash.exe"
+2026-03-06T15:57:17.109Z [DEBUG] Applying permission update: Adding 4 allow rule(s) to destination 'userSettings': ["Bash(firebase deploy:*)","Bash(gh run:*)","Bash(wc:*)","Bash(gh pr:*)"]
+2026-03-06T15:57:17.109Z [DEBUG] Applying permission update: Adding 22 allow rule(s) to destination 'localSettings': ["Bash(firebase deploy:*)","Bash(gh run:*)","Bash(wc:*)","Bash(gh pr:*)","Bash(powershell -Command \"net localgroup docker-users \"\"acodu\"\" /add\")","Bash(powershell -Command \"net localgroup docker-users /add\")","Bash(powershell -Command \"net localgroup docker-users \"\"Fabien Lessirard\"\" /add\")","Bash(powershell -Command \"Get-Command docker -ErrorAction SilentlyContinue; Get-ItemProperty ''HKLM:\\\\SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Uninstall\\\\*'' | Where-Object DisplayName -like ''*Docker*'' | Select-Object DisplayName, DisplayVersion\")","Bash(powershell -Command \"Test-Path ''C:\\\\Program Files\\\\Docker\\\\Docker\\\\Docker Desktop.exe''\")","Bash(env)","Bash(code --list-extensions)","Bash(git commit -F commit_message.txt)","Bash(git config --list)","Bash(git config --global user.name \"fabien-lessirard\")","Bash(git config --global user.email \"141371150+fabien-lessirard@users.noreply.github.com\")","Bash(git push origin branch-v2.4.0-dev)","Bash(git pull origin branch-v2.4.0-dev --rebase)","Bash(git stash push -m \"temp: exclude files before pull\")","Bash(git stash pop)","Bash(apt-get install -y gh)","Bash(npm install @anthropic-ai/sdk --ignore-scripts)","Bash(npm install @anthropic-ai/sdk)"]
+2026-03-06T15:57:17.118Z [DEBUG] [STARTUP] Loading MCP configs...
+2026-03-06T15:57:17.133Z [DEBUG] [ToolSearch:optimistic] mode=standard, ENABLE_TOOL_SEARCH=false, result=false
+2026-03-06T15:57:17.135Z [DEBUG] [STARTUP] Running setup()...
+2026-03-06T15:57:17.146Z [DEBUG] Loading skills from: managed=C:\ProgramData\ClaudeCode\.claude\skills, user=C:\Users\acodu\.claude\skills, project=[]
+2026-03-06T15:57:17.148Z [ERROR] Error: Error: ENOENT: no such file or directory, open 'C:\ProgramData\ClaudeCode\managed-settings.json'
+    at openSync (unknown)
+    at readSync (B:/~BUN/root/claude.exe:12:1441)
+    at OF (B:/~BUN/root/claude.exe:6426:113)
+    at fB (B:/~BUN/root/claude.exe:6428:226)
+    at DxE (B:/~BUN/root/claude.exe:6412:5335)
+    at RLI (B:/~BUN/root/claude.exe:6412:5108)
+    at <anonymous> (B:/~BUN/root/claude.exe:6412:3801)
+    at async bLI (B:/~BUN/root/claude.exe:6412:4183)
+    at async <anonymous> (B:/~BUN/root/claude.exe:11979:400)
+    at processTicksAndRejections (native:7:39)
+2026-03-06T15:57:17.148Z [DEBUG] Error log sink initialized
+2026-03-06T15:57:17.272Z [DEBUG] [STARTUP] setup() completed in 137ms
+2026-03-06T15:57:17.272Z [DEBUG] [STARTUP] Loading commands and agents...
+2026-03-06T15:57:17.324Z [DEBUG] Found 0 plugins (0 enabled, 0 disabled)
+2026-03-06T15:57:17.325Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-03-06T15:57:17.325Z [DEBUG] Total plugin skills loaded: 0
+2026-03-06T15:57:17.325Z [DEBUG] Total plugin commands loaded: 0
+2026-03-06T15:57:17.325Z [DEBUG] Registered 0 hooks from 0 plugins
+2026-03-06T15:57:17.325Z [DEBUG] [claudeai-mcp] Checking gate (cached)...
+2026-03-06T15:57:17.326Z [DEBUG] [claudeai-mcp] Gate returned: true
+2026-03-06T15:57:17.326Z [DEBUG] [claudeai-mcp] Missing user:mcp_servers scope (scopes=user:inference)
+2026-03-06T15:57:17.337Z [DEBUG] Total plugin agents loaded: 0
+2026-03-06T15:57:17.366Z [DEBUG] Loaded 0 unique skills (0 unconditional, 0 conditional, managed: 0, user: 0, project: 0, additional: 0, legacy commands: 0)
+2026-03-06T15:57:17.366Z [DEBUG] getSkills returning: 0 skill dir commands, 0 plugin skills, 3 bundled skills
+2026-03-06T15:57:17.368Z [DEBUG] [STARTUP] Commands and agents loaded in 96ms
+2026-03-06T15:57:17.368Z [DEBUG] [LSP MANAGER] initializeLspServerManager() called
+2026-03-06T15:57:17.370Z [DEBUG] [LSP MANAGER] Created manager instance, state=pending
+2026-03-06T15:57:17.371Z [DEBUG] [LSP MANAGER] Starting async initialization (generation 1)
+2026-03-06T15:57:17.376Z [DEBUG] Total LSP servers loaded: 0
+2026-03-06T15:57:17.376Z [DEBUG] [STARTUP] MCP configs loaded in 258ms
+2026-03-06T15:57:17.477Z [DEBUG] [LSP SERVER MANAGER] getAllLspServers returned 0 server(s)
+2026-03-06T15:57:17.477Z [DEBUG] LSP manager initialized with 0 servers
+2026-03-06T15:57:17.502Z [DEBUG] installed_plugins.json doesn't exist, returning empty V2 object
+2026-03-06T15:57:17.502Z [DEBUG] Initialized versioned plugins system with 0 plugins
+2026-03-06T15:57:17.502Z [DEBUG] LSP server manager initialized successfully
+2026-03-06T15:57:17.504Z [DEBUG] LSP notification handlers registered successfully for all 0 server(s)
+2026-03-06T15:57:17.507Z [DEBUG] Fast mode unavailable: Fast mode is not available in the Agent SDK
+2026-03-06T15:57:17.575Z [DEBUG] Watching for changes in setting files C:\Users\acodu\.claude\settings.json, C:\Users\acodu\dev\dashboard_mictlan\.claude\worktrees\eloquent-shtern\.claude\settings.json, C:\Users\acodu\dev\dashboard_mictlan\.claude\worktrees\eloquent-shtern\.claude\settings.local.json...
+2026-03-06T15:57:17.929Z [DEBUG] [Perfetto] initializePerfettoTracing called, env value: undefined
+2026-03-06T15:57:17.929Z [DEBUG] [3P telemetry] isTelemetryEnabled=false (CLAUDE_CODE_ENABLE_TELEMETRY=undefined)
+2026-03-06T15:57:17.947Z [DEBUG] Plugin autoupdate: skipped (auto-updater disabled)
+2026-03-06T15:57:17.977Z [DEBUG] Getting matching hook commands for SessionStart with query: startup
+2026-03-06T15:57:17.977Z [DEBUG] Found 0 hook matchers in settings
+2026-03-06T15:57:17.977Z [DEBUG] Matched 0 unique hooks for query "startup" (0 before deduplication)
+2026-03-06T15:57:17.981Z [DEBUG] [FileIndex] getProjectFiles called, respectGitignore=true
+2026-03-06T15:57:17.985Z [DEBUG] [FileIndex] getFilesUsingGit called
+2026-03-06T15:57:18.090Z [DEBUG] installPluginsForHeadless: starting
+2026-03-06T15:57:18.090Z [DEBUG] Found 0 installed plugins (V2 format)
+2026-03-06T15:57:18.091Z [DEBUG] installPluginsForHeadless: no missing plugins or marketplaces configured
+2026-03-06T15:57:18.200Z [DEBUG] Writing to temp file: C:\Users\acodu\.claude.json.tmp.30528.1772812638200
+2026-03-06T15:57:18.200Z [DEBUG] Preserving file permissions: 100666
+2026-03-06T15:57:18.206Z [DEBUG] Temp file written successfully, size: 7255 bytes
+2026-03-06T15:57:18.209Z [DEBUG] Applied original permissions to temp file
+2026-03-06T15:57:18.209Z [DEBUG] Renaming C:\Users\acodu\.claude.json.tmp.30528.1772812638200 to C:\Users\acodu\.claude.json
+2026-03-06T15:57:18.210Z [DEBUG] File C:\Users\acodu\.claude.json written atomically
+2026-03-06T15:57:18.245Z [DEBUG] Writing to temp file: C:\Users\acodu\.claude.json.tmp.30528.1772812638245
+2026-03-06T15:57:18.246Z [DEBUG] Preserving file permissions: 100666
+2026-03-06T15:57:18.256Z [DEBUG] Temp file written successfully, size: 7256 bytes
+2026-03-06T15:57:18.256Z [DEBUG] Applied original permissions to temp file
+2026-03-06T15:57:18.256Z [DEBUG] Renaming C:\Users\acodu\.claude.json.tmp.30528.1772812638245 to C:\Users\acodu\.claude.json
+2026-03-06T15:57:18.257Z [DEBUG] File C:\Users\acodu\.claude.json written atomically
+2026-03-06T15:57:18.366Z [DEBUG] Fetching plugin security messages from https://raw.githubusercontent.com/anthropics/claude-plugins-official/refs/heads/security/security.json
+2026-03-06T15:57:18.385Z [ERROR] "AxiosError: [url=https://api.anthropic.com/api/oauth/claude_cli/client_data,status=403,body=OAuth token does not meet scope requirement user:profile] Error\n    at cu (B:/~BUN/root/claude.exe:92:1144)\n    at <anonymous> (B:/~BUN/root/claude.exe:93:10067)\n    at emit (node:events:92:22)\n    at endReadableNT (internal:streams/readable:861:50)\n    at processTicksAndRejections (native:7:39)\n    at request (B:/~BUN/root/claude.exe:95:2149)\n    at processTicksAndRejections (native:7:39)"
+2026-03-06T15:57:18.386Z [DEBUG] Failed to fetch org fast mode status, defaulting to disabled
+2026-03-06T15:57:18.387Z [DEBUG] Git remote URL: https://github.com/fabien-lessirard/dashboard-mictlan-v1.git
+2026-03-06T15:57:18.387Z [DEBUG] Parsed repository: github.com/fabien-lessirard/dashboard-mictlan-v1 from URL: https://github.com/fabien-lessirard/dashboard-mictlan-v1.git
+2026-03-06T15:57:18.427Z [DEBUG] Total plugin output styles loaded: 0
+2026-03-06T15:57:18.428Z [DEBUG] Fast mode unavailable: Fast mode is not available in the Agent SDK
+2026-03-06T15:57:18.530Z [DEBUG] [FileIndex] git ls-files (tracked) took 543ms
+2026-03-06T15:57:18.531Z [DEBUG] [FileIndex] git ls-files: 122 tracked files in 546ms
+2026-03-06T15:57:18.545Z [DEBUG] [FileIndex] using git ls-files result (122 files)
+2026-03-06T15:57:18.816Z [DEBUG] [FileIndex] cache refresh completed in 835ms (rust index)
+2026-03-06T15:57:18.847Z [DEBUG] Security messages saved successfully
+2026-03-06T15:57:19.125Z [DEBUG] [SystemPrompt] path=simple proactive=false
+2026-03-06T15:57:19.176Z [DEBUG] [FileIndex] background untracked fetch: 0 files
+2026-03-06T15:57:19.435Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-03-06T15:57:19.437Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-03-06T15:57:19.441Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-03-06T15:57:19.441Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-03-06T15:57:19.441Z [DEBUG] Sending 2 skills via attachment (initial, 2 total sent)
+2026-03-06T15:57:19.446Z [WARN] [3P telemetry] Event dropped (no event logger initialized): user_prompt
+2026-03-06T15:57:19.450Z [DEBUG] Getting matching hook commands for UserPromptSubmit with query: undefined
+2026-03-06T15:57:19.450Z [DEBUG] Found 0 hook matchers in settings
+2026-03-06T15:57:19.450Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-03-06T15:57:19.463Z [DEBUG] autocompact: tokens=384 threshold=167000 effectiveWindow=180000
+2026-03-06T15:57:19.475Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-03-06T15:57:19.609Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.51.ea8; cc_entrypoint=claude-desktop; cch=00000;
+2026-03-06T15:57:19.611Z [DEBUG] Fast mode unavailable: Fast mode is not available in the Agent SDK
+2026-03-06T15:57:19.613Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-03-06T15:57:19.613Z [DEBUG] [API:auth] OAuth token check starting
+2026-03-06T15:57:19.617Z [DEBUG] Writing to temp file: C:\Users\acodu\.claude.json.tmp.30528.1772812639617
+2026-03-06T15:57:19.617Z [DEBUG] Preserving file permissions: 100666
+2026-03-06T15:57:19.625Z [DEBUG] Temp file written successfully, size: 7277 bytes
+2026-03-06T15:57:19.625Z [DEBUG] Applied original permissions to temp file
+2026-03-06T15:57:19.625Z [DEBUG] Renaming C:\Users\acodu\.claude.json.tmp.30528.1772812639617 to C:\Users\acodu\.claude.json
+2026-03-06T15:57:19.626Z [DEBUG] File C:\Users\acodu\.claude.json written atomically
+2026-03-06T15:57:19.643Z [DEBUG] Fast mode unavailable: Fast mode is not available in the Agent SDK
+2026-03-06T15:57:19.644Z [DEBUG] [API:auth] OAuth token check complete
+2026-03-06T15:57:19.645Z [DEBUG] Fast mode unavailable: Fast mode is not available in the Agent SDK
+2026-03-06T15:57:19.670Z [ERROR] "AxiosError: [url=https://api.anthropic.com/api/oauth/claude_cli/client_data,status=429,body=Rate limited. Please try again later.] Error\n    at cu (B:/~BUN/root/claude.exe:92:1144)\n    at <anonymous> (B:/~BUN/root/claude.exe:93:10067)\n    at emit (node:events:92:22)\n    at endReadableNT (internal:streams/readable:861:50)\n    at processTicksAndRejections (native:7:39)\n    at request (B:/~BUN/root/claude.exe:95:2149)\n    at processTicksAndRejections (native:7:39)"
+2026-03-06T15:57:19.671Z [ERROR] "AxiosError: [url=https://api.anthropic.com/api/oauth/claude_cli/client_data,status=429,body=Rate limited. Please try again later.] Error\n    at cu (B:/~BUN/root/claude.exe:92:1144)\n    at <anonymous> (B:/~BUN/root/claude.exe:93:10067)\n    at emit (node:events:92:22)\n    at endReadableNT (internal:streams/readable:861:50)\n    at processTicksAndRejections (native:7:39)\n    at request (B:/~BUN/root/claude.exe:95:2149)\n    at processTicksAndRejections (native:7:39)"
+2026-03-06T15:57:19.672Z [DEBUG] Ripgrep first use test: PASSED (mode=builtin, path=C:\Users\acodu\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude-code\2.1.51\claude.exe)
+2026-03-06T15:57:19.921Z [ERROR] API error (attempt 1/11): 429 429 {"type":"error","error":{"type":"rate_limit_error","message":"This request would exceed your account's rate limit. Please try again later."},"request_id":"req_011CYn6ptz2DL7tgvnPuYwdz"}
+2026-03-06T15:57:19.927Z [ERROR] Error in API request: 429 {"type":"error","error":{"type":"rate_limit_error","message":"This request would exceed your account's rate limit. Please try again later."},"request_id":"req_011CYn6ptz2DL7tgvnPuYwdz"}
+2026-03-06T15:57:19.932Z [ERROR] "Error: Error: 429 {\"type\":\"error\",\"error\":{\"type\":\"rate_limit_error\",\"message\":\"This request would exceed your account's rate limit. Please try again later.\"},\"request_id\":\"req_011CYn6ptz2DL7tgvnPuYwdz\"}\n    at generate (B:/~BUN/root/claude.exe:287:28527)\n    at makeRequest (B:/~BUN/root/claude.exe:326:5435)\n    at processTicksAndRejections (native:7:39)"
+2026-03-06T15:57:19.942Z [DEBUG] Getting matching hook commands for Stop with query: undefined
+2026-03-06T15:57:19.942Z [DEBUG] Found 2 hook matchers in settings
+2026-03-06T15:57:19.942Z [DEBUG] Matched 2 unique hooks for query "no match query" (2 before deduplication)
+2026-03-07T00:27:47.394Z [DEBUG] MDM settings load completed in 27ms
+2026-03-07T00:27:47.409Z [DEBUG] [init] configureGlobalMTLS starting
+2026-03-07T00:27:47.410Z [DEBUG] [init] configureGlobalMTLS complete
+2026-03-07T00:27:47.410Z [DEBUG] [init] configureGlobalAgents starting
+2026-03-07T00:27:47.410Z [DEBUG] [init] configureGlobalAgents complete
+2026-03-07T00:27:47.457Z [DEBUG] Using bash path: "C:\Program Files\Git\bin\bash.exe"
+2026-03-07T00:27:47.471Z [DEBUG] Applying permission update: Adding 4 allow rule(s) to destination 'userSettings': ["Bash(firebase deploy:*)","Bash(gh run:*)","Bash(wc:*)","Bash(gh pr:*)"]
+2026-03-07T00:27:47.471Z [DEBUG] Applying permission update: Adding 22 allow rule(s) to destination 'localSettings': ["Bash(firebase deploy:*)","Bash(gh run:*)","Bash(wc:*)","Bash(gh pr:*)","Bash(powershell -Command \"net localgroup docker-users \"\"acodu\"\" /add\")","Bash(powershell -Command \"net localgroup docker-users /add\")","Bash(powershell -Command \"net localgroup docker-users \"\"Fabien Lessirard\"\" /add\")","Bash(powershell -Command \"Get-Command docker -ErrorAction SilentlyContinue; Get-ItemProperty ''HKLM:\\\\SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Uninstall\\\\*'' | Where-Object DisplayName -like ''*Docker*'' | Select-Object DisplayName, DisplayVersion\")","Bash(powershell -Command \"Test-Path ''C:\\\\Program Files\\\\Docker\\\\Docker\\\\Docker Desktop.exe''\")","Bash(env)","Bash(code --list-extensions)","Bash(git commit -F commit_message.txt)","Bash(git config --list)","Bash(git config --global user.name \"fabien-lessirard\")","Bash(git config --global user.email \"141371150+fabien-lessirard@users.noreply.github.com\")","Bash(git push origin branch-v2.4.0-dev)","Bash(git pull origin branch-v2.4.0-dev --rebase)","Bash(git stash push -m \"temp: exclude files before pull\")","Bash(git stash pop)","Bash(apt-get install -y gh)","Bash(npm install @anthropic-ai/sdk --ignore-scripts)","Bash(npm install @anthropic-ai/sdk)"]
+2026-03-07T00:27:47.477Z [DEBUG] [STARTUP] Loading MCP configs...
+2026-03-07T00:27:47.480Z [DEBUG] [ToolSearch:optimistic] mode=standard, ENABLE_TOOL_SEARCH=false, result=false
+2026-03-07T00:27:47.481Z [DEBUG] [STARTUP] Running setup()...
+2026-03-07T00:27:47.487Z [DEBUG] Loading skills from: managed=C:\ProgramData\ClaudeCode\.claude\skills, user=C:\Users\acodu\.claude\skills, project=[]
+2026-03-07T00:27:47.488Z [ERROR] Error: Error: ENOENT: no such file or directory, open 'C:\ProgramData\ClaudeCode\managed-settings.json'
+    at openSync (unknown)
+    at readSync (B:/~BUN/root/claude.exe:12:1441)
+    at OF (B:/~BUN/root/claude.exe:6426:113)
+    at fB (B:/~BUN/root/claude.exe:6428:226)
+    at DxE (B:/~BUN/root/claude.exe:6412:5335)
+    at RLI (B:/~BUN/root/claude.exe:6412:5108)
+    at <anonymous> (B:/~BUN/root/claude.exe:6412:3801)
+    at async bLI (B:/~BUN/root/claude.exe:6412:4183)
+    at async <anonymous> (B:/~BUN/root/claude.exe:11979:400)
+    at processTicksAndRejections (native:7:39)
+2026-03-07T00:27:47.488Z [DEBUG] Error log sink initialized
+2026-03-07T00:27:47.501Z [DEBUG] [STARTUP] setup() completed in 20ms
+2026-03-07T00:27:47.501Z [DEBUG] [STARTUP] Loading commands and agents...
+2026-03-07T00:27:47.528Z [DEBUG] Found 0 plugins (0 enabled, 0 disabled)
+2026-03-07T00:27:47.528Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-03-07T00:27:47.528Z [DEBUG] Total plugin skills loaded: 0
+2026-03-07T00:27:47.528Z [DEBUG] Total plugin commands loaded: 0
+2026-03-07T00:27:47.528Z [DEBUG] Registered 0 hooks from 0 plugins
+2026-03-07T00:27:47.529Z [DEBUG] [claudeai-mcp] Checking gate (cached)...
+2026-03-07T00:27:47.529Z [DEBUG] [claudeai-mcp] Gate returned: true
+2026-03-07T00:27:47.529Z [DEBUG] [claudeai-mcp] Missing user:mcp_servers scope (scopes=user:inference)
+2026-03-07T00:27:47.539Z [DEBUG] Total plugin agents loaded: 0
+2026-03-07T00:27:47.550Z [DEBUG] Loaded 0 unique skills (0 unconditional, 0 conditional, managed: 0, user: 0, project: 0, additional: 0, legacy commands: 0)
+2026-03-07T00:27:47.550Z [DEBUG] getSkills returning: 0 skill dir commands, 0 plugin skills, 3 bundled skills
+2026-03-07T00:27:47.551Z [DEBUG] [STARTUP] Commands and agents loaded in 50ms
+2026-03-07T00:27:47.551Z [DEBUG] [LSP MANAGER] initializeLspServerManager() called
+2026-03-07T00:27:47.552Z [DEBUG] [LSP MANAGER] Created manager instance, state=pending
+2026-03-07T00:27:47.552Z [DEBUG] [LSP MANAGER] Starting async initialization (generation 1)
+2026-03-07T00:27:47.554Z [DEBUG] Total LSP servers loaded: 0
+2026-03-07T00:27:47.554Z [DEBUG] [STARTUP] MCP configs loaded in 77ms
+2026-03-07T00:27:47.573Z [DEBUG] [LSP SERVER MANAGER] getAllLspServers returned 0 server(s)
+2026-03-07T00:27:47.573Z [DEBUG] LSP manager initialized with 0 servers
+2026-03-07T00:27:47.590Z [DEBUG] installed_plugins.json doesn't exist, returning empty V2 object
+2026-03-07T00:27:47.590Z [DEBUG] Initialized versioned plugins system with 0 plugins
+2026-03-07T00:27:47.590Z [DEBUG] LSP server manager initialized successfully
+2026-03-07T00:27:47.590Z [DEBUG] LSP notification handlers registered successfully for all 0 server(s)
+2026-03-07T00:27:47.591Z [DEBUG] Fast mode unavailable: Fast mode is not available in the Agent SDK
+2026-03-07T00:27:47.647Z [DEBUG] Watching for changes in setting files C:\Users\acodu\.claude\settings.json, C:\Users\acodu\dev\dashboard_mictlan\.claude\worktrees\eloquent-shtern\.claude\settings.json, C:\Users\acodu\dev\dashboard_mictlan\.claude\worktrees\eloquent-shtern\.claude\settings.local.json...
+2026-03-07T00:27:47.736Z [DEBUG] [Perfetto] initializePerfettoTracing called, env value: undefined
+2026-03-07T00:27:47.736Z [DEBUG] [3P telemetry] isTelemetryEnabled=false (CLAUDE_CODE_ENABLE_TELEMETRY=undefined)
+2026-03-07T00:27:47.744Z [DEBUG] Plugin autoupdate: skipped (auto-updater disabled)
+2026-03-07T00:27:47.811Z [DEBUG] Getting matching hook commands for SessionStart with query: resume
+2026-03-07T00:27:47.811Z [DEBUG] Found 0 hook matchers in settings
+2026-03-07T00:27:47.811Z [DEBUG] Matched 0 unique hooks for query "resume" (0 before deduplication)
+2026-03-07T00:27:47.812Z [DEBUG] [FileIndex] getProjectFiles called, respectGitignore=true
+2026-03-07T00:27:47.812Z [DEBUG] [FileIndex] getFilesUsingGit called
+2026-03-07T00:27:47.837Z [DEBUG] installPluginsForHeadless: starting
+2026-03-07T00:27:47.837Z [DEBUG] Found 0 installed plugins (V2 format)
+2026-03-07T00:27:47.837Z [DEBUG] installPluginsForHeadless: no missing plugins or marketplaces configured
+2026-03-07T00:27:47.851Z [ERROR] "AxiosError: [url=https://api.anthropic.com/api/oauth/claude_cli/client_data,status=403,body=OAuth token does not meet scope requirement user:profile] Error\n    at cu (B:/~BUN/root/claude.exe:92:1144)\n    at <anonymous> (B:/~BUN/root/claude.exe:93:10067)\n    at emit (node:events:92:22)\n    at endReadableNT (internal:streams/readable:861:50)\n    at processTicksAndRejections (native:7:39)\n    at request (B:/~BUN/root/claude.exe:95:2149)\n    at processTicksAndRejections (native:7:39)"
+2026-03-07T00:27:47.852Z [DEBUG] Failed to fetch org fast mode status, defaulting to disabled
+2026-03-07T00:27:47.852Z [DEBUG] Git remote URL: https://github.com/fabien-lessirard/dashboard-mictlan-v1.git
+2026-03-07T00:27:47.852Z [DEBUG] Parsed repository: github.com/fabien-lessirard/dashboard-mictlan-v1 from URL: https://github.com/fabien-lessirard/dashboard-mictlan-v1.git
+2026-03-07T00:27:47.867Z [DEBUG] Fetching plugin security messages from https://raw.githubusercontent.com/anthropics/claude-plugins-official/refs/heads/security/security.json
+2026-03-07T00:27:47.878Z [DEBUG] Total plugin output styles loaded: 0
+2026-03-07T00:27:47.878Z [DEBUG] Fast mode unavailable: Fast mode is not available in the Agent SDK
+2026-03-07T00:27:47.949Z [DEBUG] [FileIndex] git ls-files (tracked) took 136ms
+2026-03-07T00:27:47.949Z [DEBUG] [FileIndex] git ls-files: 122 tracked files in 137ms
+2026-03-07T00:27:47.956Z [DEBUG] [FileIndex] using git ls-files result (122 files)
+2026-03-07T00:27:48.073Z [DEBUG] [FileIndex] cache refresh completed in 261ms (rust index)
+2026-03-07T00:27:48.092Z [DEBUG] [FileIndex] background untracked fetch: 0 files
+2026-03-07T00:27:48.095Z [DEBUG] Security messages saved successfully
+2026-03-07T00:27:48.462Z [DEBUG] Ripgrep first use test: PASSED (mode=builtin, path=C:\Users\acodu\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\claude-code\2.1.51\claude.exe)
+2026-03-07T00:28:12.623Z [DEBUG] [SystemPrompt] path=simple proactive=false
+2026-03-07T00:28:12.834Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-03-07T00:28:12.834Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-03-07T00:28:12.834Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-03-07T00:28:12.834Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-03-07T00:28:12.835Z [DEBUG] Sending 2 skills via attachment (initial, 2 total sent)
+2026-03-07T00:28:12.837Z [DEBUG] Getting matching hook commands for UserPromptSubmit with query: undefined
+2026-03-07T00:28:12.837Z [DEBUG] Found 0 hook matchers in settings
+2026-03-07T00:28:12.837Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-03-07T00:28:12.840Z [DEBUG] autocompact: tokens=2402 threshold=167000 effectiveWindow=180000
+2026-03-07T00:28:12.841Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-03-07T00:28:12.865Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.51.97b; cc_entrypoint=claude-desktop; cch=00000;
+2026-03-07T00:28:12.866Z [DEBUG] Fast mode unavailable: Fast mode is not available in the Agent SDK
+2026-03-07T00:28:12.866Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-03-07T00:28:12.866Z [DEBUG] [API:auth] OAuth token check starting
+2026-03-07T00:28:12.866Z [DEBUG] Fast mode unavailable: Fast mode is not available in the Agent SDK
+2026-03-07T00:28:12.867Z [DEBUG] [API:auth] OAuth token check complete
+2026-03-07T00:28:12.868Z [DEBUG] Fast mode unavailable: Fast mode is not available in the Agent SDK
+2026-03-07T00:28:12.873Z [ERROR] "AxiosError: [url=https://api.anthropic.com/api/oauth/claude_cli/client_data,status=403,body=OAuth token does not meet scope requirement user:profile] Error\n    at cu (B:/~BUN/root/claude.exe:92:1144)\n    at <anonymous> (B:/~BUN/root/claude.exe:93:10067)\n    at emit (node:events:92:22)\n    at endReadableNT (internal:streams/readable:861:50)\n    at processTicksAndRejections (native:7:39)\n    at request (B:/~BUN/root/claude.exe:95:2149)\n    at processTicksAndRejections (native:7:39)"
+2026-03-07T00:28:12.883Z [ERROR] "AxiosError: [url=https://api.anthropic.com/api/oauth/claude_cli/client_data,status=429,body=Rate limited. Please try again later.] Error\n    at cu (B:/~BUN/root/claude.exe:92:1144)\n    at <anonymous> (B:/~BUN/root/claude.exe:93:10067)\n    at emit (node:events:92:22)\n    at endReadableNT (internal:streams/readable:861:50)\n    at processTicksAndRejections (native:7:39)\n    at request (B:/~BUN/root/claude.exe:95:2149)\n    at processTicksAndRejections (native:7:39)"
+2026-03-07T00:28:14.409Z [DEBUG] Stream started - received first chunk
+2026-03-07T00:28:20.818Z [WARN] [3P telemetry] Event dropped (no event logger initialized): api_request
+2026-03-07T00:28:20.820Z [DEBUG] Getting matching hook commands for Stop with query: undefined
+2026-03-07T00:28:20.820Z [DEBUG] Found 1 hook matchers in settings
+2026-03-07T00:28:20.820Z [DEBUG] Matched 1 unique hooks for query "no match query" (1 before deduplication)

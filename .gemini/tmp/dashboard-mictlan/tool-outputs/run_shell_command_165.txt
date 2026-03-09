@@ -1,0 +1,3 @@
+Output: fatal: not under version control, source=frontend_rebuild_instructions.txt, destination=agent_notes/frontend_rebuild_instructions.txt
+Exit Code: 1
+Process Group PGID: 3368

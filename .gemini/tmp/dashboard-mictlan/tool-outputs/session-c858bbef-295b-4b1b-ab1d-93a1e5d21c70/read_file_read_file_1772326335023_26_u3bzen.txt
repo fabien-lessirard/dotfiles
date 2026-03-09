@@ -1,0 +1,3 @@
+{
+  "output": "// src/versionInfo.js\r\n\r\nimport packageJson from '../package.json';\r\n\r\nconst getAppVersionInfo = () => {\r\n  const version = packageJson.version;\r\n  const buildTimestamp = import.meta.env.VITE_APP_BUILD_TIMESTAMP || 'N/A';\r\n  const mode = import.meta.env.MODE;\r\n\r\n  return {\r\n    version: version,\r\n    buildTimestamp: buildTimestamp,\r\n    mode: mode,\r\n    fullVersion: `Version ${version} (${buildTimestamp} - ${mode})`\r\n  };\r\n};\r\n\r\n// Expose globally for easy access (e.g., via browser console)\r\nwindow.getAppVersionInfo = getAppVersionInfo;\r\n\r\nexport default getAppVersionInfo;"
+}

@@ -1,0 +1,55 @@
+useAuth.js:165  POST https://us-central1-dashboard-mictlan-dev.cloudfunctions.net/deleteUser 401 (Unauthorized)
+fetchImpl @ firebase_functions.js?v=2746e073:267
+postJSON @ firebase_functions.js?v=2746e073:339
+callAtURL @ firebase_functions.js?v=2746e073:386
+await in callAtURL
+call @ firebase_functions.js?v=2746e073:377
+callable @ firebase_functions.js?v=2746e073:316
+(anonymous) @ useAuth.js:165
+handleDeleteUser @ AdminPanel.jsx:89
+onClick @ AdminPanel.jsx:211
+executeDispatch @ react-dom_client.js?v=2746e073:13622
+runWithFiberInDEV @ react-dom_client.js?v=2746e073:997
+processDispatchQueue @ react-dom_client.js?v=2746e073:13658
+(anonymous) @ react-dom_client.js?v=2746e073:14071
+batchedUpdates$1 @ react-dom_client.js?v=2746e073:2626
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=2746e073:13763
+dispatchEvent @ react-dom_client.js?v=2746e073:16784
+dispatchDiscreteEvent @ react-dom_client.js?v=2746e073:16765
+<button>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=2746e073:247
+(anonymous) @ AdminPanel.jsx:211
+AdminPanel @ AdminPanel.jsx:198
+react_stack_bottom_frame @ react-dom_client.js?v=2746e073:18509
+renderWithHooksAgain @ react-dom_client.js?v=2746e073:5729
+renderWithHooks @ react-dom_client.js?v=2746e073:5665
+updateFunctionComponent @ react-dom_client.js?v=2746e073:7475
+beginWork @ react-dom_client.js?v=2746e073:8525
+runWithFiberInDEV @ react-dom_client.js?v=2746e073:997
+performUnitOfWork @ react-dom_client.js?v=2746e073:12561
+workLoopSync @ react-dom_client.js?v=2746e073:12424
+renderRootSync @ react-dom_client.js?v=2746e073:12408
+performWorkOnRoot @ react-dom_client.js?v=2746e073:11766
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=2746e073:13505
+performWorkUntilDeadline @ react-dom_client.js?v=2746e073:36
+<AdminPanel>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=2746e073:247
+App @ App.jsx:125
+react_stack_bottom_frame @ react-dom_client.js?v=2746e073:18509
+renderWithHooksAgain @ react-dom_client.js?v=2746e073:5729
+renderWithHooks @ react-dom_client.js?v=2746e073:5665
+updateFunctionComponent @ react-dom_client.js?v=2746e073:7475
+beginWork @ react-dom_client.js?v=2746e073:8525
+runWithFiberInDEV @ react-dom_client.js?v=2746e073:997
+performUnitOfWork @ react-dom_client.js?v=2746e073:12561
+workLoopSync @ react-dom_client.js?v=2746e073:12424
+renderRootSync @ react-dom_client.js?v=2746e073:12408
+performWorkOnRoot @ react-dom_client.js?v=2746e073:11766
+performSyncWorkOnRoot @ react-dom_client.js?v=2746e073:13517
+flushSyncWorkAcrossRoots_impl @ react-dom_client.js?v=2746e073:13414
+flushSyncWork$1 @ react-dom_client.js?v=2746e073:12076
+batchedUpdates$1 @ react-dom_client.js?v=2746e073:2630
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=2746e073:13763
+dispatchEvent @ react-dom_client.js?v=2746e073:16784
+dispatchDiscreteEvent @ react-dom_client.js?v=2746e073:16765Understand this error
+useAuth.js:168 Error deleting user: FirebaseError: The function must be called while authenticated.

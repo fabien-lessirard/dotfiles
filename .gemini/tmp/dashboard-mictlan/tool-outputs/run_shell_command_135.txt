@@ -1,0 +1,15 @@
+Output: billingAccountName: billingAccounts/01D852-A654AF-572E73
+billingEnabled: true
+name: projects/dashboard-mictlan-prod/billingInfo
+projectId: dashboard-mictlan-prod
+
+
+Updates are available for some Google Cloud CLI components.  To install them,
+please run:
+  $ gcloud components update
+
+
+
+To take a quick anonymous survey, run:
+  $ gcloud survey
+Process Group PGID: 21800

@@ -1,0 +1,206 @@
+[
+  {
+    "text": "/model",
+    "timestamp": 1772498796645
+  },
+  {
+    "text": "/config",
+    "timestamp": 1772498791181
+  },
+  {
+    "text": "hello",
+    "timestamp": 1772497316061
+  },
+  {
+    "text": "?",
+    "timestamp": 1772497027916
+  },
+  {
+    "text": "/exit",
+    "timestamp": 1772497005124
+  },
+  {
+    "text": "useAuth.js:67 \n POST https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCmM5gzQjRC6YyfnPal1uXL6p3NaTw-gms 400 (Bad Request)\nawait in (anonymous)\t\t\ninitializeAdmin\t@\tuseAuth.js:67\n(anonymous)\t@\tuseAuth.js:95\n<App>\t\t\n(anonymous)\t@\tmain.jsx:12",
+    "timestamp": 1772485279003
+  },
+  {
+    "text": "ou puis voir ces traces: trace: \"projects/dashboard-mictlan-dev/traces/af9519f227bd9d6fa51dd013d097013a\"",
+    "timestamp": 1772484309522
+  },
+  {
+    "text": "ok",
+    "timestamp": 1772483814753
+  },
+  {
+    "text": "useTables.js:22 Erreur Firestore : FirebaseError: Missing or insufficient permissions.\n(anonymous) @ useTables.js:22\n(anonymous) @ firebase_firestore.js?v=2746e073:14982\nsetTimeout\nOu @ firebase_firestore.js?v=2746e073:14981\nerror @ firebase_firestore.js?v=2746e073:14975\nonError @ firebase_firestore.js?v=2746e073:13801\n__PRIVATE_eventManagerOnWatchError @ firebase_firestore.js?v=2746e073:13754\n__PRIVATE_removeAndCleanupTarget @ firebase_firestore.js?v=2746e073:14473\n(anonymous) @ firebase_firestore.js?v=2746e073:14410\nPromise.then\n__PRIVATE_syncEngineRejectListen @ firebase_firestore.js?v=2746e073:14410\n__PRIVATE_handleTargetError @ firebase_firestore.js?v=2746e073:13253\n__PRIVATE_onWatchStreamChange @ firebase_firestore.js?v=2746e073:13254\nonNext @ firebase_firestore.js?v=2746e073:12912\n(anonymous) @ firebase_firestore.js?v=2746e073:12871\n(anonymous) @ firebase_firestore.js?v=2746e073:12891\n(anonymous) @ firebase_firestore.js?v=2746e073:15977\n(anonymous) @ firebase_firestore.js?v=2746e073:16008\nPromise.then\ncc @ firebase_firestore.js?v=2746e073:16008\nenqueue @ firebase_firestore.js?v=2746e073:15977\nenqueueAndForget @ firebase_firestore.js?v=2746e073:15959\n(anonymous) @ firebase_firestore.js?v=2746e073:12891\n(anonymous) @ firebase_firestore.js?v=2746e073:12871\nu_ @ firebase_firestore.js?v=2746e073:12485\n(anonymous) @ firebase_firestore.js?v=2746e073:12624\n(anonymous) @ firebase_firestore.js?v=2746e073:12588\nVa @ firebase_firestore.js?v=2746e073:920\nD @ firebase_firestore.js?v=2746e073:888\nZ2.qa @ firebase_firestore.js?v=2746e073:2477\nLb @ firebase_firestore.js?v=2746e073:1387\nN2.Y @ firebase_firestore.js?v=2746e073:1238\nN2.ba @ firebase_firestore.js?v=2746e073:1189\nVa @ firebase_firestore.js?v=2746e073:920\nD @ firebase_firestore.js?v=2746e073:888\nQc @ firebase_firestore.js?v=2746e073:1885\nh.Xa @ firebase_firestore.js?v=2746e073:1880\nh.Ca @ firebase_firestore.js?v=2746e073:1877\nGc @ firebase_firestore.js?v=2746e073:1778\nh.Ma @ firebase_firestore.js?v=2746e073:1745\nPromise.then\nIc @ firebase_firestore.js?v=2746e073:1736\nh.Ma @ firebase_firestore.js?v=2746e073:1746\nPromise.then\nIc @ firebase_firestore.js?v=2746e073:1736\nh.Ma @ firebase_firestore.js?v=2746e073:1746\nPromise.then\nIc @ firebase_firestore.js?v=2746e073:1736\nh.Pa @ firebase_firestore.js?v=2746e073:1732\nPromise.then\nh.send @ firebase_firestore.js?v=2746e073:1712\nh.ea @ firebase_firestore.js?v=2746e073:1853\nEb @ firebase_firestore.js?v=2746e073:1182\n$c @ firebase_firestore.js?v=2746e073:2278\nh.Da @ firebase_firestore.js?v=2746e073:2245\nsa @ firebase_firestore.js?v=2746e073:624\nPromise.then\nu @ firebase_firestore.js?v=2746e073:618\nac @ firebase_firestore.js?v=2746e073:2231\nLb @ firebase_firestore.js?v=2746e073:1384\nN2.Y @ firebase_firestore.js?v=2746e073:1238\nN2.ba @ firebase_firestore.js?v=2746e073:1189\nVa @ firebase_firestore.js?v=2746e073:920\nD @ firebase_firestore.js?v=2746e073:888\nQc @ firebase_firestore.js?v=2746e073:1885\nh.Xa @ firebase_firestore.js?v=2746e073:1880\nh.Ca @ firebase_firestore.js?v=2746e073:1877\nGc @ firebase_firestore.js?v=2746e073:1778\nh.Ma @ firebase_firestore.js?v=2746e073:1745\nPromise.then\nIc @ firebase_firestore.js?v=2746e073:1736\nh.Pa @ firebase_firestore.js?v=2746e073:1732\nPromise.then\nh.send @ firebase_firestore.js?v=2746e073:1712\nh.ea @ firebase_firestore.js?v=2746e073:1853\nEb @ firebase_firestore.js?v=2746e073:1177\nCb @ firebase_firestore.js?v=2746e073:1152\nh.Ea @ firebase_firestore.js?v=2746e073:2154\nsa @ firebase_firestore.js?v=2746e073:624\nPromise.then\nu @ firebase_firestore.js?v=2746e073:618\nbc @ firebase_firestore.js?v=2746e073:2098\nh.connect @ firebase_firestore.js?v=2746e073:2058\nY2.m @ firebase_firestore.js?v=2746e073:2425\nYo @ firebase_firestore.js?v=2746e073:12582\nsend @ firebase_firestore.js?v=2746e073:12473\nq_ @ firebase_firestore.js?v=2746e073:12789\nY_ @ firebase_firestore.js?v=2746e073:12941\n__PRIVATE_sendWatchRequest @ firebase_firestore.js?v=2746e073:13197\n(anonymous) @ firebase_firestore.js?v=2746e073:13226\n__PRIVATE_onWatchStreamOpen @ firebase_firestore.js?v=2746e073:13225\n(anonymous) @ firebase_firestore.js?v=2746e073:12867\n(anonymous) @ firebase_firestore.js?v=2746e073:12891\n(anonymous) @ firebase_firestore.js?v=2746e073:15977\n(anonymous) @ firebase_firestore.js?v=2746e073:16008\nPromise.then\ncc @ firebase_firestore.js?v=2746e073:16008\nenqueue @ firebase_firestore.js?v=2746e073:15977\nenqueueAndForget @ firebase_firestore.js?v=2746e073:15959\n(anonymous) @ firebase_firestore.js?v=2746e073:12891\n(anonymous) @ firebase_firestore.js?v=2746e073:12867\n__ @ firebase_firestore.js?v=2746e073:12479\n(anonymous) @ firebase_firestore.js?v=2746e073:12629\nsetTimeout\nT_ @ firebase_firestore.js?v=2746e073:12628\nj_ @ firebase_firestore.js?v=2746e073:12900\nG_ @ firebase_firestore.js?v=2746e073:12864\n(anonymous) @ firebase_firestore.js?v=2746e073:12854\nPromise.then\nauth @ firebase_firestore.js?v=2746e073:12850\nstart @ firebase_firestore.js?v=2746e073:12749\n__PRIVATE_startWatchStream @ firebase_firestore.js?v=2746e073:13207\n(anonymous) @ firebase_firestore.js?v=2746e073:13411\n__PRIVATE_enableNetworkInternal @ firebase_firestore.js?v=2746e073:13163\n__PRIVATE_remoteStoreHandleCredentialChange @ firebase_firestore.js?v=2746e073:13385\nawait in __PRIVATE_remoteStoreHandleCredentialChange\n(anonymous) @ firebase_firestore.js?v=2746e073:15346\n(anonymous) @ firebase_firestore.js?v=2746e073:15294\n__PRIVATE_guardedChangeListener @ firebase_firestore.js?v=2746e073:2784\n(anonymous) @ firebase_firestore.js?v=2746e073:2787\nlc @ firebase_firestore.js?v=2746e073:15989\n(anonymous) @ firebase_firestore.js?v=2746e073:15980\n(anonymous) @ firebase_firestore.js?v=2746e073:15977\n(anonymous) @ firebase_firestore.js?v=2746e073:16008\nPromise.then\ncc @ firebase_firestore.js?v=2746e073:16008\nenqueue @ firebase_firestore.js?v=2746e073:15977\nenqueueAndForget @ firebase_firestore.js?v=2746e073:15959\nenqueueRetryable @ firebase_firestore.js?v=2746e073:15980\no @ firebase_firestore.js?v=2746e073:2787\n(anonymous) @ firebase_auth.js?v=2746e073:7961\n(anonymous) @ chunk-DPGHDWGE.js?v=2746e073:742\n(anonymous) @ chunk-DPGHDWGE.js?v=2746e073:834\nPromise.then\nsendOne @ chunk-DPGHDWGE.js?v=2746e073:831\nforEachObserver @ chunk-DPGHDWGE.js?v=2746e073:824\nnext @ chunk-DPGHDWGE.js?v=2746e073:741\nnotifyAuthListeners @ firebase_auth.js?v=2746e073:2722\n(anonymous) @ firebase_auth.js?v=2746e073:2538\nPromise.then\nqueue @ firebase_auth.js?v=2746e073:2783\n_updateCurrentUser @ firebase_auth.js?v=2746e073:2536\nsignOut @ firebase_auth.js?v=2746e073:2549\nawait in signOut\nsignOut @ firebase_auth.js?v=2746e073:5131\n(anonymous) @ useAuth.js:121\nexecuteDispatch @ react-dom_client.js?v=2746e073:13622\nrunWithFiberInDEV @ react-dom_client.js?v=2746e073:997\nprocessDispatchQueue @ react-dom_client.js?v=2746e073:13658\n(anonymous) @ react-dom_client.js?v=2746e073:14071\nbatchedUpdates$1 @ react-dom_client.js?v=2746e073:2626\ndispatchEventForPluginEventSystem @ react-dom_client.js?v=2746e073:13763\ndispatchEvent @ react-dom_client.js?v=2746e073:16784\ndispatchDiscreteEvent @ react-dom_client.js?v=2746e073:16765\n<button>\nexports.jsxDEV @ react_jsx-dev-runtime.js?v=2746e073:247\nHeader @ Header.jsx:155\nreact_stack_bottom_frame @ react-dom_client.js?v=2746e073:18509\nrenderWithHooksAgain @ react-dom_client.js?v=2746e073:5729\nrenderWithHooks @ react-dom_client.js?v=2746e073:5665\nupdateFunctionComponent @ react-dom_client.js?v=2746e073:7475\nbeginWork @ react-dom_client.js?v=2746e073:8525\nrunWithFiberInDEV @ react-dom_client.js?v=2746e073:997\nperformUnitOfWork @ react-dom_client.js?v=2746e073:12561\nworkLoopSync @ react-dom_client.js?v=2746e073:12424\nrenderRootSync @ react-dom_client.js?v=2746e073:12408\nperformWorkOnRoot @ react-dom_client.js?v=2746e073:11766\nperformWorkOnRootViaSchedulerTask @ react-dom_client.js?v=2746e073:13505\nperformWorkUntilDeadline @ react-dom_client.js?v=2746e073:36\n<Header>\nexports.jsxDEV @ react_jsx-dev-runtime.js?v=2746e073:247\nApp @ App.jsx:90\nreact_stack_bottom_frame @ react-dom_client.js?v=2746e073:18509\nrenderWithHooksAgain @ react-dom_client.js?v=2746e073:5729\nrenderWithHooks @ react-dom_client.js?v=2746e073:5665\nupdateFunctionComponent @ react-dom_client.js?v=2746e073:7475\nbeginWork @ react-dom_client.js?v=2746e073:8525\nrunWithFiberInDEV @ react-dom_client.js?v=2746e073:997\nperformUnitOfWork @ react-dom_client.js?v=2746e073:12561\nworkLoopSync @ react-dom_client.js?v=2746e073:12424\nrenderRootSync @ react-dom_client.js?v=2746e073:12408\nperformWorkOnRoot @ react-dom_client.js?v=2746e073:11766\nperformWorkOnRootViaSchedulerTask @ react-dom_client.js?v=2746e073:13505\nperformWorkUntilDeadline @ react-dom_client.js?v=2746e073:36\n<App>\nexports.jsxDEV @ react_jsx-dev-runtime.js?v=2746e073:247\n(anonymous) @ main.jsx:12Understand this error\nuseSettings.js:39 Erreur listening to settings: FirebaseError: Missing or insufficient permissions.\n(anonymous) @ useSettings.js:39\n(anonymous) @ firebase_firestore.js?v=2746e073:14982\nsetTimeout\nOu @ firebase_firestore.js?v=2746e073:14981\nerror @ firebase_firestore.js?v=2746e073:14975\nonError @ firebase_firestore.js?v=2746e073:13801\n__PRIVATE_eventManagerOnWatchError @ firebase_firestore.js?v=2746e073:13754\n__PRIVATE_removeAndCleanupTarget @ firebase_firestore.js?v=2746e073:14473\n(anonymous) @ firebase_firestore.js?v=2746e073:14410\nPromise.then\n__PRIVATE_syncEngineRejectListen @ firebase_firestore.js?v=2746e073:14410\n__PRIVATE_handleTargetError @ firebase_firestore.js?v=2746e073:13253\n__PRIVATE_onWatchStreamChange @ firebase_firestore.js?v=2746e073:13254\nonNext @ firebase_firestore.js?v=2746e073:12912\n(anonymous) @ firebase_firestore.js?v=2746e073:12871\n(anonymous) @ firebase_firestore.js?v=2746e073:12891\n(anonymous) @ firebase_firestore.js?v=2746e073:15977\n(anonymous) @ firebase_firestore.js?v=2746e073:16008\nPromise.then\ncc @ firebase_firestore.js?v=2746e073:16008\nenqueue @ firebase_firestore.js?v=2746e073:15977\nenqueueAndForget @ firebase_firestore.js?v=2746e073:15959\n(anonymous) @ firebase_firestore.js?v=2746e073:12891\n(anonymous) @ firebase_firestore.js?v=2746e073:12871\nu_ @ firebase_firestore.js?v=2746e073:12485\n(anonymous) @ firebase_firestore.js?v=2746e073:12624\n(anonymous) @ firebase_firestore.js?v=2746e073:12588\nVa @ firebase_firestore.js?v=2746e073:920\nD @ firebase_firestore.js?v=2746e073:888\nZ2.qa @ firebase_firestore.js?v=2746e073:2477\nLb @ firebase_firestore.js?v=2746e073:1387\nN2.Y @ firebase_firestore.js?v=2746e073:1238\nN2.ba @ firebase_firestore.js?v=2746e073:1189\nVa @ firebase_firestore.js?v=2746e073:920\nD @ firebase_firestore.js?v=2746e073:888\nQc @ firebase_firestore.js?v=2746e073:1885\nh.Xa @ firebase_firestore.js?v=2746e073:1880\nh.Ca @ firebase_firestore.js?v=2746e073:1877\nGc @ firebase_firestore.js?v=2746e073:1778\nh.Ma @ firebase_firestore.js?v=2746e073:1745\nPromise.then\nIc @ firebase_firestore.js?v=2746e073:1736\nh.Ma @ firebase_firestore.js?v=2746e073:1746\nPromise.then\nIc @ firebase_firestore.js?v=2746e073:1736\nh.Ma @ firebase_firestore.js?v=2746e073:1746\nPromise.then\nIc @ firebase_firestore.js?v=2746e073:1736\nh.Ma @ firebase_firestore.js?v=2746e073:1746\nPromise.then\nIc @ firebase_firestore.js?v=2746e073:1736\nh.Pa @ firebase_firestore.js?v=2746e073:1732\nPromise.then\nh.send @ firebase_firestore.js?v=2746e073:1712\nh.ea @ firebase_firestore.js?v=2746e073:1853\nEb @ firebase_firestore.js?v=2746e073:1182\n$c @ firebase_firestore.js?v=2746e073:2278\nh.Da @ firebase_firestore.js?v=2746e073:2245\nsa @ firebase_firestore.js?v=2746e073:624\nPromise.then\nu @ firebase_firestore.js?v=2746e073:618\nac @ firebase_firestore.js?v=2746e073:2231\nLb @ firebase_firestore.js?v=2746e073:1384\nN2.Y @ firebase_firestore.js?v=2746e073:1238\nN2.ba @ firebase_firestore.js?v=2746e073:1189\nVa @ firebase_firestore.js?v=2746e073:920\nD @ firebase_firestore.js?v=2746e073:888\nQc @ firebase_firestore.js?v=2746e073:1885\nh.Xa @ firebase_firestore.js?v=2746e073:1880\nh.Ca @ firebase_firestore.js?v=2746e073:1877\nGc @ firebase_firestore.js?v=2746e073:1778\nh.Ma @ firebase_firestore.js?v=2746e073:1745\nPromise.then\nIc @ firebase_firestore.js?v=2746e073:1736\nh.Pa @ firebase_firestore.js?v=2746e073:1732\nPromise.then\nh.send @ firebase_firestore.js?v=2746e073:1712\nh.ea @ firebase_firestore.js?v=2746e073:1853\nEb @ firebase_firestore.js?v=2746e073:1177\nCb @ firebase_firestore.js?v=2746e073:1152\nh.Ea @ firebase_firestore.js?v=2746e073:2154\nsa @ firebase_firestore.js?v=2746e073:624\nPromise.then\nu @ firebase_firestore.js?v=2746e073:618\nbc @ firebase_firestore.js?v=2746e073:2098\nh.connect @ firebase_firestore.js?v=2746e073:2058\nY2.m @ firebase_firestore.js?v=2746e073:2425\nYo @ firebase_firestore.js?v=2746e073:12582\nsend @ firebase_firestore.js?v=2746e073:12473\nq_ @ firebase_firestore.js?v=2746e073:12789\nY_ @ firebase_firestore.js?v=2746e073:12941\n__PRIVATE_sendWatchRequest @ firebase_firestore.js?v=2746e073:13197\n(anonymous) @ firebase_firestore.js?v=2746e073:13226\n__PRIVATE_onWatchStreamOpen @ firebase_firestore.js?v=2746e073:13225\n(anonymous) @ firebase_firestore.js?v=2746e073:12867\n(anonymous) @ firebase_firestore.js?v=2746e073:12891\n(anonymous) @ firebase_firestore.js?v=2746e073:15977\n(anonymous) @ firebase_firestore.js?v=2746e073:16008\nPromise.then\ncc @ firebase_firestore.js?v=2746e073:16008\nenqueue @ firebase_firestore.js?v=2746e073:15977\nenqueueAndForget @ firebase_firestore.js?v=2746e073:15959\n(anonymous) @ firebase_firestore.js?v=2746e073:12891\n(anonymous) @ firebase_firestore.js?v=2746e073:12867\n__ @ firebase_firestore.js?v=2746e073:12479\n(anonymous) @ firebase_firestore.js?v=2746e073:12629\nsetTimeout\nT_ @ firebase_firestore.js?v=2746e073:12628\nj_ @ firebase_firestore.js?v=2746e073:12900\nG_ @ firebase_firestore.js?v=2746e073:12864\n(anonymous) @ firebase_firestore.js?v=2746e073:12854\nPromise.then\nauth @ firebase_firestore.js?v=2746e073:12850\nstart @ firebase_firestore.js?v=2746e073:12749\n__PRIVATE_startWatchStream @ firebase_firestore.js?v=2746e073:13207\n(anonymous) @ firebase_firestore.js?v=2746e073:13411\n__PRIVATE_enableNetworkInternal @ firebase_firestore.js?v=2746e073:13163\n__PRIVATE_remoteStoreHandleCredentialChange @ firebase_firestore.js?v=2746e073:13385\nawait in __PRIVATE_remoteStoreHandleCredentialChange\n(anonymous) @ firebase_firestore.js?v=2746e073:15346\n(anonymous) @ firebase_firestore.js?v=2746e073:15294\n__PRIVATE_guardedChangeListener @ firebase_firestore.js?v=2746e073:2784\n(anonymous) @ firebase_firestore.js?v=2746e073:2787\nlc @ firebase_firestore.js?v=2746e073:15989\n(anonymous) @ firebase_firestore.js?v=2746e073:15980\n(anonymous) @ firebase_firestore.js?v=2746e073:15977\n(anonymous) @ firebase_firestore.js?v=2746e073:16008\nPromise.then\ncc @ firebase_firestore.js?v=2746e073:16008\nenqueue @ firebase_firestore.js?v=2746e073:15977\nenqueueAndForget @ firebase_firestore.js?v=2746e073:15959\nenqueueRetryable @ firebase_firestore.js?v=2746e073:15980\no @ firebase_firestore.js?v=2746e073:2787\n(anonymous) @ firebase_auth.js?v=2746e073:7961\n(anonymous) @ chunk-DPGHDWGE.js?v=2746e073:742\n(anonymous) @ chunk-DPGHDWGE.js?v=2746e073:834\nPromise.then\nsendOne @ chunk-DPGHDWGE.js?v=2746e073:831\nforEachObserver @ chunk-DPGHDWGE.js?v=2746e073:824\nnext @ chunk-DPGHDWGE.js?v=2746e073:741\nnotifyAuthListeners @ firebase_auth.js?v=2746e073:2722\n(anonymous) @ firebase_auth.js?v=2746e073:2538\nPromise.then\nqueue @ firebase_auth.js?v=2746e073:2783\n_updateCurrentUser @ firebase_auth.js?v=2746e073:2536\nsignOut @ firebase_auth.js?v=2746e073:2549\nawait in signOut\nsignOut @ firebase_auth.js?v=2746e073:5131\n(anonymous) @ useAuth.js:121\nexecuteDispatch @ react-dom_client.js?v=2746e073:13622\nrunWithFiberInDEV @ react-dom_client.js?v=2746e073:997\nprocessDispatchQueue @ react-dom_client.js?v=2746e073:13658\n(anonymous) @ react-dom_client.js?v=2746e073:14071\nbatchedUpdates$1 @ react-dom_client.js?v=2746e073:2626\ndispatchEventForPluginEventSystem @ react-dom_client.js?v=2746e073:13763\ndispatchEvent @ react-dom_client.js?v=2746e073:16784\ndispatchDiscreteEvent @ react-dom_client.js?v=2746e073:16765\n<button>\nexports.jsxDEV @ react_jsx-dev-runtime.js?v=2746e073:247\nHeader @ Header.jsx:155\nreact_stack_bottom_frame @ react-dom_client.js?v=2746e073:18509\nrenderWithHooksAgain @ react-dom_client.js?v=2746e073:5729\nrenderWithHooks @ react-dom_client.js?v=2746e073:5665\nupdateFunctionComponent @ react-dom_client.js?v=2746e073:7475\nbeginWork @ react-dom_client.js?v=2746e073:8525\nrunWithFiberInDEV @ react-dom_client.js?v=2746e073:997\nperformUnitOfWork @ react-dom_client.js?v=2746e073:12561\nworkLoopSync @ react-dom_client.js?v=2746e073:12424\nrenderRootSync @ react-dom_client.js?v=2746e073:12408\nperformWorkOnRoot @ react-dom_client.js?v=2746e073:11766\nperformWorkOnRootViaSchedulerTask @ react-dom_client.js?v=2746e073:13505\nperformWorkUntilDeadline @ react-dom_client.js?v=2746e073:36\n<Header>\nexports.jsxDEV @ react_jsx-dev-runtime.js?v=2746e073:247\nApp @ App.jsx:90\nreact_stack_bottom_frame @ react-dom_client.js?v=2746e073:18509\nrenderWithHooksAgain @ react-dom_client.js?v=2746e073:5729\nrenderWithHooks @ react-dom_client.js?v=2746e073:5665\nupdateFunctionComponent @ react-dom_client.js?v=2746e073:7475\nbeginWork @ react-dom_client.js?v=2746e073:8525\nrunWithFiberInDEV @ react-dom_client.js?v=2746e073:997\nperformUnitOfWork @ react-dom_client.js?v=2746e073:12561\nworkLoopSync @ react-dom_client.js?v=2746e073:12424\nrenderRootSync @ react-dom_client.js?v=2746e073:12408\nperformWorkOnRoot @ react-dom_client.js?v=2746e073:11766\nperformWorkOnRootViaSchedulerTask @ react-dom_client.js?v=2746e073:13505\nperformWorkUntilDeadline @ react-dom_client.js?v=2746e073:36\n<App>\nexports.jsxDEV @ react_jsx-dev-runtime.js?v=2746e073:247\n(anonymous) @ main.jsx:12Understand this error\nuseAuth.js:121 [2026-03-02T20:32:08.193Z]  @firebase/firestore: Firestore (12.4.0): Uncaught Error in snapshot listener: FirebaseError: [code=permission-denied]: Missing or insufficient permissions.",
+    "timestamp": 1772483555018
+  },
+  {
+    "text": "{\n  \"kind\": \"identitytoolkit#GetAccountInfoResponse\",\n  \"users\": [\n    {\n      \"localId\": \"kY7b4mkCN9OAlOjYirpsl7s7oe73\",\n      \"email\": \"admin@example.com\",\n      \"passwordHash\": \"UkVEQUNURUQ=\",\n      \"emailVerified\": false,\n      \"passwordUpdatedAt\": 1768166821074,\n      \"providerUserInfo\": [\n        {\n          \"providerId\": \"password\",\n          \"federatedId\": \"admin@example.com\",\n          \"email\": \"admin@example.com\",\n          \"rawId\": \"admin@example.com\"\n        }\n      ],\n      \"validSince\": \"1768166821\",\n      \"lastLoginAt\": \"1772483413007\",\n      \"createdAt\": \"1768166821074\",\n      \"customAttributes\": \"{\\\"role\\\":\\\"admin\\\"}\",\n      \"lastRefreshAt\": \"2026-03-02T20:30:13.007Z\"\n    }\n  ]\n}",
+    "timestamp": 1772483481017
+  },
+  {
+    "text": "Aucun contexte d'authentification reçu. L'utilisateur n'est pas connecté.\nÉchec de la vérification des permissions. L'utilisateur n'est pas un admin ou n'est pas authentifié.",
+    "timestamp": 1772483313289
+  },
+  {
+    "text": "c'est fait?",
+    "timestamp": 1772472745394
+  },
+  {
+    "text": "essaie encore",
+    "timestamp": 1772472653994
+  },
+  {
+    "text": "ou en est le deploiement",
+    "timestamp": 1772471996633
+  },
+  {
+    "text": "firebase deploy --only functions",
+    "timestamp": 1772471901161
+  },
+  {
+    "text": "toujours le meme probleme",
+    "timestamp": 1772471782473
+  },
+  {
+    "text": "{\n    \"error\": {\n        \"message\": \"Only admin users can delete other users.\",\n        \"status\": \"PERMISSION_DENIED\"\n    }\n}",
+    "timestamp": 1772470617672
+  },
+  {
+    "text": "oui",
+    "timestamp": 1772470468383
+  },
+  {
+    "text": "execute le",
+    "timestamp": 1772470431504
+  },
+  {
+    "text": "toujours aucun message. essayons la commande firebase en local",
+    "timestamp": 1772469463439
+  },
+  {
+    "text": "je ne vois pas ce log",
+    "timestamp": 1772469317759
+  },
+  {
+    "text": "Uncaught SyntaxError: Cannot use import statement outside a module",
+    "timestamp": 1772469035591
+  },
+  {
+    "text": "in firebase ui, where can you see if a user has a custom claim",
+    "timestamp": 1772468835103
+  },
+  {
+    "text": "\"error\": {\n        \"message\": \"Only admin users can delete other users.\",\n        \"status\": \"PERMISSION_DENIED",
+    "timestamp": 1772468507430
+  },
+  {
+    "text": "/?",
+    "timestamp": 1772468331286
+  },
+  {
+    "text": "/clear",
+    "timestamp": 1772468323494
+  },
+  {
+    "text": "fais le",
+    "timestamp": 1772468262782
+  },
+  {
+    "text": "Unhandled error TypeError: Cannot read properties of undefined (reading 'token')\n    at /workspace/index.js:339:20\n    at fixedLen (/workspace/node_modules/firebase-functions/lib/v2/providers/https.js:131:34)\n    at /workspace/node_modules/firebase-functions/lib/common/providers/https.js:513:20\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)",
+    "timestamp": 1772468222414
+  },
+  {
+    "text": "the problem is still there. the most suspicious is the latest modifications you did about user deletion and password update. and also, the problem appears only when the admin role related components are activated",
+    "timestamp": 1772468070751
+  },
+  {
+    "text": "fais tout ca pour moi",
+    "timestamp": 1772467725014
+  },
+  {
+    "text": "corrige le toi",
+    "timestamp": 1772467664830
+  },
+  {
+    "text": "le nombre de requetes est tres rapide et enorme",
+    "timestamp": 1772467610078
+  },
+  {
+    "text": "a huge number of network messages can be seen: https://firestore.googleapis.com/google.firestore.v1.Firestore/Listen/channel?VER=8&database=projects%2Fdashboard-mictlan-dev%2Fdatabases%2F(default)&gsessionid=jlP0OSgFrPIhq8mnw4P68jMAp4cqKRDFaMXCzTPxoMiAzmK4kPO0bw&SID=anx3737s_MIDrjX3nMW2zQ&RID=21196&AID=973&zx=lghrzp8lkydi&t=1",
+    "timestamp": 1772467374869
+  },
+  {
+    "text": "ou en est le deploiement des mes functions?",
+    "timestamp": 1772467158644
+  },
+  {
+    "text": "!firebase deploy --only functions",
+    "timestamp": 1772467052862
+  },
+  {
+    "text": "vas-y",
+    "timestamp": 1772466936990
+  },
+  {
+    "text": "j'ai deja des cloud functions. peux-tu creer les functions qui manquent?",
+    "timestamp": 1772466881740
+  },
+  {
+    "text": "quelle cloud function?",
+    "timestamp": 1772466774294
+  },
+  {
+    "text": "je souhaite egalement pouvoir les supprimer et changer le mot de passe",
+    "timestamp": 1772466714349
+  },
+  {
+    "text": "serait il possible de rajouter egalement la creation d'utilisateurs firebase?",
+    "timestamp": 1772466494381
+  },
+  {
+    "text": "je ne vois pas de menu deroulant",
+    "timestamp": 1772466360524
+  },
+  {
+    "text": "je souhaite pouvoir changer leur role",
+    "timestamp": 1772466149980
+  },
+  {
+    "text": "je voudrais liste les utilisateurs sur l'ui admin, et afficher leur role",
+    "timestamp": 1772465836237
+  },
+  {
+    "text": "now the same for dev",
+    "timestamp": 1772465709036
+  },
+  {
+    "text": "so the same for the staging",
+    "timestamp": 1772465666052
+  },
+  {
+    "text": "run the script for the production project",
+    "timestamp": 1772465603724
+  },
+  {
+    "text": "Okay, I will modify scripts/local/clear-anonymous-users-db.cjs to delete anonymous users directly from Firebase Authentication.\n\n  Here's the plan for the updated script:\n   1. It will initialize the Firebase Admin SDK (as it currently does).\n   2. It will fetch all users from Firebase Authentication using admin.auth().listUsers().\n   3. It will identify anonymous users by checking if their providerData is empty (meaning they haven't linked any identity providers like email/password, Google, etc.) and they \n      don't have an email address set.\n   4. It will then use admin.auth().deleteUsers(uids) for efficient batch deletion of these identified anonymous users.\n\n  I will now read the current content of scripts/local/clear-anonymous-users-db.cjs to prepare for the modification.",
+    "timestamp": 1772465529845
+  },
+  {
+    "text": "analyze my project",
+    "timestamp": 1772464897428
+  },
+  {
+    "text": "change to gemini",
+    "timestamp": 1772463538243
+  },
+  {
+    "text": "/login",
+    "timestamp": 1772463143403
+  },
+  {
+    "text": "/auth",
+    "timestamp": 1772463115220
+  }
+]

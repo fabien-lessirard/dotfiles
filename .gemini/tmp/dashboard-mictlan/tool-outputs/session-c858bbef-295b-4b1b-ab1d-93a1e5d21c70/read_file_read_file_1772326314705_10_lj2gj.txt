@@ -1,0 +1,3 @@
+{
+  "output": "{\r\n  \"apiKey\": \"AIzaSyBqeD6RJXz168H30hVkMieMDu7M6gqAaXg\",\r\n  \"authDomain\": \"dashboard-mictlan-prod.firebaseapp.com\",\r\n  \"projectId\": \"dashboard-mictlan-prod\",\r\n  \"storageBucket\": \"dashboard-mictlan-prod.firebasestorage.app\",\r\n  \"messagingSenderId\": \"976040868703\",\r\n  \"appId\": \"1:976040868703:web:b891881c0f94fbaee114ea\",\r\n  \"measurementId\": \"G-9LP4K5RN7L\"\r\n}"
+}

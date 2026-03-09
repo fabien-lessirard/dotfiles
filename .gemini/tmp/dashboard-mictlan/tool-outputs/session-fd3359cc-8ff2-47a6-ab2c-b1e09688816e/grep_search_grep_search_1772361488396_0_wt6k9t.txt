@@ -1,0 +1,3 @@
+{
+  "output": "Found 4 matches for pattern \"ProductForm\" in path \".\":\n---\nFile: src\\prompts\\recreate app prompt.md\nL111: *   **`ProductForm.jsx`, `ProductList.jsx`, `ProductDecisions.jsx`, `ProductReporting.jsx`**: Components for managing products.\n---\nFile: src\\components\\ProductForm.jsx\nL10: export default function ProductForm() {\n---\nFile: src\\components\\ProductManagementDashboard.jsx\nL6: import ProductForm from './ProductForm'; // Assuming ProductForm is also related\nL42:         {activeTab === 'add' && <ProductForm />}\n---"
+}

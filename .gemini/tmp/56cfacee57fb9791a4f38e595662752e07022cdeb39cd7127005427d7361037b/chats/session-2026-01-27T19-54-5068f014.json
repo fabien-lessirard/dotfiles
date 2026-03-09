@@ -1,0 +1,36 @@
+{
+  "sessionId": "5068f014-465e-43c7-8ec2-698d7f286927",
+  "projectHash": "56cfacee57fb9791a4f38e595662752e07022cdeb39cd7127005427d7361037b",
+  "startTime": "2026-01-27T19:54:01.890Z",
+  "lastUpdated": "2026-01-27T19:54:17.707Z",
+  "messages": [
+    {
+      "id": "11ef5f3e-bb3f-43cd-95c6-196543d2ac7f",
+      "timestamp": "2026-01-27T19:54:01.890Z",
+      "type": "user",
+      "content": "Your task is to answer the following question about Gemini CLI:\n<question>\nDoes the Gemini CLI automatically read the gemini.md file for configuration? If so, how and when?\n</question>"
+    },
+    {
+      "id": "464ce295-eb5a-40bb-a892-dcf230038fa3",
+      "timestamp": "2026-01-27T19:54:17.706Z",
+      "type": "gemini",
+      "content": "The Gemini CLI automatically reads `GEMINI.md` files for configuration. These files serve as \"context files\" to provide instructional context to the Gemini model with every prompt.\n\nHere's how and when the Gemini CLI reads these files:\n\n**How it reads them:**\nThe CLI uses a hierarchical system to source context. It loads various context files from several locations, concatenates their contents, and sends them to the model along with each prompt. This allows you to define instructions, personas, or coding styles once, rather than repeating them in every prompt.\n\n**When it reads them (Context Hierarchy):**\nThe CLI loads `GEMINI.md` files in the following order:\n\n1.  **Global context file:** Located at `~/.gemini/GEMINI.md` (in your user home directory). This provides default instructions for all your projects.\n2.  **Project root and ancestor context files:** The CLI searches for a `GEMINI.md` file in your current working directory and then in each parent directory up to the project root (identified by a `.git` folder). This provides project-specific context.\n3.  **Sub-directory context files:** The CLI also scans for `GEMINI.md` files in subdirectories below your current working directory, respecting `.gitignore` and `.geminiignore` rules. This allows for highly specific instructions for particular components or modules.\n\nYou can also manage this context using the `/memory` command, for example, `/memory show` to display the concatenated content or `/memory refresh` to force a re-scan and reload. The default `GEMINI.md` filename can be customized in `settings.json` using the `context.fileName` property.\n\nThe CLI footer displays the number of loaded context files, providing a visual cue of the active instructional context.\n\nSources:\n- cli/gemini-md.md",
+      "thoughts": [],
+      "tokens": {
+        "input": 3137,
+        "output": 393,
+        "cached": 0,
+        "thoughts": 304,
+        "tool": 0,
+        "total": 3834
+      },
+      "model": "gemini-2.5-flash"
+    },
+    {
+      "id": "8740732c-e739-4b32-89fe-24d70f47b01f",
+      "timestamp": "2026-01-27T19:54:17.707Z",
+      "type": "user",
+      "content": "You have stopped calling tools without finishing. You have one final chance to complete the task with a short grace period. You MUST call `complete_task` immediately with your best answer and explain that your investigation was interrupted. Do not call any other tools."
+    }
+  ]
+}

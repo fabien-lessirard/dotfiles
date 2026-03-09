@@ -1,0 +1,410 @@
+Deploy Preview (PR)	Set up job	﻿2026-03-02T21:54:30.4305050Z Current runner version: '2.331.0'
+Deploy Preview (PR)	Set up job	2026-03-02T21:54:30.4347324Z ##[group]Runner Image Provisioner
+Deploy Preview (PR)	Set up job	2026-03-02T21:54:30.4349384Z Hosted Compute Agent
+Deploy Preview (PR)	Set up job	2026-03-02T21:54:30.4351090Z Version: 20260213.493
+Deploy Preview (PR)	Set up job	2026-03-02T21:54:30.4352809Z Commit: 5c115507f6dd24b8de37d8bbe0bb4509d0cc0fa3
+Deploy Preview (PR)	Set up job	2026-03-02T21:54:30.4354759Z Build Date: 2026-02-13T00:28:41Z
+Deploy Preview (PR)	Set up job	2026-03-02T21:54:30.4356908Z Worker ID: ***074586d1-93f7-4136-baae-46af96bcb9d3***
+Deploy Preview (PR)	Set up job	2026-03-02T21:54:30.4358967Z Azure Region: eastus2
+Deploy Preview (PR)	Set up job	2026-03-02T21:54:30.4360569Z ##[endgroup]
+Deploy Preview (PR)	Set up job	2026-03-02T21:54:30.4363326Z ##[group]Operating System
+Deploy Preview (PR)	Set up job	2026-03-02T21:54:30.4365216Z Ubuntu
+Deploy Preview (PR)	Set up job	2026-03-02T21:54:30.4366916Z 24.04.3
+Deploy Preview (PR)	Set up job	2026-03-02T21:54:30.4368316Z LTS
+Deploy Preview (PR)	Set up job	2026-03-02T21:54:30.4369846Z ##[endgroup]
+Deploy Preview (PR)	Set up job	2026-03-02T21:54:30.4371428Z ##[group]Runner Image
+Deploy Preview (PR)	Set up job	2026-03-02T21:54:30.4373019Z Image: ubuntu-24.04
+Deploy Preview (PR)	Set up job	2026-03-02T21:54:30.4374714Z Version: 20260224.36.1
+Deploy Preview (PR)	Set up job	2026-03-02T21:54:30.4377572Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260224.36/images/ubuntu/Ubuntu2404-Readme.md
+Deploy Preview (PR)	Set up job	2026-03-02T21:54:30.4381376Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260224.36
+Deploy Preview (PR)	Set up job	2026-03-02T21:54:30.4383738Z ##[endgroup]
+Deploy Preview (PR)	Set up job	2026-03-02T21:54:30.4387421Z ##[group]GITHUB_TOKEN Permissions
+Deploy Preview (PR)	Set up job	2026-03-02T21:54:30.4390785Z Checks: write
+Deploy Preview (PR)	Set up job	2026-03-02T21:54:30.4392385Z Contents: read
+Deploy Preview (PR)	Set up job	2026-03-02T21:54:30.4394439Z Metadata: read
+Deploy Preview (PR)	Set up job	2026-03-02T21:54:30.4396178Z PullRequests: write
+Deploy Preview (PR)	Set up job	2026-03-02T21:54:30.4397856Z ##[endgroup]
+Deploy Preview (PR)	Set up job	2026-03-02T21:54:30.4401639Z Secret source: Actions
+Deploy Preview (PR)	Set up job	2026-03-02T21:54:30.4403723Z Prepare workflow directory
+Deploy Preview (PR)	Set up job	2026-03-02T21:54:30.4894517Z Prepare all required actions
+Deploy Preview (PR)	Set up job	2026-03-02T21:54:30.4950954Z Getting action download info
+Deploy Preview (PR)	Set up job	2026-03-02T21:54:30.8200047Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+Deploy Preview (PR)	Set up job	2026-03-02T21:54:30.9892564Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+Deploy Preview (PR)	Set up job	2026-03-02T21:54:31.0970876Z Download action repository 'FirebaseExtended/action-hosting-deploy@v0' (SHA:e2eda2e106cfa35cdbcf4ac9ddaf6c4756df2c8c)
+Deploy Preview (PR)	Set up job	2026-03-02T21:54:31.4464386Z Complete job name: Deploy Preview (PR)
+Deploy Preview (PR)	Checkout	﻿2026-03-02T21:54:31.5427093Z ##[group]Run actions/checkout@v4
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.5428401Z with:
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.5429219Z   repository: fabien-lessirard/dashboard-mictlan-v1
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.5430361Z   token: ***
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.5431066Z   ssh-strict: true
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.5431780Z   ssh-user: git
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.5432492Z   persist-credentials: true
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.5433252Z   clean: true
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.5433966Z   sparse-checkout-cone-mode: true
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.5434777Z   fetch-depth: 1
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.5435475Z   fetch-tags: false
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.5436344Z   show-progress: true
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.5437068Z   lfs: false
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.5437752Z   submodules: false
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.5438472Z   set-safe-directory: true
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.5439480Z ##[endgroup]
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.6661897Z Syncing repository: fabien-lessirard/dashboard-mictlan-v1
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.6675295Z ##[group]Getting Git version info
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.6678621Z Working directory is '/home/runner/work/dashboard-mictlan-v1/dashboard-mictlan-v1'
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.6681810Z [command]/usr/bin/git version
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.6771717Z git version 2.53.0
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.6803811Z ##[endgroup]
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.6819615Z Temporarily overriding HOME='/home/runner/work/_temp/0d00ae14-af82-4eb5-ab8a-1538ffcbefd6' before making global git config changes
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.6824233Z Adding repository directory to the temporary git global config as a safe directory
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.6828922Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/dashboard-mictlan-v1/dashboard-mictlan-v1
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.6879446Z Deleting the contents of '/home/runner/work/dashboard-mictlan-v1/dashboard-mictlan-v1'
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.6884994Z ##[group]Initializing the repository
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.6889695Z [command]/usr/bin/git init /home/runner/work/dashboard-mictlan-v1/dashboard-mictlan-v1
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.7034263Z hint: Using 'master' as the name for the initial branch. This default branch name
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.7037922Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.7041081Z hint: to use in all of your new repositories, which will suppress this warning,
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.7043547Z hint: call:
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.7045127Z hint:
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.7047386Z hint: 	git config --global init.defaultBranch <name>
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.7049598Z hint:
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.7051279Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.7053665Z hint: 'development'. The just-created branch can be renamed via this command:
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.7055569Z hint:
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.7057201Z hint: 	git branch -m <name>
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.7058696Z hint:
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.7060838Z hint: Disable this message with "git config set advice.defaultBranchName false"
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.7064128Z Initialized empty Git repository in /home/runner/work/dashboard-mictlan-v1/dashboard-mictlan-v1/.git/
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.7070018Z [command]/usr/bin/git remote add origin https://github.com/fabien-lessirard/dashboard-mictlan-v1
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.7111910Z ##[endgroup]
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.7114981Z ##[group]Disabling automatic garbage collection
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.7117294Z [command]/usr/bin/git config --local gc.auto 0
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.7152047Z ##[endgroup]
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.7154216Z ##[group]Setting up auth
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.7159855Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.7196176Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.7593803Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.7643336Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.7901568Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.7938537Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.8201063Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.8243524Z ##[endgroup]
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.8247078Z ##[group]Fetching the repository
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:31.8254769Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +6a49f96af3724be4c82dc9b18f1d74ac7c50677b:refs/remotes/pull/21/merge
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:32.2573243Z From https://github.com/fabien-lessirard/dashboard-mictlan-v1
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:32.2592967Z  * [new ref]         6a49f96af3724be4c82dc9b18f1d74ac7c50677b -> pull/21/merge
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:32.2618918Z ##[endgroup]
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:32.2624833Z ##[group]Determining the checkout info
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:32.2629797Z ##[endgroup]
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:32.2633798Z [command]/usr/bin/git sparse-checkout disable
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:32.2677191Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:32.2711337Z ##[group]Checking out the ref
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:32.2715981Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/21/merge
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:32.3120973Z Note: switching to 'refs/remotes/pull/21/merge'.
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:32.3124511Z 
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:32.3126181Z You are in 'detached HEAD' state. You can look around, make experimental
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:32.3129277Z changes and commit them, and you can discard any commits you make in this
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:32.3132426Z state without impacting any branches by switching back to a branch.
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:32.3134008Z 
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:32.3135292Z If you want to create a new branch to retain commits you create, you may
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:32.3139176Z do so (now or later) by using -c with the switch command. Example:
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:32.3140762Z 
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:32.3141676Z   git switch -c <new-branch-name>
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:32.3142964Z 
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:32.3143987Z Or undo this operation with:
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:32.3145225Z 
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:32.3146391Z   git switch -
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:32.3147647Z 
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:32.3149012Z Turn off this advice by setting config variable advice.detachedHead to false
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:32.3150640Z 
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:32.3152359Z HEAD is now at 6a49f96 Merge 8f6b18965f7178cd8a32ef2183bfac0abfd84788 into ff7fedda1616f2c07f8ba004eb258a5f096a9f4e
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:32.3159283Z ##[endgroup]
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:32.3177773Z [command]/usr/bin/git log -1 --format=%H
+Deploy Preview (PR)	Checkout	2026-03-02T21:54:32.3205389Z 6a49f96af3724be4c82dc9b18f1d74ac7c50677b
+Deploy Preview (PR)	Use Node.js	﻿2026-03-02T21:54:32.3532081Z ##[group]Run actions/setup-node@v4
+Deploy Preview (PR)	Use Node.js	2026-03-02T21:54:32.3533446Z with:
+Deploy Preview (PR)	Use Node.js	2026-03-02T21:54:32.3534600Z   node-version: 20
+Deploy Preview (PR)	Use Node.js	2026-03-02T21:54:32.3535893Z   cache: npm
+Deploy Preview (PR)	Use Node.js	2026-03-02T21:54:32.3537029Z   always-auth: false
+Deploy Preview (PR)	Use Node.js	2026-03-02T21:54:32.3538206Z   check-latest: false
+Deploy Preview (PR)	Use Node.js	2026-03-02T21:54:32.3539537Z   token: ***
+Deploy Preview (PR)	Use Node.js	2026-03-02T21:54:32.3540659Z ##[endgroup]
+Deploy Preview (PR)	Use Node.js	2026-03-02T21:54:32.5538483Z Found in cache @ /opt/hostedtoolcache/node/20.20.0/x64
+Deploy Preview (PR)	Use Node.js	2026-03-02T21:54:32.5543738Z ##[group]Environment details
+Deploy Preview (PR)	Use Node.js	2026-03-02T21:54:33.2274686Z node: v20.20.0
+Deploy Preview (PR)	Use Node.js	2026-03-02T21:54:33.2286534Z npm: 10.8.2
+Deploy Preview (PR)	Use Node.js	2026-03-02T21:54:33.2313698Z yarn: 1.22.22
+Deploy Preview (PR)	Use Node.js	2026-03-02T21:54:33.2321951Z ##[endgroup]
+Deploy Preview (PR)	Use Node.js	2026-03-02T21:54:33.2328987Z [command]/opt/hostedtoolcache/node/20.20.0/x64/bin/npm config get cache
+Deploy Preview (PR)	Use Node.js	2026-03-02T21:54:33.3400795Z /home/runner/.npm
+Deploy Preview (PR)	Use Node.js	2026-03-02T21:54:33.4733174Z Cache hit for: node-cache-Linux-x64-npm-3dc1d9e06c5071b49b30d63b1d4a33c3a134f75848ef4eca9ca092e6995aa1fa
+Deploy Preview (PR)	Use Node.js	2026-03-02T21:54:34.1896744Z Received 63868150 of 63868150 (100.0%), 89.2 MBs/sec
+Deploy Preview (PR)	Use Node.js	2026-03-02T21:54:34.1902762Z Cache Size: ~61 MB (63868150 B)
+Deploy Preview (PR)	Use Node.js	2026-03-02T21:54:34.1939783Z [command]/usr/bin/tar -xf /home/runner/work/_temp/a0a0865d-fc40-487a-81d6-87f0a9e4a96a/cache.tzst -P -C /home/runner/work/dashboard-mictlan-v1/dashboard-mictlan-v1 --use-compress-program unzstd
+Deploy Preview (PR)	Use Node.js	2026-03-02T21:54:34.5045562Z Cache restored successfully
+Deploy Preview (PR)	Use Node.js	2026-03-02T21:54:34.5184282Z Cache restored from key: node-cache-Linux-x64-npm-3dc1d9e06c5071b49b30d63b1d4a33c3a134f75848ef4eca9ca092e6995aa1fa
+Deploy Preview (PR)	Install jq	﻿2026-03-02T21:54:34.5411423Z ##[group]Run sudo apt-get update && sudo apt-get install -y jq
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:34.5412138Z [36;1msudo apt-get update && sudo apt-get install -y jq[0m
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:34.5477771Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail ***0***
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:34.5478421Z ##[endgroup]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:34.6765496Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:34.7632222Z Hit:2 http://azure.archive.ubuntu.com/ubuntu noble InRelease
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:34.7633689Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:34.7668150Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:34.7673156Z Get:6 https://packages.microsoft.com/repos/azure-cli noble InRelease [3564 B]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:34.7712077Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:34.7761788Z Get:7 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:35.0692047Z Get:8 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1800 kB]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:35.1037162Z Get:9 http://azure.archive.ubuntu.com/ubuntu noble-updates/main Translation-en [331 kB]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:35.1109342Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Components [175 kB]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:35.1111623Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 c-n-f Metadata [16.5 kB]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:35.1177457Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1558 kB]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:35.1250799Z Get:13 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe Translation-en [316 kB]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:35.1307123Z Get:14 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Components [386 kB]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:35.1362462Z Get:15 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 c-n-f Metadata [32.7 kB]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:35.1390110Z Get:16 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [2735 kB]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:35.1624476Z Get:17 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted Translation-en [630 kB]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:35.1880028Z Get:20 https://packages.microsoft.com/repos/azure-cli noble/main amd64 Packages [2011 B]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:35.2187840Z Get:18 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Components [212 B]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:35.2190205Z Get:19 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Components [940 B]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:35.3304658Z Get:21 http://azure.archive.ubuntu.com/ubuntu noble-backports/main amd64 Components [7312 B]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:35.3321343Z Get:22 http://azure.archive.ubuntu.com/ubuntu noble-backports/universe amd64 Components [10.5 kB]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:35.3351644Z Get:23 http://azure.archive.ubuntu.com/ubuntu noble-backports/restricted amd64 Components [216 B]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:35.3357657Z Get:24 http://azure.archive.ubuntu.com/ubuntu noble-backports/multiverse amd64 Components [212 B]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:35.4634847Z Get:25 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Packages [1494 kB]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:35.4880334Z Get:26 http://azure.archive.ubuntu.com/ubuntu noble-security/main Translation-en [240 kB]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:35.4934822Z Get:27 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Components [21.5 kB]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:35.4944791Z Get:28 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 c-n-f Metadata [9932 B]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:35.5017220Z Get:29 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Packages [973 kB]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:35.5097783Z Get:30 http://azure.archive.ubuntu.com/ubuntu noble-security/universe Translation-en [218 kB]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:35.5149679Z Get:31 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Components [74.1 kB]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:35.5191712Z Get:32 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 c-n-f Metadata [20.6 kB]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:35.5679131Z Get:33 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted amd64 Packages [2568 kB]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:35.5684324Z Get:37 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [76.5 kB]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:35.5881573Z Get:38 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [97.6 kB]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:35.5959889Z Get:34 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted Translation-en [596 kB]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:35.6012653Z Get:39 https://packages.microsoft.com/ubuntu/24.04/prod noble/main armhf Packages [11.4 kB]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:35.6061495Z Get:35 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted amd64 Components [212 B]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:35.6077653Z Get:36 http://azure.archive.ubuntu.com/ubuntu noble-security/multiverse amd64 Components [208 B]
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:42.5438198Z Fetched 14.8 MB in 2s (6642 kB/s)
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:43.4296866Z Reading package lists...
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:43.4664692Z Reading package lists...
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:43.6875446Z Building dependency tree...
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:43.6884124Z Reading state information...
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:43.8839069Z jq is already the newest version (1.7.1-3ubuntu0.24.04.1).
+Deploy Preview (PR)	Install jq	2026-03-02T21:54:43.8840406Z 0 upgraded, 0 newly installed, 0 to remove and 32 not upgraded.
+Deploy Preview (PR)	Debug FIREBASE_CONFIG_JSON	﻿2026-03-02T21:54:43.8908356Z ##[group]Run echo "Raw FIREBASE_CONFIG_JSON (masked): $FIREBASE_CONFIG_JSON"
+Deploy Preview (PR)	Debug FIREBASE_CONFIG_JSON	2026-03-02T21:54:43.8909083Z [36;1mecho "Raw FIREBASE_CONFIG_JSON (masked): $FIREBASE_CONFIG_JSON"[0m
+Deploy Preview (PR)	Debug FIREBASE_CONFIG_JSON	2026-03-02T21:54:43.8909732Z [36;1mecho "Raw FIREBASE_CONFIG_JSON from env (masked): $FIREBASE_CONFIG_JSON"[0m
+Deploy Preview (PR)	Debug FIREBASE_CONFIG_JSON	2026-03-02T21:54:43.8910615Z [36;1mecho "Attempting to parse FIREBASE_CONFIG_JSON from env with JSON.parse:"[0m
+Deploy Preview (PR)	Debug FIREBASE_CONFIG_JSON	2026-03-02T21:54:43.8911650Z [36;1mnode -e "try *** console.log(JSON.stringify(JSON.parse(process.env.FIREBASE_CONFIG_JSON))); *** catch (e) *** console.error('JSON.parse failed:', e.message); ***"[0m
+Deploy Preview (PR)	Debug FIREBASE_CONFIG_JSON	2026-03-02T21:54:43.8912608Z [36;1mecho "Attempting to parse FIREBASE_CONFIG_JSON from env with eval:"[0m
+Deploy Preview (PR)	Debug FIREBASE_CONFIG_JSON	2026-03-02T21:54:43.8913491Z [36;1mnode -e "try *** console.log(JSON.stringify(eval(process.env.FIREBASE_CONFIG_JSON))); *** catch (e) *** console.error('eval failed:', e.message); ***"[0m
+Deploy Preview (PR)	Debug FIREBASE_CONFIG_JSON	2026-03-02T21:54:43.8964396Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail ***0***
+Deploy Preview (PR)	Debug FIREBASE_CONFIG_JSON	2026-03-02T21:54:43.8964923Z env:
+Deploy Preview (PR)	Debug FIREBASE_CONFIG_JSON	2026-03-02T21:54:43.8966800Z   FIREBASE_CONFIG_JSON: ***
+Deploy Preview (PR)	Debug FIREBASE_CONFIG_JSON	2026-03-02T21:54:43.8967172Z ##[endgroup]
+Deploy Preview (PR)	Debug FIREBASE_CONFIG_JSON	2026-03-02T21:54:43.9040838Z Raw FIREBASE_CONFIG_JSON (masked): ***
+Deploy Preview (PR)	Debug FIREBASE_CONFIG_JSON	2026-03-02T21:54:43.9044235Z   ***
+Deploy Preview (PR)	Debug FIREBASE_CONFIG_JSON	2026-03-02T21:54:43.9045028Z   ***
+Deploy Preview (PR)	Debug FIREBASE_CONFIG_JSON	2026-03-02T21:54:43.9045873Z   ***
+Deploy Preview (PR)	Debug FIREBASE_CONFIG_JSON	2026-03-02T21:54:43.9046798Z   ***
+Deploy Preview (PR)	Debug FIREBASE_CONFIG_JSON	2026-03-02T21:54:43.9047499Z   ***
+Deploy Preview (PR)	Debug FIREBASE_CONFIG_JSON	2026-03-02T21:54:43.9048171Z   ***
+Deploy Preview (PR)	Debug FIREBASE_CONFIG_JSON	2026-03-02T21:54:43.9048794Z   ***
+Deploy Preview (PR)	Debug FIREBASE_CONFIG_JSON	2026-03-02T21:54:43.9049309Z ***
+Deploy Preview (PR)	Debug FIREBASE_CONFIG_JSON	2026-03-02T21:54:43.9050001Z Raw FIREBASE_CONFIG_JSON from env (masked): ***
+Deploy Preview (PR)	Debug FIREBASE_CONFIG_JSON	2026-03-02T21:54:43.9050939Z   ***
+Deploy Preview (PR)	Debug FIREBASE_CONFIG_JSON	2026-03-02T21:54:43.9051713Z   ***
+Deploy Preview (PR)	Debug FIREBASE_CONFIG_JSON	2026-03-02T21:54:43.9052351Z   ***
+Deploy Preview (PR)	Debug FIREBASE_CONFIG_JSON	2026-03-02T21:54:43.9053143Z   ***
+Deploy Preview (PR)	Debug FIREBASE_CONFIG_JSON	2026-03-02T21:54:43.9053760Z   ***
+Deploy Preview (PR)	Debug FIREBASE_CONFIG_JSON	2026-03-02T21:54:43.9054423Z   ***
+Deploy Preview (PR)	Debug FIREBASE_CONFIG_JSON	2026-03-02T21:54:43.9054986Z   ***
+Deploy Preview (PR)	Debug FIREBASE_CONFIG_JSON	2026-03-02T21:54:43.9055436Z ***
+Deploy Preview (PR)	Debug FIREBASE_CONFIG_JSON	2026-03-02T21:54:43.9057785Z Attempting to parse FIREBASE_CONFIG_JSON from env with JSON.parse:
+Deploy Preview (PR)	Debug FIREBASE_CONFIG_JSON	2026-03-02T21:54:43.9282860Z ***"apiKey":"AIzaSyDDBAzayzk5B-R92pQEYaAM1cyh2qgI3y0","authDomain":"dashboard-mictlan-staging.firebaseapp.com","projectId":"dashboard-mictlan-staging","storageBucket":"dashboard-mictlan-staging.firebasestorage.app","messagingSenderId":"702884048893","appId":"1:702884048893:web:69bf2dd1782f59c7c63394","measurementId":"G-J2YE8MGLKG"***
+Deploy Preview (PR)	Debug FIREBASE_CONFIG_JSON	2026-03-02T21:54:43.9320745Z Attempting to parse FIREBASE_CONFIG_JSON from env with eval:
+Deploy Preview (PR)	Debug FIREBASE_CONFIG_JSON	2026-03-02T21:54:43.9546809Z eval failed: Unexpected token ':'
+Deploy Preview (PR)	Create .env for Staging DB (Frontend config)	﻿2026-03-02T21:54:43.9639704Z ##[group]Run echo "Generating .env file from standard Firebase config for Staging DB..."
+Deploy Preview (PR)	Create .env for Staging DB (Frontend config)	2026-03-02T21:54:43.9640536Z [36;1mecho "Generating .env file from standard Firebase config for Staging DB..."[0m
+Deploy Preview (PR)	Create .env for Staging DB (Frontend config)	2026-03-02T21:54:43.9641773Z [36;1mJSON_DATA=$(node -e "try *** console.log(JSON.stringify(JSON.parse(process.env.FIREBASE_CONFIG_JSON))); *** catch (e) *** console.error('Error parsing FIREBASE_CONFIG_JSON:', e.message); process.exit(1); ***")[0m
+Deploy Preview (PR)	Create .env for Staging DB (Frontend config)	2026-03-02T21:54:43.9642722Z [36;1m[0m
+Deploy Preview (PR)	Create .env for Staging DB (Frontend config)	2026-03-02T21:54:43.9643046Z [36;1mecho "$JSON_DATA" | jq -r '[0m
+Deploy Preview (PR)	Create .env for Staging DB (Frontend config)	2026-03-02T21:54:43.9643472Z [36;1m  "VITE_FIREBASE_API_KEY=\(.apiKey)",[0m
+Deploy Preview (PR)	Create .env for Staging DB (Frontend config)	2026-03-02T21:54:43.9643965Z [36;1m  "VITE_FIREBASE_AUTH_DOMAIN=\(.authDomain)",[0m
+Deploy Preview (PR)	Create .env for Staging DB (Frontend config)	2026-03-02T21:54:43.9644453Z [36;1m  "VITE_FIREBASE_PROJECT_ID=\(.projectId)",[0m
+Deploy Preview (PR)	Create .env for Staging DB (Frontend config)	2026-03-02T21:54:43.9644941Z [36;1m  "VITE_FIREBASE_STORAGE_BUCKET=\(.storageBucket)",[0m
+Deploy Preview (PR)	Create .env for Staging DB (Frontend config)	2026-03-02T21:54:43.9645498Z [36;1m  "VITE_FIREBASE_MESSAGING_SENDER_ID=\(.messagingSenderId)",[0m
+Deploy Preview (PR)	Create .env for Staging DB (Frontend config)	2026-03-02T21:54:43.9646314Z [36;1m  "VITE_FIREBASE_APP_ID=\(.appId)"[0m
+Deploy Preview (PR)	Create .env for Staging DB (Frontend config)	2026-03-02T21:54:43.9646712Z [36;1m  ' > .env[0m
+Deploy Preview (PR)	Create .env for Staging DB (Frontend config)	2026-03-02T21:54:43.9647029Z [36;1m[0m
+Deploy Preview (PR)	Create .env for Staging DB (Frontend config)	2026-03-02T21:54:43.9647438Z [36;1m  STAGING_PROJECT_ID=$(echo "$JSON_DATA" | jq -r '.projectId')[0m
+Deploy Preview (PR)	Create .env for Staging DB (Frontend config)	2026-03-02T21:54:43.9648266Z [36;1m  echo "VITE_FIREBASE_PROJECT_ID=$STAGING_PROJECT_ID" >> $GITHUB_ENV # Ensure GITHUB_ENV has the staging project ID for subsequent steps[0m
+Deploy Preview (PR)	Create .env for Staging DB (Frontend config)	2026-03-02T21:54:43.9649160Z [36;1m  echo "VITE_OPENWEATHER_API_KEY=***" >> .env[0m
+Deploy Preview (PR)	Create .env for Staging DB (Frontend config)	2026-03-02T21:54:43.9649578Z [36;1m[0m
+Deploy Preview (PR)	Create .env for Staging DB (Frontend config)	2026-03-02T21:54:43.9649897Z [36;1m  echo "Generated .env content:"[0m
+Deploy Preview (PR)	Create .env for Staging DB (Frontend config)	2026-03-02T21:54:43.9650280Z [36;1m  cat .env[0m
+Deploy Preview (PR)	Create .env for Staging DB (Frontend config)	2026-03-02T21:54:43.9699768Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail ***0***
+Deploy Preview (PR)	Create .env for Staging DB (Frontend config)	2026-03-02T21:54:43.9700259Z env:
+Deploy Preview (PR)	Create .env for Staging DB (Frontend config)	2026-03-02T21:54:43.9701802Z   FIREBASE_CONFIG_JSON: ***
+Deploy Preview (PR)	Create .env for Staging DB (Frontend config)	2026-03-02T21:54:43.9702450Z   VITE_OPENWEATHER_API_KEY: ***
+Deploy Preview (PR)	Create .env for Staging DB (Frontend config)	2026-03-02T21:54:43.9702819Z ##[endgroup]
+Deploy Preview (PR)	Create .env for Staging DB (Frontend config)	2026-03-02T21:54:43.9777917Z Generating .env file from standard Firebase config for Staging DB...
+Deploy Preview (PR)	Create .env for Staging DB (Frontend config)	2026-03-02T21:54:44.0111641Z Generated .env content:
+Deploy Preview (PR)	Create .env for Staging DB (Frontend config)	2026-03-02T21:54:44.0122246Z VITE_FIREBASE_API_KEY=AIzaSyDDBAzayzk5B-R92pQEYaAM1cyh2qgI3y0
+Deploy Preview (PR)	Create .env for Staging DB (Frontend config)	2026-03-02T21:54:44.0124776Z VITE_FIREBASE_AUTH_DOMAIN=dashboard-mictlan-staging.firebaseapp.com
+Deploy Preview (PR)	Create .env for Staging DB (Frontend config)	2026-03-02T21:54:44.0126845Z VITE_FIREBASE_PROJECT_ID=dashboard-mictlan-staging
+Deploy Preview (PR)	Create .env for Staging DB (Frontend config)	2026-03-02T21:54:44.0128261Z VITE_FIREBASE_STORAGE_BUCKET=dashboard-mictlan-staging.firebasestorage.app
+Deploy Preview (PR)	Create .env for Staging DB (Frontend config)	2026-03-02T21:54:44.0129341Z VITE_FIREBASE_MESSAGING_SENDER_ID=702884048893
+Deploy Preview (PR)	Create .env for Staging DB (Frontend config)	2026-03-02T21:54:44.0130320Z VITE_FIREBASE_APP_ID=1:702884048893:web:69bf2dd1782f59c7c63394
+Deploy Preview (PR)	Create .env for Staging DB (Frontend config)	2026-03-02T21:54:44.0131403Z VITE_OPENWEATHER_API_KEY=***
+Deploy Preview (PR)	Create Google Credentials for Production Hosting	﻿2026-03-02T21:54:44.0165571Z ##[group]Run echo '***
+Deploy Preview (PR)	Create Google Credentials for Production Hosting	2026-03-02T21:54:44.0166428Z [36;1mecho '***[0m
+Deploy Preview (PR)	Create Google Credentials for Production Hosting	2026-03-02T21:54:44.0166803Z [36;1m  ***[0m
+Deploy Preview (PR)	Create Google Credentials for Production Hosting	2026-03-02T21:54:44.0167219Z [36;1m  ***[0m
+Deploy Preview (PR)	Create Google Credentials for Production Hosting	2026-03-02T21:54:44.0167643Z [36;1m  ***[0m
+Deploy Preview (PR)	Create Google Credentials for Production Hosting	2026-03-02T21:54:44.0174855Z [36;1m  ***[0m
+Deploy Preview (PR)	Create Google Credentials for Production Hosting	2026-03-02T21:54:44.0175424Z [36;1m  ***[0m
+Deploy Preview (PR)	Create Google Credentials for Production Hosting	2026-03-02T21:54:44.0175963Z [36;1m  ***[0m
+Deploy Preview (PR)	Create Google Credentials for Production Hosting	2026-03-02T21:54:44.0176403Z [36;1m  ***[0m
+Deploy Preview (PR)	Create Google Credentials for Production Hosting	2026-03-02T21:54:44.0176797Z [36;1m  ***[0m
+Deploy Preview (PR)	Create Google Credentials for Production Hosting	2026-03-02T21:54:44.0177264Z [36;1m  ***[0m
+Deploy Preview (PR)	Create Google Credentials for Production Hosting	2026-03-02T21:54:44.0178022Z [36;1m  ***[0m
+Deploy Preview (PR)	Create Google Credentials for Production Hosting	2026-03-02T21:54:44.0178471Z [36;1m  ***[0m
+Deploy Preview (PR)	Create Google Credentials for Production Hosting	2026-03-02T21:54:44.0178984Z [36;1m***' > google-credentials.json[0m
+Deploy Preview (PR)	Create Google Credentials for Production Hosting	2026-03-02T21:54:44.0229445Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail ***0***
+Deploy Preview (PR)	Create Google Credentials for Production Hosting	2026-03-02T21:54:44.0230157Z env:
+Deploy Preview (PR)	Create Google Credentials for Production Hosting	2026-03-02T21:54:44.0230767Z   VITE_FIREBASE_PROJECT_ID: dashboard-mictlan-staging
+Deploy Preview (PR)	Create Google Credentials for Production Hosting	2026-03-02T21:54:44.0231473Z ##[endgroup]
+Deploy Preview (PR)	Set GOOGLE_APPLICATION_CREDENTIALS	﻿2026-03-02T21:54:44.0358537Z ##[group]Run echo "GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/google-credentials.json" >> $GITHUB_ENV
+Deploy Preview (PR)	Set GOOGLE_APPLICATION_CREDENTIALS	2026-03-02T21:54:44.0359388Z [36;1mecho "GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/google-credentials.json" >> $GITHUB_ENV[0m
+Deploy Preview (PR)	Set GOOGLE_APPLICATION_CREDENTIALS	2026-03-02T21:54:44.0407241Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail ***0***
+Deploy Preview (PR)	Set GOOGLE_APPLICATION_CREDENTIALS	2026-03-02T21:54:44.0407735Z env:
+Deploy Preview (PR)	Set GOOGLE_APPLICATION_CREDENTIALS	2026-03-02T21:54:44.0408114Z   VITE_FIREBASE_PROJECT_ID: dashboard-mictlan-staging
+Deploy Preview (PR)	Set GOOGLE_APPLICATION_CREDENTIALS	2026-03-02T21:54:44.0408551Z ##[endgroup]
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	﻿2026-03-02T21:54:44.0517845Z ##[group]Run npm ci
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	2026-03-02T21:54:44.0518235Z [36;1mnpm ci[0m
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	2026-03-02T21:54:44.0518954Z [36;1mVITE_GITHUB_PR_NUMBER=21 VITE_APP_BUILD_TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ") npm run build -- --mode staging # Build frontend for staging DB[0m
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	2026-03-02T21:54:44.0564362Z shell: /usr/bin/bash -e ***0***
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	2026-03-02T21:54:44.0564763Z env:
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	2026-03-02T21:54:44.0565241Z   VITE_FIREBASE_PROJECT_ID: dashboard-mictlan-staging
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	2026-03-02T21:54:44.0566370Z   GOOGLE_APPLICATION_CREDENTIALS: /home/runner/work/dashboard-mictlan-v1/dashboard-mictlan-v1/google-credentials.json
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	2026-03-02T21:54:44.0567095Z ##[endgroup]
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	2026-03-02T21:54:55.9798155Z 
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	2026-03-02T21:54:55.9800734Z added 497 packages, and audited 498 packages in 12s
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	2026-03-02T21:54:55.9802942Z 
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	2026-03-02T21:54:55.9804812Z 129 packages are looking for funding
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	2026-03-02T21:54:55.9807287Z   run `npm fund` for details
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	2026-03-02T21:54:56.0046582Z 
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	2026-03-02T21:54:56.0047738Z 5 vulnerabilities (2 moderate, 2 high, 1 critical)
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	2026-03-02T21:54:56.0053189Z 
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	2026-03-02T21:54:56.0053666Z To address all issues, run:
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	2026-03-02T21:54:56.0054476Z   npm audit fix
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	2026-03-02T21:54:56.0054908Z 
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	2026-03-02T21:54:56.0055305Z Run `npm audit` for details.
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	2026-03-02T21:54:56.1719115Z 
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	2026-03-02T21:54:56.1721528Z > vite-project2@2.0.0 build
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	2026-03-02T21:54:56.1722768Z > vite build --mode staging --mode staging
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	2026-03-02T21:54:56.1724477Z 
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	2026-03-02T21:54:56.4133814Z [36mvite v7.3.0 [32mbuilding client environment for staging...[36m[39m
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	2026-03-02T21:54:56.6026730Z transforming...
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	2026-03-02T21:55:04.2914110Z [32m✓[39m 3032 modules transformed.
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	2026-03-02T21:55:05.0754507Z rendering chunks...
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	2026-03-02T21:55:05.0897231Z computing gzip size...
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	2026-03-02T21:55:05.1227418Z [2mdist/[22m[32mindex.html                 [39m[1m[2m    0.52 kB[22m[1m[22m[2m │ gzip:   0.33 kB[22m
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	2026-03-02T21:55:05.1236230Z [33m
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	2026-03-02T21:55:05.1237672Z [2mdist/[22m[2massets/[22m[35mindex-DIlTNH6g.css  [39m[1m[2m   62.08 kB[22m[1m[22m[2m │ gzip:  10.29 kB[22m
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	2026-03-02T21:55:05.1239218Z (!) Some chunks are larger than 500 kB after minification. Consider:
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	2026-03-02T21:55:05.1240288Z - Using dynamic import() to code-split the application
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	2026-03-02T21:55:05.1241787Z - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	2026-03-02T21:55:05.1243924Z - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	2026-03-02T21:55:05.1248442Z [2mdist/[22m[2massets/[22m[36mindex-YvQ-6RML.js   [39m[1m[33m1,164.47 kB[39m[22m[2m │ gzip: 337.23 kB[22m
+Deploy Preview (PR)	Install dependencies & Build for Staging Frontend	2026-03-02T21:55:05.1250017Z [32m✓ built in 8.69s[39m
+Deploy Preview (PR)	Compute preview channel id	﻿2026-03-02T21:55:05.2046260Z ##[group]Run PR_NUMBER='21'
+Deploy Preview (PR)	Compute preview channel id	2026-03-02T21:55:05.2046741Z [36;1mPR_NUMBER='21'[0m
+Deploy Preview (PR)	Compute preview channel id	2026-03-02T21:55:05.2047218Z [36;1mif [ -z "$PR_NUMBER" ] || [ "$PR_NUMBER" = "null" ]; then[0m
+Deploy Preview (PR)	Compute preview channel id	2026-03-02T21:55:05.2047706Z [36;1m  CHANNEL="pr-22597427846"[0m
+Deploy Preview (PR)	Compute preview channel id	2026-03-02T21:55:05.2048078Z [36;1melse[0m
+Deploy Preview (PR)	Compute preview channel id	2026-03-02T21:55:05.2048408Z [36;1m  CHANNEL="pr-$PR_NUMBER"[0m
+Deploy Preview (PR)	Compute preview channel id	2026-03-02T21:55:05.2048775Z [36;1mfi[0m
+Deploy Preview (PR)	Compute preview channel id	2026-03-02T21:55:05.2049129Z [36;1mecho "Using preview channel: $CHANNEL"[0m
+Deploy Preview (PR)	Compute preview channel id	2026-03-02T21:55:05.2049591Z [36;1mecho "channel=$CHANNEL" >> $GITHUB_OUTPUT[0m
+Deploy Preview (PR)	Compute preview channel id	2026-03-02T21:55:05.2099385Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail ***0***
+Deploy Preview (PR)	Compute preview channel id	2026-03-02T21:55:05.2099879Z env:
+Deploy Preview (PR)	Compute preview channel id	2026-03-02T21:55:05.2100257Z   VITE_FIREBASE_PROJECT_ID: dashboard-mictlan-staging
+Deploy Preview (PR)	Compute preview channel id	2026-03-02T21:55:05.2101046Z   GOOGLE_APPLICATION_CREDENTIALS: /home/runner/work/dashboard-mictlan-v1/dashboard-mictlan-v1/google-credentials.json
+Deploy Preview (PR)	Compute preview channel id	2026-03-02T21:55:05.2101769Z ##[endgroup]
+Deploy Preview (PR)	Compute preview channel id	2026-03-02T21:55:05.2178102Z Using preview channel: pr-21
+Deploy Preview (PR)	Show dist contents (debug)	﻿2026-03-02T21:55:05.2228031Z ##[group]Run echo 'dist content:'
+Deploy Preview (PR)	Show dist contents (debug)	2026-03-02T21:55:05.2228493Z [36;1mecho 'dist content:'[0m
+Deploy Preview (PR)	Show dist contents (debug)	2026-03-02T21:55:05.2228868Z [36;1mls -la dist || true[0m
+Deploy Preview (PR)	Show dist contents (debug)	2026-03-02T21:55:05.2275128Z shell: /usr/bin/bash -e ***0***
+Deploy Preview (PR)	Show dist contents (debug)	2026-03-02T21:55:05.2275549Z env:
+Deploy Preview (PR)	Show dist contents (debug)	2026-03-02T21:55:05.2276069Z   VITE_FIREBASE_PROJECT_ID: dashboard-mictlan-staging
+Deploy Preview (PR)	Show dist contents (debug)	2026-03-02T21:55:05.2276922Z   GOOGLE_APPLICATION_CREDENTIALS: /home/runner/work/dashboard-mictlan-v1/dashboard-mictlan-v1/google-credentials.json
+Deploy Preview (PR)	Show dist contents (debug)	2026-03-02T21:55:05.2277698Z ##[endgroup]
+Deploy Preview (PR)	Show dist contents (debug)	2026-03-02T21:55:05.2350475Z dist content:
+Deploy Preview (PR)	Show dist contents (debug)	2026-03-02T21:55:05.2366555Z total 2688
+Deploy Preview (PR)	Show dist contents (debug)	2026-03-02T21:55:05.2372732Z drwxr-xr-x  3 runner runner    4096 Mar  2 21:55 .
+Deploy Preview (PR)	Show dist contents (debug)	2026-03-02T21:55:05.2375104Z drwxr-xr-x 14 runner runner    4096 Mar  2 21:55 ..
+Deploy Preview (PR)	Show dist contents (debug)	2026-03-02T21:55:05.2376307Z drwxr-xr-x  2 runner runner    4096 Mar  2 21:55 assets
+Deploy Preview (PR)	Show dist contents (debug)	2026-03-02T21:55:05.2377328Z -rw-r--r--  1 runner runner 1365853 Mar  2 21:55 favicon.ico
+Deploy Preview (PR)	Show dist contents (debug)	2026-03-02T21:55:05.2378349Z -rw-r--r--  1 runner runner     518 Mar  2 21:55 index.html
+Deploy Preview (PR)	Show dist contents (debug)	2026-03-02T21:55:05.2379450Z -rw-r--r--  1 runner runner 1365853 Mar  2 21:55 mictlan-logo.png
+Deploy Preview (PR)	Deploy to Firebase preview channel	﻿2026-03-02T21:55:05.2476770Z ##[group]Run FirebaseExtended/action-hosting-deploy@v0
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:55:05.2477273Z with:
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:55:05.2477720Z   repoToken: ***
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:55:05.2487585Z   firebaseServiceAccount: ***
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:55:05.2488010Z   projectId: ***
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:55:05.2488338Z   channelId: pr-21
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:55:05.2488678Z   expires: 7d
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:55:05.2488994Z   entryPoint: .
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:55:05.2489323Z   firebaseToolsVersion: latest
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:55:05.2489692Z   disableComment: false
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:55:05.2490026Z   force: false
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:55:05.2490327Z env:
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:55:05.2490694Z   VITE_FIREBASE_PROJECT_ID: dashboard-mictlan-staging
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:55:05.2491431Z   GOOGLE_APPLICATION_CREDENTIALS: /home/runner/work/dashboard-mictlan-v1/dashboard-mictlan-v1/google-credentials.json
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:55:05.2492106Z ##[endgroup]
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:55:05.6375485Z ##[group]Verifying firebase.json exists
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:55:05.6388384Z firebase.json file found. Continuing deploy.
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:55:05.6390031Z ##[endgroup]
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:55:05.6391047Z ##[group]Setting up CLI credentials
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:55:05.6395443Z Created a temporary file with Application Default Credentials.
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:55:05.6396912Z ##[endgroup]
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:55:05.6400428Z ##[group]Deploying to Firebase preview channel pr-21
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:55:05.6422582Z [command]/opt/hostedtoolcache/node/20.20.0/x64/bin/npx firebase-tools@latest hosting:channel:deploy pr-21 --expires 7d --project *** --json
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:55:14.9908469Z npm warn exec The following package was not found and will be installed: firebase-tools@15.8.0
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:55:53.2613575Z npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:55:55.7691251Z npm warn deprecated json-ptr@3.1.1: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:55:55.8332754Z npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:56:04.6571912Z ***
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:56:04.6572549Z   "status": "success",
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:56:04.6573158Z   "result": ***
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:56:04.6573810Z     "***": ***
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:56:04.6574468Z       "site": "***",
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:56:04.6575368Z       "url": "https://***--pr-21-v23yvsa9.web.app",
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:56:04.6582268Z       "version": "",
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:56:04.6583054Z       "expireTime": "2026-03-09T21:56:01.994159175Z"
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:56:04.6583825Z     ***
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:56:04.6584355Z   ***
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:56:04.7081580Z ***::endgroup::
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:56:04.7106978Z ##[group]Commenting on PR
+Deploy Preview (PR)	Deploy to Firebase preview channel	2026-03-02T21:56:05.5201922Z ##[endgroup]
+Deploy Preview (PR)	Post Use Node.js	﻿2026-03-02T21:56:05.9155929Z Post job cleanup.
+Deploy Preview (PR)	Post Use Node.js	2026-03-02T21:56:06.1224787Z Cache hit occurred on the primary key node-cache-Linux-x64-npm-3dc1d9e06c5071b49b30d63b1d4a33c3a134f75848ef4eca9ca092e6995aa1fa, not saving cache.
+Deploy Preview (PR)	Post Checkout	﻿2026-03-02T21:56:06.1386411Z Post job cleanup.
+Deploy Preview (PR)	Post Checkout	2026-03-02T21:56:06.2407136Z [command]/usr/bin/git version
+Deploy Preview (PR)	Post Checkout	2026-03-02T21:56:06.2461995Z git version 2.53.0
+Deploy Preview (PR)	Post Checkout	2026-03-02T21:56:06.2511821Z Temporarily overriding HOME='/home/runner/work/_temp/60ca6004-11be-4a40-ae15-1aeb80dc5fc4' before making global git config changes
+Deploy Preview (PR)	Post Checkout	2026-03-02T21:56:06.2515148Z Adding repository directory to the temporary git global config as a safe directory
+Deploy Preview (PR)	Post Checkout	2026-03-02T21:56:06.2519750Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/dashboard-mictlan-v1/dashboard-mictlan-v1
+Deploy Preview (PR)	Post Checkout	2026-03-02T21:56:06.2563509Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+Deploy Preview (PR)	Post Checkout	2026-03-02T21:56:06.2605263Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+Deploy Preview (PR)	Post Checkout	2026-03-02T21:56:06.2901646Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+Deploy Preview (PR)	Post Checkout	2026-03-02T21:56:06.2919202Z http.https://github.com/.extraheader
+Deploy Preview (PR)	Post Checkout	2026-03-02T21:56:06.2935289Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+Deploy Preview (PR)	Post Checkout	2026-03-02T21:56:06.2975224Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+Deploy Preview (PR)	Post Checkout	2026-03-02T21:56:06.3240785Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+Deploy Preview (PR)	Post Checkout	2026-03-02T21:56:06.3280128Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+Deploy Preview (PR)	Complete job	﻿2026-03-02T21:56:06.3845100Z Cleaning up orphan processes

@@ -1,0 +1,196 @@
+Successfully modified file: C:\Users\acodu\dev\dashboard_mictlan\.github\workflows\ci-cd.yml (1 replacements). User modified the `new_string` content to be: name: CI/CD — Dashboard Mictlan (consolidated)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build (Vite)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build:production
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  deploy-preview:
+    name: Deploy Preview (PR)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    environment:
+      name: production
+    permissions:
+      checks: write
+      pull-requests: write
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+        shell: bash
+
+      - name: Create .env for Staging
+        env:
+          FIREBASE_CONFIG_JSON: ${{ secrets.VITE_FIREBASE_CONFIG_JSON_STAGING }}
+          VITE_OPENWEATHER_API_KEY: ${{ secrets.VITE_OPENWEATHER_API_KEY }}
+        run: |
+          echo "Generating .env file from standard Firebase config for Staging..."
+          # Convert JS object literal to valid JSON using Node.js
+          JSON_DATA=$(node -e "try { console.log(JSON.stringify(eval('(' + process.env.FIREBASE_CONFIG_JSON + ')'))); } catch (e) { console.error('Error parsing FIREBASE_CONFIG_JSON:', e.message); process.exit(1); }")
+          
+          echo "$JSON_DATA" | jq -r '
+            "VITE_FIREBASE_API_KEY=\(.apiKey)",
+            "VITE_FIREBASE_AUTH_DOMAIN=\(.authDomain)",
+            "VITE_FIREBASE_PROJECT_ID=\(.projectId)",
+            "VITE_FIREBASE_STORAGE_BUCKET=\(.storageBucket)",
+            "VITE_FIREBASE_MESSAGING_SENDER_ID=\(.messagingSenderId)",
+            "VITE_FIREBASE_APP_ID=\(.appId)"
+          ' > .env
+
+          STAGING_PROJECT_ID=$(echo "$JSON_DATA" | jq -r '.projectId')
+          echo "VITE_FIREBASE_PROJECT_ID=$STAGING_PROJECT_ID" >> $GITHUB_ENV
+          echo "VITE_OPENWEATHER_API_KEY=${{ secrets.VITE_OPENWEATHER_API_KEY }}" >> .env
+          
+          echo "Generated .env content:"
+          cat .env
+        shell: bash
+
+      - name: Create Google Credentials for Staging
+        run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_STAGING }}' > google-credentials.json
+        shell: bash
+
+      - name: Set GOOGLE_APPLICATION_CREDENTIALS
+        run: echo "GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/google-credentials.json" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Install dependencies & Build for Staging
+        run: |
+          npm ci
+          VITE_GITHUB_PR_NUMBER=${{ github.event.pull_request.number }} VITE_APP_BUILD_TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ") npm run build -- --mode staging
+
+      - name: Compute preview channel id
+        id: compute_channel
+        run: |
+          PR_NUMBER='${{ github.event.pull_request.number }}'
+          if [ -z "$PR_NUMBER" ] || [ "$PR_NUMBER" = "null" ]; then
+            CHANNEL="pr-${{ github.run_id }}"
+          else
+            CHANNEL="pr-$PR_NUMBER"
+          fi
+          echo "Using preview channel: $CHANNEL"
+          echo "channel=$CHANNEL" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Show dist contents (debug)
+        run: |
+          echo 'dist content:'
+          ls -la dist || true
+
+      - name: Deploy to Firebase preview channel
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_STAGING }}
+          projectId: ${{ secrets.FIREBASE_PROD_PROJECT_ID }}
+          channelId: ${{ steps.compute_channel.outputs.channel }}
+
+  deploy-production:
+    name: Deploy Production
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment:
+      name: production
+    permissions:
+      checks: write
+      pull-requests: write
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+                
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+        shell: bash
+
+      - name: Create .env for Production
+        env:
+          FIREBASE_CONFIG_JSON: ${{ secrets.VITE_FIREBASE_CONFIG_JSON_STAGING }}
+          VITE_OPENWEATHER_API_KEY: ${{ secrets.VITE_OPENWEATHER_API_KEY }}
+        run: |
+          echo "Setting up production environment..."
+          # Convert JS object literal to valid JSON using Node.js
+          JSON_DATA=$(node -e "try { console.log(JSON.stringify(eval('(' + process.env.FIREBASE_CONFIG_JSON + ')'))); } catch (e) { console.error('Error parsing FIREBASE_CONFIG_JSON:', e.message); process.exit(1); }")
+          
+          echo "$JSON_DATA" | jq -r '
+            "VITE_FIREBASE_API_KEY=\(.apiKey)",
+            "VITE_FIREBASE_AUTH_DOMAIN=\(.authDomain)",
+            "VITE_FIREBASE_PROJECT_ID=\(.projectId)",
+            "VITE_FIREBASE_STORAGE_BUCKET=\(.storageBucket)",
+            "VITE_FIREBASE_MESSAGING_SENDER_ID=\(.messagingSenderId)",
+            "VITE_FIREBASE_APP_ID=\(.appId)"
+          ' > .env
+
+          PROJECT_ID=$(echo "$JSON_DATA" | jq -r '.projectId')
+          echo "VITE_FIREBASE_PROJECT_ID=$PROJECT_ID" >> $GITHUB_ENV
+          echo "VITE_OPENWEATHER_API_KEY=${{ secrets.VITE_OPENWEATHER_API_KEY }}" >> .env
+          
+          echo "Environment variables set:"
+          cat .env
+        shell: bash
+
+      - name: Create Google Credentials for Production
+        run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_PRODUCTION }}' > google-credentials.json
+        shell: bash
+
+      - name: Set GOOGLE_APPLICATION_CREDENTIALS
+        run: echo "GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/google-credentials.json" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Install dependencies & Build for Production
+        run: |
+          npm ci
+          VITE_APP_BUILD_TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ") npm run build -- --mode production
+      - name: Deploy to Firebase (live)
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PRODUCTION }}
+          projectId: ${{ secrets.FIREBASE_PROD_PROJECT_ID }}
+          channelId: live
+
+
+.

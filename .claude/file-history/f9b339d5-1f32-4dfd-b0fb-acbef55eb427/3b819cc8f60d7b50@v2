@@ -1,0 +1,42 @@
+#!/bin/bash
+set -e
+
+echo "🌮 Setting up El Mictlan Dashboard dev environment..."
+
+# Claude Code is already installed as a VSCode extension
+# echo "📦 Installing Claude Code..."
+# npm install -g @anthropic-ai/claude-code
+
+# Install project dependencies
+if [ -f "package.json" ]; then
+  echo "📦 Installing project dependencies..."
+  npm install
+fi
+
+echo ""
+
+# Set up keybindings
+echo "⌨️  Configuring keybindings..."
+mkdir -p /root/.config/Code/User
+cat > /root/.config/Code/User/keybindings.json << 'EOF'
+[
+  {
+    "key": "shift+enter",
+    "command": "workbench.action.terminal.sendSequence",
+    "args": { "text": "\u001b\r" },
+    "when": "terminalFocus"
+  }
+]
+EOF
+
+echo ""
+echo "✅ Setup complete!"
+echo ""
+echo "👉 To start Claude Code from your phone:"
+echo "   1. Run 'claude' and select option 1 (Claude subscription)"
+echo "   2. Copy the login URL and open it in your phone browser"
+echo "   3. Authorize — browser redirects to a localhost URL"
+echo "   4. Copy that localhost URL from the address bar"
+echo "   5. Go to PORTS tab, find the matching port number"
+echo "   6. Replace 'localhost:PORT' with the Codespaces forwarded URL"
+echo "   7. Paste the modified URL in your phone browser → done!"

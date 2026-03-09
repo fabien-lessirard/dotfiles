@@ -1,0 +1,3 @@
+{
+  "output": "import { StrictMode } from 'react'\r\nimport { createRoot } from 'react-dom/client'\r\nimport { BrowserRouter } from 'react-router-dom'\r\nimport './index.css'\r\nimport App from './App.jsx'\r\n\r\nconsole.log('🚀 App launching with Project ID:', import.meta.env.VITE_FIREBASE_PROJECT_ID);\r\n\r\ncreateRoot(document.getElementById('root')).render(\r\n  <StrictMode>\r\n    <BrowserRouter>\r\n      <App />\r\n    </BrowserRouter>\r\n  </StrictMode>,\r\n)\r\n"
+}

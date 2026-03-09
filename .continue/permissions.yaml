@@ -1,0 +1,8 @@
+# Continue CLI Permissions Configuration
+# This file is managed by the Continue CLI and should not be edited manually.
+# Use the TUI to modify permissions interactively.
+
+allow:
+  - MultiEdit
+ask: []
+exclude: []

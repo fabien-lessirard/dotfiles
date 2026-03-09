@@ -1,0 +1,47 @@
+Successfully modified file: C:\Users\acodu\dev\dashboard_mictlan\src\todolist\todolist.txt (1 replacements). User modified the `new_string` content to be: # Liste de choses à faire
+
+## Configuration de l'environnement backend
+
+- [ ] Renommer `sa-key-admin.json` en `sa-key-dev-admin.json`.
+- [ ] Créer une clé de compte de service dédiée pour le staging (`sa-key-staging.json`).
+- [ ] Modifier les scripts CJS pour charger dynamiquement la clé de compte de service correcte en fonction de la variable d'environnement `FIREBASE_ADMIN_SA_KEY_PATH`.
+- [ ] Mettre à jour `package.json` avec des scripts pour définir la variable d'environnement `FIREBASE_ADMIN_SA_KEY_PATH` pour différents environnements.
+- [ ] Modifier `populate-products-db.cjs` pour utiliser le chargement dynamique des clés.
+
+- [ ] Corriger les points suivants :
+    - remplir produits
+        - sur dev, modifie la db de staging
+        - sur staging: "Erreur lors du remplissage des produits: Response is missing data field." et modifie la db de staging (ok)
+        - sur prod: modifie la db de staging
+
+## Nouvelles fonctionnalités requises
+
+- [x] Implémenter la fonctionnalité de date d'expiration des produits :
+    - [x] Écran pour les suggestions des clients (incitant à consommer les produits bientôt périmés)
+    - [x] Écran pour afficher les décisions pour les produits sur le point d'expirer
+    - [ ] Prendre des photos pour l'identification des produits (OCR pour la date d'expiration) - *Voir les propositions d'amélioration*
+
+- [x] **Gestion des produits** :
+    - [x] **Saisie** : Nom, Poids, Date d'expiration, Photos
+    - [ ] **Identification** : OCR pour la date d'expiration à partir de la photo - *Voir les propositions d'amélioration*
+
+- [x] **Écran des suggestions clients** :
+    - [x] Afficher les produits à moins de 7 jours d'expiration.
+    - [x] Filtres : catégorie, prix.
+    - [x] Options : réduction, offre groupée.
+
+- [x] **Écran des décisions produits** :
+    - [x] Lister les produits à moins de 3 jours d'expiration.
+    - [x] Actions : promotion, don, destruction.
+    - [x] Statut de la décision (à traiter, traitée).
+
+- [x] **Notifications** : Rappels pour les décisions produits.
+
+- [x] **Rapports** : Statistiques pour les produits périmés et les actions entreprises.
+
+## Propositions d'amélioration
+
+- [ ] OCR pour la numérisation de la date d'expiration
+- [ ] Validation améliorée de la date
+- [ ] Indices visuels dans la liste des produits
+.

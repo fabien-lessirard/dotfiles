@@ -1,0 +1,3 @@
+{
+  "output": "VITE_FIREBASE_PROJECT_ID=dashboard-mictlan-dev\r\n"
+}

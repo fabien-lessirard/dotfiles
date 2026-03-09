@@ -1,0 +1,24 @@
+{
+  "sessionId": "caf7e07a-6e51-46a5-a3f1-66eac0d2364b",
+  "title": "Untitled Session",
+  "workspaceDirectory": "C:\\Users\\acodu\\dev\\dashboard_mictlan",
+  "history": [
+    {
+      "message": {
+        "role": "user",
+        "content": "change to gemini"
+      },
+      "contextItems": [],
+      "editorState": "change to gemini"
+    }
+  ],
+  "usage": {
+    "totalCost": 0,
+    "promptTokens": 0,
+    "completionTokens": 0,
+    "promptTokensDetails": {
+      "cachedTokens": 0,
+      "cacheWriteTokens": 0
+    }
+  }
+}

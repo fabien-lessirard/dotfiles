@@ -1,0 +1,14 @@
+Found 4 matches for pattern "sa-key" in path "." (filter: "*.cjs"):
+---
+File: clear-products-db.cjs
+L2: const serviceAccount = require('./sa-key-admin.json');
+---
+File: empty-db.cjs
+L4: const serviceAccount = require('./sa-key-admin.json');
+---
+File: populate-dishes-db.cjs
+L5: const serviceAccount = require('./sa-key-admin.json');
+---
+File: populate-products-db.cjs
+L2: const serviceAccount = require('./sa-key-admin.json');
+---

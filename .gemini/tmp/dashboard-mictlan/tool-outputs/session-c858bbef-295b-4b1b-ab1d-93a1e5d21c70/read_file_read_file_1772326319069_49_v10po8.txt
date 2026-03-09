@@ -1,0 +1,3 @@
+{
+  "output": "/* eslint-disable react-refresh/only-export-components */\r\nimport { createContext, useState, useContext } from 'react';\r\n\r\nconst CardContext = createContext();\r\n\r\nexport const useCardContext = () => useContext(CardContext);\r\n\r\nexport const CardProvider = ({ children }) => {\r\n  const [areCardsOpen, setAreCardsOpen] = useState(true);\r\n\r\n  const toggleCards = () => {\r\n    setAreCardsOpen(prevState => !prevState);\r\n  };\r\n\r\n  return (\r\n    <CardContext.Provider value={{ areCardsOpen, toggleCards }}>\r\n      {children}\r\n    </CardContext.Provider>\r\n  );\r\n};\r\n"
+}

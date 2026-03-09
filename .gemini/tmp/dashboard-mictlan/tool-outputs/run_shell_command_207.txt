@@ -1,0 +1,3 @@
+Output: fatal: pathspec 'src/prompts/service' did not match any files
+Exit Code: 1
+Process Group PGID: 21960

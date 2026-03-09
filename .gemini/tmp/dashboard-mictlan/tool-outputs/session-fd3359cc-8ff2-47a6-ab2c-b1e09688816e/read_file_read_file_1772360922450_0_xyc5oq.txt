@@ -1,0 +1,3 @@
+{
+  "output": "@import \"tailwindcss\";\r\n\r\n@theme {\r\n  --color-mictlan-gold: #FFD700;\r\n  --color-mictlan-red: #DC2626;\r\n  --color-mictlan-black: #000000;\r\n  --color-mictlan-dark-gray: #1A1A1A;\r\n}\r\n\r\n:root {\r\n  background-color: var(--color-mictlan-black);\r\n  color: white;\r\n}"
+}

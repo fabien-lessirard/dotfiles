@@ -1,0 +1,5 @@
+Successfully updated the todo list. The current list is now:
+1. [completed] Investigate `functions/index.js` for existing Cloud Functions and service account key usage.
+2. [in_progress] Implement `populateDishes` Cloud Function in `functions/index.js`.
+3. [pending] Update `AdminPanel.jsx` to include a "Populate Dishes" button and its handler.
+4. [cancelled] (Optional) Improve existing Cloud Functions (`populateProducts`, `clearProducts`) to ensure they use `FIREBASE_ADMIN_SA_KEY_PATH`.

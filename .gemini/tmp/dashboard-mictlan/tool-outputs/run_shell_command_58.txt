@@ -1,0 +1,143 @@
+Output: [
+  {
+    "conclusion": "success",  
+    "databaseId": 22304242567,
+    "name": "📋 Gemini Scheduled Issue Triage",
+    "status": "completed",
+    "url": "https://github.com/fabien-lessirard/dashboard-mictlan-v1/actions/runs/22304242567"
+  },
+  {
+    "conclusion": "failure",
+    "databaseId": 22303421000,
+    "name": "🔀 Gemini Dispatch",
+    "status": "completed",
+    "url": "https://github.com/fabien-lessirard/dashboard-mictlan-v1/actions/runs/22303421000"
+  },
+  {
+    "conclusion": "success",
+    "databaseId": 22303420977,
+    "name": "CI/CD — Dashboard Mictlan (consolidated)",
+    "status": "completed",
+    "url": "https://github.com/fabien-lessirard/dashboard-mictlan-v1/actions/runs/22303420977"
+  },
+  {
+    "conclusion": "success",
+    "databaseId": 22302491058,
+    "name": "📋 Gemini Scheduled Issue Triage",
+    "status": "completed",
+    "url": "https://github.com/fabien-lessirard/dashboard-mictlan-v1/actions/runs/22302491058"
+  },
+  {
+    "conclusion": "success",
+    "databaseId": 22300500521,
+    "name": "📋 Gemini Scheduled Issue Triage",
+    "status": "completed",
+    "url": "https://github.com/fabien-lessirard/dashboard-mictlan-v1/actions/runs/22300500521"
+  },
+  {
+    "conclusion": "success",
+    "databaseId": 22298421790,
+    "name": "📋 Gemini Scheduled Issue Triage",
+    "status": "completed",
+    "url": "https://github.com/fabien-lessirard/dashboard-mictlan-v1/actions/runs/22298421790"
+  },
+  {
+    "conclusion": "success",
+    "databaseId": 22297125481,
+    "name": "📋 Gemini Scheduled Issue Triage",
+    "status": "completed",
+    "url": "https://github.com/fabien-lessirard/dashboard-mictlan-v1/actions/runs/22297125481"
+  },
+  {
+    "conclusion": "success",
+    "databaseId": 22295803231,
+    "name": "📋 Gemini Scheduled Issue Triage",
+    "status": "completed",
+    "url": "https://github.com/fabien-lessirard/dashboard-mictlan-v1/actions/runs/22295803231"
+  },
+  {
+    "conclusion": "success",
+    "databaseId": 22293901415,
+    "name": "📋 Gemini Scheduled Issue Triage",
+    "status": "completed",
+    "url": "https://github.com/fabien-lessirard/dashboard-mictlan-v1/actions/runs/22293901415"
+  },
+  {
+    "conclusion": "success",
+    "databaseId": 22292001074,
+    "name": "📋 Gemini Scheduled Issue Triage",
+    "status": "completed",
+    "url": "https://github.com/fabien-lessirard/dashboard-mictlan-v1/actions/runs/22292001074"
+  },
+  {
+    "conclusion": "success",
+    "databaseId": 22289260725,
+    "name": "📋 Gemini Scheduled Issue Triage",
+    "status": "completed",
+    "url": "https://github.com/fabien-lessirard/dashboard-mictlan-v1/actions/runs/22289260725"
+  },
+  {
+    "conclusion": "success",
+    "databaseId": 22288474291,
+    "name": "CI/CD — Dashboard Mictlan (consolidated)",
+    "status": "completed",
+    "url": "https://github.com/fabien-lessirard/dashboard-mictlan-v1/actions/runs/22288474291"
+  },
+  {
+    "conclusion": "success",
+    "databaseId": 22288454239,
+    "name": "CI/CD — Dashboard Mictlan (consolidated)",
+    "status": "completed",
+    "url": "https://github.com/fabien-lessirard/dashboard-mictlan-v1/actions/runs/22288454239"
+  },
+  {
+    "conclusion": "success",
+    "databaseId": 22288366489,
+    "name": "CI/CD — Dashboard Mictlan (consolidated)",
+    "status": "completed",
+    "url": "https://github.com/fabien-lessirard/dashboard-mictlan-v1/actions/runs/22288366489"
+  },
+  {
+    "conclusion": "failure",
+    "databaseId": 22288335583,
+    "name": "CI/CD — Dashboard Mictlan (consolidated)",
+    "status": "completed",
+    "url": "https://github.com/fabien-lessirard/dashboard-mictlan-v1/actions/runs/22288335583"
+  },
+  {
+    "conclusion": "success",
+    "databaseId": 22287788065,
+    "name": "CI/CD — Dashboard Mictlan (consolidated)",
+    "status": "completed",
+    "url": "https://github.com/fabien-lessirard/dashboard-mictlan-v1/actions/runs/22287788065"
+  },
+  {
+    "conclusion": "success",
+    "databaseId": 22287718302,
+    "name": "CI/CD — Dashboard Mictlan (consolidated)",
+    "status": "completed",
+    "url": "https://github.com/fabien-lessirard/dashboard-mictlan-v1/actions/runs/22287718302"
+  },
+  {
+    "conclusion": "success",
+    "databaseId": 22287469831,
+    "name": "📋 Gemini Scheduled Issue Triage",
+    "status": "completed",
+    "url": "https://github.com/fabien-lessirard/dashboard-mictlan-v1/actions/runs/22287469831"
+  },
+  {
+    "conclusion": "success",
+    "databaseId": 22287426877,
+    "name": "CI/CD — Dashboard Mictlan (consolidated)",
+    "status": "completed",
+    "url": "https://github.com/fabien-lessirard/dashboard-mictlan-v1/actions/runs/22287426877"
+  },
+  {
+    "conclusion": "failure",
+    "databaseId": 22287426858,
+    "name": "🔀 Gemini Dispatch",
+    "status": "completed",
+    "url": "https://github.com/fabien-lessirard/dashboard-mictlan-v1/actions/runs/22287426858"
+  }
+]
+Process Group PGID: 7436

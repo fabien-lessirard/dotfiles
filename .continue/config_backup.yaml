@@ -1,0 +1,16 @@
+name: Local Config
+version: 1.0.0
+schema: v1
+models:
+  - uses: anthropic/claude-3.5-sonnet
+    with:
+      OPENROUTER_API_KEY: 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
+  - uses: google/gemini-2.5-pro
+    with:
+      GEMINI_API_KEY: AIzaSyCwKb7RYzqIdZm1Xmq52tQIzKFlr8EbFTI
+  - uses: google/gemini-2.0-flash
+    with:
+      GEMINI_API_KEY: AIzaSyCwKb7RYzqIdZm1Xmq52tQIzKFlr8EbFTI
+  - name: Autodetect
+    provider: ollama
+    model: AUTODETECT

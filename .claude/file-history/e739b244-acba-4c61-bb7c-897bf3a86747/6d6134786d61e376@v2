@@ -1,0 +1,78 @@
+0.  **IAM Permissions Check/Setup for GitHub Actions Service Account:**
+    *   This step ensures the GitHub Actions service account has all necessary permissions for a successful production deployment. The service account is typically identified by an email like `github-actions-deployer@<your-project-id>.iam.gserviceaccount.com`.
+    *   **Action:** Provide your Firebase production project ID and the service account email when prompted. The agent will then generate and ask you to execute `gcloud` commands to grant the required IAM roles.
+    *   **Required Roles:**
+        *   `Firebase Hosting Admin` (`roles/firebasehosting.admin`) - For deploying hosting artifacts.
+        *   `Firebase Extensions Admin` (`roles/firebaseextensions.admin`) - For managing Firebase Extensions (e.g., when deploying functions that interact with extensions).
+        *   `Cloud Functions Viewer` (`roles/cloudfunctions.viewer`) - For listing Cloud Functions.
+        *   `Cloud Functions Developer` (`roles/cloudfunctions.developer`) - For creating, updating, and deploying Cloud Functions.
+        *   `Cloud Functions Admin` (`roles/cloudfunctions.admin`) - **Required when deploying new HTTP (`onRequest`) functions** (needed for `setIamPolicy` to make them publicly accessible). Without this, deployment fails with "Missing required permission: cloudfunctions.functions.setIamPolicy". Grant with: `gcloud projects add-iam-policy-binding <prod-project-id> --member="serviceAccount:<sa-email>" --role="roles/cloudfunctions.admin"`
+
+1.  **Check current branch:** Verify that the current branch is *not* `main`. If it is `main`, stop the process immediately and instruct the user to switch to a feature branch or create one.
+1b. **Check if main has diverged from the branch:** Run `git log HEAD..main --oneline`. If main has commits the branch does not have, merge main into the branch first: `git merge main -X ignore-cr-at-eol`. Resolve any conflicts before continuing.
+2.  **Check working tree:** Run `git status --short`. If the output is empty (working tree clean), skip steps 2–4 and go directly to step 5 (push + PR check). Otherwise, **list all staged changes and unstaged changes** in detail, then ask me if I want to stage all outstanding changes.
+    *   **To produce an exhaustive and accurate summary, read the FULL diff for every modified file** using `git diff HEAD -- <file>` individually. Do NOT rely on `--stat` or truncated output.
+    *   For each file, report **every** change in detail:
+        *   **New functions/exports** — name, purpose, auth/permission logic, what it does
+        *   **Modified functions** — what changed (logic, signature, error handling, etc.)
+        *   **Deleted code** — what was removed and why (e.g. dead code, moved elsewhere)
+        *   **Moved files** — original path → new path, and whether content changed
+        *   **New scripts** — name and purpose
+        *   **Config changes** (`package.json`, etc.) — every script added/removed/changed, key renames
+    *   Flag any **sensitive files** that should NOT be committed (e.g. `*_export.json`, `.env`, `sa-key-*.json`, `.claude/`).
+    *   Present the summary clearly grouped by file before asking to stage.
+3.  **Generate a comprehensive commit message** composed of two parts:
+    *   **Part 1 — Summary (title + bullets):** A concise one-line title followed by a bullet per file/group describing the key changes.
+    *   **Part 2 — Exhaustive detail:** The full per-file breakdown produced in step 2, pasted verbatim as the commit body (grouped by file, every function/change listed).
+4.  **Show the commit message** and ask for confirmation that I want to continue using this commit message.
+5.  If I confirm that I want to continue, then:
+    *   **Write the generated commit message to a temporary file** (e.g., `commit_message.txt` in the project root).
+    *   **Commit the staged changes** using `git commit -F commit_message.txt`.
+    *   **Delete the temporary file** `commit_message.txt`.
+    *   **Push the branch** (e.g., `git push --set-upstream origin <branch-name>`).
+    *   **Check for existing Pull Request**: Before creating a new PR, check if one already exists for the current branch. If it does, inform the user and ask if they want to use the existing one or create a new one (and if so, what to do with the old one). For now, if a PR exists, just re-use its number and skip creation.
+    *   **Generate a PR title and body based on all the changes since the beginning of the branch we are going to merge with main and write it to a temporary file** (e.g., `pr.txt` in the project root).
+    *   **Create a Pull Request**. The PR title and body should be read from `pr.txt` (e.g., `gh pr create --base main --head <branch-name> --title "<PR_TITLE>" --body-file pr.txt`).
+    *   **Delete the temporary file** `pr.txt`.
+    *   Then, **monitor the deployment process** as described in step 6.
+6.  **Monitor Preview Deployment (Automated Polling):**
+    *   **Loop and poll:** Implement a loop that polls `gh run list --branch <branch-name> --limit 5` every 30 seconds for up to 10 minutes (20 retries). Do NOT use `jq` — it is not available on Windows. Use `grep` instead.
+    *   **Filter and check status:** Filter with `grep "CI/CD"` and check if the line contains "completed". Wait until status is "completed" and conclusion is "success".
+    *   **Timeout/Failure Handling:** If the timeout is reached or conclusion is 'failure', report it to the user, provide a link to the workflow run, and ask if they want to:
+        1.  Re-run the workflow (after addressing potential issues).
+        2.  Proceed with the release manually (skipping automated checks).
+    *   **Get Run ID:** Extract the run ID from the `gh run list` output (it is the numeric field before the duration column).
+    *   **Extract Preview URL:** Fetch the full logs using `gh run view <run_id> --log`. Search for a line containing `"url":` and `web.app` — the URL will be masked (project ID replaced by `***`). **Reconstruct the real URL** by replacing `***` with the `prod` project ID read from `.firebaserc` (key `"prod"`). The final URL follows this pattern: `https://<prod-project-id>--pr-<pr-number>-<random-string>.web.app`. Example: if `.firebaserc` has `"prod": "dashboard-mictlan-prod"` and the masked URL is `https://***--pr-21-v23yvsa9.web.app`, the real URL is `https://dashboard-mictlan-prod--pr-21-v23yvsa9.web.app`.
+    *   **Present link:** Present the preview link to the user and ask them to confirm if it works as expected.
+7.  If I confirm that the preview link works as expected, then:
+    *   **Check for any local changes** to any files, specifically `release_automation_prompt.md` if it has been modified during the run.
+    *   If there are local changes, **stash them** using `git stash push -m "Stash changes before merge"`.
+    *   **Merge the branch** using squash (e.g., `gh pr merge <pr-number> --squash --delete-branch`).
+    *   **If a stash was created, reapply it** using `git stash pop`.
+    *   **Pull main** to sync the local branch: `git checkout main && git pull origin main`.
+8.  **Initiate Release Workflow (Post-Merge):**
+    *   **Determine new version:** Ask me if I want to bump the version as 'patch', 'minor', or 'major'.
+    *   **Update `package.json`, Commit & Create Tag (on `main`):**
+        *   Use `npm version <patch|minor|major> --no-git-tag-version` to update only `package.json` (avoids tag conflicts with squash merges).
+        *   Commit manually: `git add package.json && git commit -m "chore: bump version to X.Y.Z"`.
+        *   Create an annotated tag: `git tag -a vX.Y.Z -m "Release vX.Y.Z"`.
+    *   **Push to `main` & Tags:** `git push origin main --tags`.
+9.  **Monitor Production Deployment (Automated Polling):**
+    *   **Loop and poll:** Implement a loop that polls `gh run list --branch main --limit 5` every 30 seconds for up to 10 minutes (20 retries). Do NOT use `jq` — use `grep "CI/CD"` instead.
+    *   **Filter and check status:** Wait until the CI/CD line contains "completed" and "success".
+    *   **Timeout/Failure Handling:** If the timeout is reached or conclusion is 'failure', report it to the user, provide a link to the workflow run, and ask if they want to:
+        1.  Re-run the workflow (after addressing potential issues).
+        2.  Proceed with the release manually (skipping automated checks).
+    *   **Extract Production URL:** Get the production URL using `firebase hosting:sites:list --project <prod-project-id>` (read prod project ID from `.firebaserc`). The URL appears in the output as the defaultUrl.
+    *   **Present link:** Present the production URL to the user.
+10. **Run Integration Tests (if applicable):**
+    *   (Optional) If a separate integration test suite exists for production (e.g., indicated by a script like `test:integration` in `package.json`), execute and monitor these tests.
+    *   Report test results to the user.
+11. **Final Confirmation & Handoff:**
+    *   Ask me for final confirmation of the production deployment.
+    *   If it is ok then proceed to next step
+12. **Prepare for Next Development Cycle:**
+    *   **Create and switch to a new development branch.** This ensures that further development work does not directly affect the main codebase (`main` branch) before being thoroughly tested in development and staging environments.
+    *   Suggest a default branch name based on the latest release version (e.g., `branch-vX.Y.Z-dev`), and allow the user to approve or provide a custom name.
+    *   Once the branch is created and switched to, perform an empty commit on it with the message "FIRST EMPTY COMMIT for <branch name>" to establish its history.
+13. **Improve release_automation_prompt.md:** Analyze the execution, identify areas for improvement (e.g., less costly, quicker, more robust), and modify this prompt for the next run.

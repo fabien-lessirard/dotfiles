@@ -1,0 +1,8 @@
+Successfully created and wrote to new file: C:\Users\acodu\dev\dashboard_mictlan\cloud_function_deployment_summary.txt. User modified the `content` to be: The Cloud Functions have been successfully deployed to the `dashboard-mictlan-dev` project.
+
+You can now use the buttons in your UI.
+
+Here are the URLs for the deployed functions:
+*   `populateProducts`: https://us-central1-dashboard-mictlan-dev.cloudfunctions.net/populateProducts
+*   `clearProducts`: https://us-central1-dashboard-mictlan-dev.cloudfunctions.net/clearProducts
+*   `populateDishes`: https://us-central1-dashboard-mictlan-dev.cloudfunctions.net/populateDishes

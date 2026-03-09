@@ -1,0 +1,7 @@
+Successfully updated the todo list. The current list is now:
+1. [completed] Rename `sa-key-admin.json` to `sa-key-dev-admin.json`.
+2. [completed] Create `sa-key-staging-admin.json`.
+3. [completed] Identify all CJS scripts using the service account key.
+4. [completed] Modify CJS scripts to use `FIREBASE_ADMIN_SA_KEY_PATH` environment variable.
+5. [completed] Update `package.json` with scripts for different environments.
+6. [in_progress] Mark backend environment setup as complete in `todolist.txt`.

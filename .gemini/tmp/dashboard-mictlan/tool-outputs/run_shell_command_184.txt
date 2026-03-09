@@ -1,0 +1,4 @@
+Output: [branch-v1.1.0-dev fd608d4] feat: Add UI buttons for CJS scripts and deploy Cloud Functions
+ 3 files changed, 96 insertions(+)
+ rename {src/prompts => docs}/service accounts description.txt (100%)
+Process Group PGID: 22592
