@@ -21,19 +21,19 @@ models:
   - name: "Gemini 3 Flash (Routine - Rapide & Illimité)"
     provider: "google-generative-ai"
     model: "gemini-3-flash"
-    apiKey: "AIzaSyA1S9qagfTAXhtIRSd"
+    apiKey: "gemini apikey"
     description: "Ton compagnon par défaut. Idéal pour le code de routine et les explications."
 
   - name: "Gemini 2.5 Pro (Expert Stable)"
     provider: "google-generative-ai"
     model: "gemini-2.5-pro-latest"
-    apiKey: "AIzaSyA1S9qagfTAXhtIRSd"
+    apiKey: "gemini apikey"
     description: "À utiliser pour l'architecture et les fonctions Firebase complexes."
 
   - name: "Gemini 3.0 Preview (Cerveau Expérimental)"
     provider: "google-generative-ai"
     model: "gemini-3.0-preview-001"
-    apiKey: "AIzaSyA1S9qagfTAXhtIRSd"
+    apiKey: "gemini apikey"
     description: "Le dernier recours pour les bugs que personne n'arrive à résoudre."
 
 #  - name: Qwen 2.5 Coder 7B (GTX 1060)
@@ -76,4 +76,4 @@ tabAutocompleteModel:
 embeddingsProvider:
   provider: "google-generative-ai"
   model: "text-embedding-004"
-  apiKey: "AIzaSyA1S9qagfTAXhtIRSd"
+  apiKey: "gemini apikey"
