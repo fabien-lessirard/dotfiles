@@ -9,31 +9,31 @@ models:
 #      OPENROUTER_API_KEY: sk-or-v1-YOUR_OPENROUTER_KEY_HERE
 #  - uses: google/gemini-2.5-pro
 #    with:
-#      GEMINI_API_KEY: AIzaSyA1S9qagfTAXhtIRSd-jNaggeemwzSX1MI
+#      GEMINI_API_KEY: geminiApiKey
 #  - uses: google/gemini-2.5-flash
 #    with:
-#      GEMINI_API_KEY: AIzaSyA1S9qagfTAXhtIRSd-jNaggeemwzSX1MI
+#      GEMINI_API_KEY: geminiApiKey
 #  - uses: google/gemini-3.0-preview
 #    with:
-#      GEMINI_API_KEY: AIzaSyA1S9qagfTAXhtIRSd-jNaggeemwzSX1MI
+#      GEMINI_API_KEY: geminiApiKey
 
 # --- LE TRIO GOOGLE (Survie & Performance) ---
   - name: "Gemini 3 Flash (Routine - Rapide & Illimité)"
     provider: "google-generative-ai"
     model: "gemini-3-flash"
-    apiKey: "gemini apikey"
+    apiKey: "geminiApiKey"
     description: "Ton compagnon par défaut. Idéal pour le code de routine et les explications."
 
   - name: "Gemini 2.5 Pro (Expert Stable)"
     provider: "google-generative-ai"
     model: "gemini-2.5-pro-latest"
-    apiKey: "gemini apikey"
+    apiKey: "geminiApiKey"
     description: "À utiliser pour l'architecture et les fonctions Firebase complexes."
 
   - name: "Gemini 3.0 Preview (Cerveau Expérimental)"
     provider: "google-generative-ai"
     model: "gemini-3.0-preview-001"
-    apiKey: "gemini apikey"
+    apiKey: "geminiApiKey"
     description: "Le dernier recours pour les bugs que personne n'arrive à résoudre."
 
 #  - name: Qwen 2.5 Coder 7B (GTX 1060)
@@ -76,4 +76,4 @@ tabAutocompleteModel:
 embeddingsProvider:
   provider: "google-generative-ai"
   model: "text-embedding-004"
-  apiKey: "gemini apikey"
+  apiKey: "geminiApiKey"
