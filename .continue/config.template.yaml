@@ -1,25 +1,77 @@
 name: Local Config
 version: 1.0.0
 schema: v1
-models:
-  - uses: google/gemini-2.5-pro
-    with:
-      GEMINI_API_KEY: ${VITE_GEMINI_API_KEY}
 
-  - name: "Qwen 2.5 Coder 7B (Ollama Windows)"
+systemMessage: "Lis et applique les instructions du projet dans .github/mictlan-instructions.md"
+
+models:
+  # === FREE TIER (AI Studio — sans billing) ===
+
+  - name: "Gemini 2.5 Flash (Free)"
+    provider: "google-generative-ai"
+    model: "gemini-2.5-flash-preview-04-17"
+    apiKey: ${VITE_GEMINI_API_KEY}
+
+  - name: "Gemini 2.5 Flash Lite (Free)"
+    provider: "google-generative-ai"
+    model: "gemini-2.5-flash-lite-preview-06-17"
+    apiKey: ${VITE_GEMINI_API_KEY}
+
+  - name: "Gemini 2.0 Flash (Free)"
+    provider: "google-generative-ai"
+    model: "gemini-2.0-flash"
+    apiKey: ${VITE_GEMINI_API_KEY}
+
+  - name: "Gemini 2.0 Flash Lite (Free)"
+    provider: "google-generative-ai"
+    model: "gemini-2.0-flash-lite"
+    apiKey: ${VITE_GEMINI_API_KEY}
+
+  - name: "Gemini 1.5 Flash (Free)"
+    provider: "google-generative-ai"
+    model: "gemini-1.5-flash"
+    apiKey: ${VITE_GEMINI_API_KEY}
+
+  - name: "Gemini 1.5 Flash 8B (Free)"
+    provider: "google-generative-ai"
+    model: "gemini-1.5-flash-8b"
+    apiKey: ${VITE_GEMINI_API_KEY}
+
+  # === À TESTER — peut devenir free tier ===
+
+  - name: "Gemini 2.5 Pro (Tester — payant si billing)"
+    provider: "google-generative-ai"
+    model: "gemini-2.5-pro-preview-05-06"
+    apiKey: ${VITE_GEMINI_API_KEY}
+
+  - name: "Gemini 2.0 Flash Thinking (Tester)"
+    provider: "google-generative-ai"
+    model: "gemini-2.0-flash-thinking-exp"
+    apiKey: ${VITE_GEMINI_API_KEY}
+
+  - name: "Gemini 1.5 Pro (Tester)"
+    provider: "google-generative-ai"
+    model: "gemini-1.5-pro"
+    apiKey: ${VITE_GEMINI_API_KEY}
+
+  # === LOCAL (GTX 1060 — Gratuit & Confidentiel) ===
+
+  - name: "Qwen 2.5 Coder 7B (Ollama - Gratuit)"
     provider: "ollama"
     model: "qwen2.5-coder:7b"
     apiBase: "http://host.docker.internal:11434"
 
-  - name: "Llama 3 (Ollama Windows)"
+  - name: "Llama 3 (Ollama - Gratuit)"
     provider: "ollama"
     model: "llama3"
     apiBase: "http://host.docker.internal:11434"
     contextLength: 2048
 
-  - name: "Claude 3.5 Sonnet (Pro)"
-    provider: "anthropic"
-    model: "claude-3-5-sonnet-20240620"
+  # === CLAUDE PRO (Compte claude.ai — sans frais API) ===
+
+  - name: "Claude Sonnet 4.5 (Pro Account - Sans frais API)"
+    provider: "claudeai"
+    model: "claude-sonnet-4-5"
 
 tabAutocompleteModel:
   disabled: true
